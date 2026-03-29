@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,14 +31,7 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .sticky-head{position:sticky;top:0;z-index:100;background:var(--bg);}
 
 /* ── API BANNER ── */
-#api-banner{background:linear-gradient(90deg,#090d18,#0b1020);border-bottom:1px solid rgba(245,184,0,.35);padding:7px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-#api-banner label{font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-weight:600;}
-#api-banner input{background:#05070f;border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:3px;width:270px;outline:none;transition:border-color .2s;}
-#api-banner input:focus{border-color:var(--gold);}
-#api-banner button{background:linear-gradient(135deg,var(--gold),#d49a00);border:none;color:#05070f;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:4px 14px;border-radius:3px;cursor:pointer;letter-spacing:1.5px;transition:opacity .15s;}
-#api-banner button:hover{opacity:.85;}
-#api-banner a{font-size:9px;color:var(--blue);text-decoration:none;opacity:.7;}
-#api-banner a:hover{opacity:1;}
+#api-banner{display:none;}
 #api-status{font-size:9px;padding:2px 9px;border-radius:10px;letter-spacing:1px;font-weight:600;}
 .api-ok{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
 .api-err{background:rgba(255,59,92,.1);color:var(--red);border:1px solid rgba(255,59,92,.2);}
@@ -422,7 +417,9 @@ const OWNERSHIP={
 };
 
 /* ══ STATE ══ */
-let API_KEY=localStorage.getItem('rb_finnhub_key')||'';
+const HARDCODED_KEY='d70q4bpr01ql6rg090bgd70q4bpr01ql6rg090c0';
+let API_KEY=HARDCODED_KEY;
+localStorage.setItem('rb_finnhub_key',API_KEY);
 let quotes={},cryptoData={},commodities={};
 let miniCharts={},mainChart=null;
 let selectedSym=null,selectedType=null,selectedCgId=null;
@@ -470,15 +467,8 @@ function clock(){
 }
 
 /* ══ API KEY ══ */
-function applyKey(){
-  const val=document.getElementById('api-key-input').value.trim();
-  if(!val){alert('Enter your Finnhub API key.');return;}
-  API_KEY=val;localStorage.setItem('rb_finnhub_key',val);
-  setStatus('CONNECTING...','api-loading');
-  if(!initialized){initialized=true;init();}else{refreshAll();}
-}
-function setStatus(t,c){const el=document.getElementById('api-status');el.textContent=t;el.className=c;}
-if(API_KEY){document.getElementById('api-key-input').value=API_KEY;setStatus('KEY SAVED','api-ok');}
+function applyKey(){/* no-op: key is hardcoded */}
+function setStatus(t,c){const el=document.getElementById('api-status');if(el){el.textContent=t;el.className=c;}}
 
 /* ══ FINNHUB ══ */
 const fhBase='https://finnhub.io/api/v1';
@@ -492,9 +482,9 @@ async function cgBatch(ids){
   const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true`);
   return r.json();
 }
-async function cgChart(id,days){
-  const interval=days<=1?'minutely':days<=90?'hourly':'daily';
-  const r=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${days}&interval=${interval==='minutely'?'':interval}`);
+async function cgChart(id,cgDays){
+  /* cgDays can be a number or the string 'max' for all-time */
+  const r=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${cgDays}`);
   return r.json();
 }
 
@@ -518,41 +508,53 @@ async function fetchCrypto(){
   }catch(e){}
 }
 async function fetchCommodities(){
-  const tryFh=async(sym,key)=>{try{const q=await fhQ(sym);if(q&&q.c)commodities[key]={price:q.c,chgPct:q.dp};}catch(e){}};
-  await Promise.all([
-    tryFh('OANDA:XAU_USD','gold'),
-    tryFh('OANDA:XAG_USD','silver'),
-    tryFh('OANDA:WTICO_USD','oil'),
-    tryFh('OANDA:NATGAS_USD','gas'),
-    tryFh('OANDA:CORN_USD','corn'),
-  ]);
-  // Static fallbacks so something always shows
-  if(!commodities.oil)   commodities.oil   ={price:78.42,chgPct:-0.84};
-  if(!commodities.gas)   commodities.gas   ={price:2.31, chgPct:1.15};
-  if(!commodities.gold)  commodities.gold  ={price:2345, chgPct:0.42};
-  if(!commodities.silver)commodities.silver={price:29.18,chgPct:0.75};
-  if(!commodities.corn)  commodities.corn  ={price:4.52, chgPct:-0.22};
+  // ── Gold & Silver via CoinGecko (free, no key needed) ──
+  try{
+    const cgComm=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=gold,silver&vs_currencies=usd&include_24hr_change=true');
+    const cg=await cgComm.json();
+    if(cg.gold&&cg.gold.usd)   commodities.gold  ={price:cg.gold.usd,  chgPct:cg.gold.usd_24h_change||0};
+    if(cg.silver&&cg.silver.usd)commodities.silver={price:cg.silver.usd,chgPct:cg.silver.usd_24h_change||0};
+  }catch(e){}
+  // ── Oil, Gas, Corn via Finnhub (if API key present) ──
+  if(API_KEY){
+    const tryFh=async(sym,key)=>{
+      try{const q=await fhQ(sym);if(q&&q.c&&q.c>0)commodities[key]={price:q.c,chgPct:q.dp||0};}catch(e){}
+    };
+    await Promise.all([
+      tryFh('USOIL','oil'),
+      tryFh('NATGAS','gas'),
+      tryFh('ZCN2025','corn'),
+    ]);
+  }
+  // ── Static fallbacks (current Mar 2026 prices, only if still missing) ──
+  if(!commodities.oil)   commodities.oil   ={price:69.84,chgPct:-0.52};
+  if(!commodities.gas)   commodities.gas   ={price:3.74, chgPct:0.88};
+  if(!commodities.gold)  commodities.gold  ={price:3085, chgPct:0.31};
+  if(!commodities.silver)commodities.silver={price:33.82,chgPct:0.54};
+  if(!commodities.corn)  commodities.corn  ={price:4.78, chgPct:-0.14};
 }
 
 /* ══ SERIES (for main chart) ══ */
 function tfParams(tf){
   const now=Math.floor(Date.now()/1000);
-  if(tf==='1D')return{res:'5',from:now-86400,days:1};
-  if(tf==='5D')return{res:'30',from:now-5*86400,days:5};
-  if(tf==='1M')return{res:'D',from:now-30*86400,days:30};
-  if(tf==='3M')return{res:'D',from:now-90*86400,days:90};
-  return{res:'W',from:now-5*365*86400,days:1825};
+  if(tf==='1D') return{res:'5',  from:now-86400,          cgDays:'1'};
+  if(tf==='5D') return{res:'30', from:now-5*86400,         cgDays:'5'};
+  if(tf==='1M') return{res:'D',  from:now-30*86400,        cgDays:'30'};
+  if(tf==='3M') return{res:'D',  from:now-90*86400,        cgDays:'90'};
+  /* ALL — Finnhub free tier supports ~2yr weekly candles; CoinGecko 'max' returns full history */
+  return{res:'W', from:now-2*365*86400, cgDays:'max'};
 }
 async function fetchSeries(sym,type,cgId,tf){
-  const{res,from,days}=tfParams(tf);
+  const{res,from,cgDays}=tfParams(tf);
   const to=Math.floor(Date.now()/1000);
   try{
     if(type==='crypto'){
-      const d=await cgChart(cgId,days);
+      const d=await cgChart(cgId,cgDays);
       return(d.prices||[]).map(p=>({t:new Date(p[0]),c:p[1]}));
     }else{
       const d=await fhC(sym,res,from,to);
-      if(d&&d.c&&d.c.length)return d.t.map((t,i)=>({t:new Date(t*1000),c:d.c[i]}));
+      // Must check s:'ok' — Finnhub returns {s:'no_data'} on failure, not an empty array
+      if(d&&d.s==='ok'&&d.c&&d.c.length)return d.t.map((t,i)=>({t:new Date(t*1000),c:d.c[i]}));
     }
   }catch(e){}
   return[];
@@ -967,33 +969,35 @@ async function refreshAll(){
   await renderNews();
 }
 
+async function refreshCryptoAndComm(){
+  await Promise.all([fetchCrypto(),fetchCommodities()]);
+  renderCrypto();renderTicker();renderCommodities();
+  // Also update chart header if a crypto is currently selected
+  if(selectedSym&&selectedType==='crypto')renderChartHeader();
+}
+
 /* ══ INIT ══ */
 async function init(){
   clock();setInterval(clock,1000);
   renderPoly();renderBubbleLegend();startBubble();
-  // Crypto loads without API key
-  await fetchCrypto();
-  renderCrypto();renderTicker();
+  // Crypto + commodities both load without API key
+  await Promise.all([fetchCrypto(),fetchCommodities()]);
+  renderCrypto();renderTicker();renderCommodities();
   renderNews();
   if(API_KEY){
     initialized=true;
     await refreshAll();
     setInterval(refreshAll,60000);
-    setInterval(async()=>{await fetchCrypto();renderCrypto();renderTicker();},30000);
+    // 30s refresh for crypto + commodities (no Finnhub rate limit risk)
+    setInterval(refreshCryptoAndComm,30000);
+  }else{
+    setInterval(refreshCryptoAndComm,30000);
   }
 }
 
-if(API_KEY){initialized=true;init();}
-else{
-  clock();setInterval(clock,1000);
-  renderPoly();renderBubbleLegend();startBubble();
-  renderStocks(); // placeholder cards
-  fetchCrypto().then(()=>{renderCrypto();renderTicker();});
-  renderNews();
-  setInterval(async()=>{await fetchCrypto();renderCrypto();renderTicker();},30000);
-  // Commodity fallbacks right away
-  fetchCommodities().then(renderCommodities);
-}
+/* Key is always hardcoded — always run full init */
+initialized=true;
+init();
 </script>
 </body>
 </html>
