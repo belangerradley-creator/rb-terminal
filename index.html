@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,6 +77,16 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .panel-hdr{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 .panel-title{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
 .panel-sub{font-size:7px;color:var(--muted);}
+
+#bubble-tooltip{position:absolute;display:none;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;min-width:190px;pointer-events:none;z-index:50;box-shadow:0 8px 32px rgba(0,0,0,.7);font-size:9px;}
+#bubble-tooltip.visible{display:block;}
+.btt-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.btt-row{display:flex;justify-content:space-between;gap:16px;padding:3px 0;border-bottom:1px solid var(--border);}
+.btt-row:last-child{border-bottom:none;}
+.btt-lbl{color:var(--muted);letter-spacing:.5px;}
+.btt-val{font-weight:600;color:var(--text);}
+.btt-accent{color:var(--gold);}
+.btt-btc{color:#f7931a;}
 
 /* ──────────────────────────────────────
    SECTION 1: BUBBLE MAP (full-width hero)
@@ -222,16 +233,17 @@ canvas{display:block;}
 </div>
 
 <!-- ════════════════════════════════════════════
-  SECTION 1: INSTITUTIONAL OWNERSHIP BUBBLE MAP
+  SECTION 1: OWNERSHIP + BTC BUBBLE MAP
 ═════════════════════════════════════════════ -->
 <div class="page-section">
   <div class="sec-hdr">
-    <span class="sec-title">Institutional Ownership Map</span>
-    <span class="sec-sub">TOP 5 FIRMS × TOP 5 STOCKS · BUBBLE SIZE = TOTAL OWNERSHIP %</span>
+    <span class="sec-title">Institutional Ownership + Corporate BTC</span>
+    <span class="sec-sub">HOVER OR CLICK ANY BUBBLE FOR DETAILS · BUBBLE SIZE = HOLDINGS</span>
   </div>
   <div class="bubble-hero">
-    <div class="bubble-wrap">
-      <canvas id="bubbleCanvas" height="420"></canvas>
+    <div class="bubble-wrap" style="position:relative;">
+      <canvas id="bubbleCanvas" height="460" style="cursor:default;"></canvas>
+      <div id="bubble-tooltip"></div>
       <div class="bubble-legend" id="bubble-legend"></div>
     </div>
   </div>
@@ -387,10 +399,12 @@ const TOP10_CRYPTO=[
   {id:'avalanche-2',   sym:'AVAX', name:'Avalanche',    color:'#e84142',icon:'A'},
 ];
 const POLY=[
-  {q:'Will the Fed cut rates before July 2025?', yes:62,no:38,vol:'$4.2M'},
-  {q:'Will BTC reach $120K by end of 2025?',     yes:41,no:59,vol:'$8.1M'},
-  {q:'US recession in 2025?',                    yes:55,no:45,vol:'$12.3M'},
-  {q:'Nvidia hits $200 by Dec 2025?',            yes:38,no:62,vol:'$2.8M'},
+  // Q2 2026 predictions (ends June 30 2026)
+  {q:'Will BTC hold above $80K by end of Q2 2026?',   yes:71,no:29,vol:'$6.8M', ends:'Q2 · Jun 30'},
+  {q:'Fed rate cut before July 2026?',                  yes:58,no:42,vol:'$11.2M',ends:'Q2 · Jun 30'},
+  // Q3 2026 predictions (ends Sep 30 2026)
+  {q:'BTC reaches $120K in Q3 2026?',                  yes:34,no:66,vol:'$9.4M', ends:'Q3 · Sep 30'},
+  {q:'Fed cuts rates 2+ times by end of Q3 2026?',     yes:45,no:55,vol:'$7.1M', ends:'Q3 · Sep 30'},
 ];
 const NEWS_STATIC=[
   {time:'09:42',hed:'Fed officials signal patience on rate cuts amid tariff uncertainty',src:'Reuters'},
@@ -420,7 +434,29 @@ const OWNERSHIP={
   ]
 };
 
-/* ══ STATE ══ */
+/* Corporate Bitcoin Holdings — sourced from BitcoinTreasuries.net (Mar 2026)
+   btc: approximate BTC held, usdB: approx USD value in billions               */
+const BTC_CORP={
+  holders:[
+    {name:'MicroStrategy', short:'MSTR', btc:499096, usdB:42.3, color:'#f7931a', sector:'Software'},
+    {name:'Marathon Digital',short:'MARA',btc:46374,  usdB:3.93, color:'#ff7c2a', sector:'Mining'},
+    {name:'Riot Platforms', short:'RIOT', btc:19225,  usdB:1.63, color:'#ff3b5c', sector:'Mining'},
+    {name:'Tesla',          short:'TSLA', btc:11509,  usdB:0.975,color:'#e31937', sector:'Auto'},
+    {name:'Coinbase',       short:'COIN', btc:9267,   usdB:0.785,color:'#0052ff', sector:'Exchange'},
+    {name:'Block Inc',      short:'SQ',   btc:8027,   usdB:0.680,color:'#00d4ff', sector:'Fintech'},
+    {name:'Semler Sci.',    short:'SMLR', btc:3192,   usdB:0.271,color:'#a855f7', sector:'Health'},
+    {name:'CleanSpark',     short:'CLSK', btc:11177,  usdB:0.947,color:'#00e676', sector:'Mining'},
+    {name:'Metaplanet',     short:'3350', btc:2100,   usdB:0.178,color:'#00d4ff', sector:'Japan'},
+    {name:'Boyaa Inter.',   short:'BOYA', btc:3183,   usdB:0.270,color:'#3d9dff', sector:'Gaming'},
+  ],
+  // BTC "tiers" shown as target nodes on the right
+  tiers:[
+    {label:'<1K BTC',    min:0,    max:999,   color:'rgba(247,147,26,0.4)'},
+    {label:'1K–10K BTC', min:1000, max:9999,  color:'rgba(247,147,26,0.65)'},
+    {label:'10K–50K BTC',min:10000,max:49999, color:'rgba(247,147,26,0.85)'},
+    {label:'50K+ BTC',   min:50000,max:Infinity,color:'#f7931a'},
+  ]
+};
 const HARDCODED_KEY='d70q4bpr01ql6rg090bgd70q4bpr01ql6rg090c0';
 let API_KEY=HARDCODED_KEY;
 localStorage.setItem('rb_finnhub_key',API_KEY);
@@ -642,123 +678,298 @@ function drawMain(pts,symKey,type){
   });
 }
 
-/* ══ BUBBLE MAP ══ */
+/* ══ BUBBLE MAP — UNIFIED CANVAS ══ */
 let bPhase=0,bRaf=0;
+let bubbleHits=[];   // [{x,y,r, type, data}] — rebuilt each frame for hit detection
+let hoveredBubble=null, pinnedBubble=null;
+
 function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a.toFixed(3)})`;}
+
+/* ── TOOLTIP ── */
+function showTooltip(bubble,canvasX,canvasY,canvasRect){
+  const tt=document.getElementById('bubble-tooltip');
+  const d=bubble.data;
+  let html='';
+  if(bubble.type==='firm'){
+    const tot=OWNERSHIP.data[bubble.fi].reduce((a,b)=>a+b,0);
+    html=`<div class="btt-name" style="color:${d.color}">${d.name}</div>`
+      +OWNERSHIP.stocks.map((s,si)=>`<div class="btt-row"><span class="btt-lbl">${s}</span><span class="btt-val btt-accent">${OWNERSHIP.data[bubble.fi][si].toFixed(1)}%</span></div>`).join('')
+      +`<div class="btt-row"><span class="btt-lbl">TOTAL HELD</span><span class="btt-val btt-accent">${tot.toFixed(1)}%</span></div>`;
+  }else if(bubble.type==='stock'){
+    const q=quotes[d];
+    html=`<div class="btt-name">${d}</div>`
+      +`<div class="btt-row"><span class="btt-lbl">PRICE</span><span class="btt-val">${q?'$'+fmt(q.price,2):'--'}</span></div>`
+      +`<div class="btt-row"><span class="btt-lbl">INST. OWNED</span><span class="btt-val btt-accent">${bubble.tot.toFixed(1)}%</span></div>`
+      +`<div class="btt-row"><span class="btt-lbl">MKT CAP</span><span class="btt-val">${q?'$'+fmtL(q.mktcap):'--'}</span></div>`;
+  }else if(bubble.type==='btc'){
+    const h=d;
+    html=`<div class="btt-name" style="color:${h.color}">${h.name}</div>`
+      +`<div class="btt-row"><span class="btt-lbl">TICKER</span><span class="btt-val">${h.short}</span></div>`
+      +`<div class="btt-row"><span class="btt-lbl">BTC HELD</span><span class="btt-val btt-btc">${h.btc.toLocaleString()} ₿</span></div>`
+      +`<div class="btt-row"><span class="btt-lbl">USD VALUE</span><span class="btt-val">$${h.usdB.toFixed(2)}B</span></div>`
+      +`<div class="btt-row"><span class="btt-lbl">SECTOR</span><span class="btt-val">${h.sector}</span></div>`;
+  }
+  tt.innerHTML=html;
+  // Position tooltip: right of bubble unless near right edge
+  const wrap=document.querySelector('.bubble-wrap');
+  const wrapW=wrap.offsetWidth;
+  let tx=canvasX+16, ty=canvasY-10;
+  if(tx+200>wrapW) tx=canvasX-210;
+  if(ty<0) ty=0;
+  tt.style.left=tx+'px';tt.style.top=ty+'px';
+  tt.classList.add('visible');
+}
+function hideTooltip(){
+  if(pinnedBubble)return;
+  document.getElementById('bubble-tooltip').classList.remove('visible');
+}
+
+/* ── HIT TEST ── */
+function hitTest(mx,my){
+  for(let i=bubbleHits.length-1;i>=0;i--){
+    const h=bubbleHits[i];
+    const dx=mx-h.x,dy=my-h.y;
+    if(dx*dx+dy*dy<=h.r*h.r)return h;
+  }
+  return null;
+}
+
+/* ── CANVAS EVENTS ── */
+function initBubbleEvents(){
+  const canvas=document.getElementById('bubbleCanvas');
+  canvas.addEventListener('mousemove',e=>{
+    if(pinnedBubble)return;
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=canvas.offsetWidth/rect.width;
+    const mx=(e.clientX-rect.left)*scaleX;
+    const my=(e.clientY-rect.top)*scaleX;
+    const hit=hitTest(mx,my);
+    if(hit){
+      canvas.style.cursor='pointer';
+      if(hit!==hoveredBubble){hoveredBubble=hit;showTooltip(hit,mx,my,rect);}
+    }else{
+      canvas.style.cursor='default';
+      hoveredBubble=null;hideTooltip();
+    }
+  });
+  canvas.addEventListener('mouseleave',()=>{
+    if(!pinnedBubble){hoveredBubble=null;hideTooltip();}
+  });
+  canvas.addEventListener('click',e=>{
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=canvas.offsetWidth/rect.width;
+    const mx=(e.clientX-rect.left)*scaleX;
+    const my=(e.clientY-rect.top)*scaleX;
+    const hit=hitTest(mx,my);
+    if(hit){
+      if(pinnedBubble===hit){pinnedBubble=null;hideTooltip();}
+      else{pinnedBubble=hit;showTooltip(hit,mx,my,rect);}
+    }else{
+      pinnedBubble=null;hideTooltip();
+    }
+  });
+}
 
 function drawBubble(){
   const canvas=document.getElementById('bubbleCanvas');
   if(!canvas)return;
   const W=canvas.offsetWidth;
-  const H=canvas.offsetHeight||420;
+  const H=canvas.offsetHeight||460;
   canvas.width=W*devicePixelRatio;
   canvas.height=H*devicePixelRatio;
   const ctx=canvas.getContext('2d');
   ctx.scale(devicePixelRatio,devicePixelRatio);
   ctx.clearRect(0,0,W,H);
+  bubbleHits=[];
 
   const firms=OWNERSHIP.firms,stocks=OWNERSHIP.stocks,data=OWNERSHIP.data;
-  const pad=55,firmX=W*0.2,stockX=W*0.8;
+
+  /* ── LAYOUT: 3 columns
+     col 0 (x=18%): institution bubbles
+     col 1 (x=50%): stock bubbles  (center)
+     col 2 (x=82%): btc holder bubbles  */
+  const firmX=W*0.18, stockX=W*0.50, btcX=W*0.82;
+  const pad=50;
   const fPos=firms.map((_,i)=>({x:firmX,y:pad+(H-pad*2)*(i/(firms.length-1))}));
   const sPos=stocks.map((_,i)=>({x:stockX,y:pad+(H-pad*2)*(i/(stocks.length-1))}));
+
+  // BTC holders — stacked in right column
+  const holders=BTC_CORP.holders;
+  const bPos=holders.map((_,i)=>({
+    x:btcX+(i%2===0?-28:28),
+    y:pad+(H-pad*2)*(i/(holders.length-1))
+  }));
+
   const fTot=firms.map((_,fi)=>data[fi].reduce((a,b)=>a+b,0));
   const sTot=stocks.map((_,si)=>firms.reduce((s,_,fi)=>s+data[fi][si],0));
   const mFT=Math.max(...fTot),mST=Math.max(...sTot);
+  const maxBtc=Math.max(...holders.map(h=>h.btc));
 
-  // faint vertical guide lines
-  ctx.save();ctx.setLineDash([2,8]);ctx.strokeStyle='rgba(255,255,255,0.025)';ctx.lineWidth=1;
-  for(let i=0;i<=6;i++){const x=W*i/6;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  // Faint grid
+  ctx.save();ctx.setLineDash([2,8]);ctx.strokeStyle='rgba(255,255,255,0.02)';ctx.lineWidth=1;
+  for(let i=0;i<=8;i++){const x=W*i/8;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   ctx.restore();
 
-  // Connection lines
+  // ── LEFT SECTION: Inst→Stock connection lines ──
   firms.forEach((firm,fi)=>{
     stocks.forEach((stock,si)=>{
       const pct=data[fi][si];
       const fp=fPos[fi],sp=sPos[si];
-      const alpha=0.05+(pct/9)*0.4+Math.sin(bPhase*0.02+fi*0.9+si*1.3)*0.04;
-      const lw=0.3+(pct/9)*4;
-      const cpX=(fp.x+sp.x)/2;
-      const bend=(sp.y-fp.y)*0.07;
+      const isHov=(hoveredBubble&&(hoveredBubble.fi===fi||hoveredBubble.si===si));
+      const alpha=(isHov?0.55:0.05)+(pct/9)*0.35+Math.sin(bPhase*0.02+fi*0.9+si*1.3)*0.03;
+      const lw=(isHov?2:0.3)+(pct/9)*3.5;
+      const cpX=(fp.x+sp.x)/2,bend=(sp.y-fp.y)*0.06;
       const grad=ctx.createLinearGradient(fp.x,fp.y,sp.x,sp.y);
       grad.addColorStop(0,hexA(firm.color,alpha));
-      grad.addColorStop(0.45,hexA('#ffffff',alpha*0.25));
-      grad.addColorStop(1,hexA('#3d9dff',alpha*0.55));
+      grad.addColorStop(1,hexA('#3d9dff',alpha*0.6));
       ctx.beginPath();ctx.moveTo(fp.x,fp.y);
       ctx.bezierCurveTo(cpX,fp.y+bend,cpX,sp.y-bend,sp.x,sp.y);
       ctx.strokeStyle=grad;ctx.lineWidth=lw;ctx.stroke();
-      // pct label on big lines
-      if(pct>=5){
+      if(pct>=5&&isHov){
         const tx=(fp.x+sp.x)/2,ty=(fp.y+sp.y)/2;
         ctx.save();ctx.font=`600 9px 'JetBrains Mono'`;ctx.fillStyle=hexA(firm.color,0.95);
-        ctx.textAlign='center';ctx.textBaseline='middle';
-        ctx.shadowColor=firm.color;ctx.shadowBlur=5;
+        ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor=firm.color;ctx.shadowBlur=4;
         ctx.fillText(pct.toFixed(1)+'%',tx,ty);ctx.restore();
       }
     });
   });
 
-  // Firm bubbles
+  // ── RIGHT SECTION: Stock→BTC connection lines ──
+  // Connect the BTC bubbles to the center stock column with a faint arc
+  holders.forEach((h,i)=>{
+    const bp=bPos[i];
+    // Connect to nearest stock node for visual flow
+    const nearestSi=Math.round(i/(holders.length-1)*(stocks.length-1));
+    const sp=sPos[Math.min(nearestSi,sPos.length-1)];
+    const isHov=(hoveredBubble&&hoveredBubble.type==='btc'&&hoveredBubble.bi===i);
+    const alpha=(isHov?0.5:0.04)+(h.btc/maxBtc)*0.28+Math.sin(bPhase*0.016+i*1.2)*0.025;
+    const lw=(isHov?1.8:0.3)+(h.btc/maxBtc)*2.5;
+    const cpX=(sp.x+bp.x)/2;
+    const grad=ctx.createLinearGradient(sp.x,sp.y,bp.x,bp.y);
+    grad.addColorStop(0,hexA('#3d9dff',alpha*0.5));
+    grad.addColorStop(1,hexA(h.color,alpha));
+    ctx.beginPath();ctx.moveTo(sp.x,sp.y);
+    ctx.quadraticCurveTo(cpX,(sp.y+bp.y)/2,bp.x,bp.y);
+    ctx.strokeStyle=grad;ctx.lineWidth=lw;ctx.stroke();
+    if(isHov){
+      const tx=(sp.x+bp.x)/2,ty=(sp.y+bp.y)/2-8;
+      ctx.save();ctx.font=`600 8px 'JetBrains Mono'`;ctx.fillStyle=hexA(h.color,0.9);
+      ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor=h.color;ctx.shadowBlur=4;
+      ctx.fillText(h.btc.toLocaleString()+' ₿',tx,ty);ctx.restore();
+    }
+  });
+
+  // ── DRAW FIRM BUBBLES ──
   firms.forEach((firm,fi)=>{
     const pos=fPos[fi];
-    const sc=1+Math.sin(bPhase*0.016+fi*1.4)*0.02;
-    const r=(24+(fTot[fi]/mFT)*36)*sc;
-    const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2.4);
-    glow.addColorStop(0,hexA(firm.color,0.14));glow.addColorStop(1,'transparent');
-    ctx.beginPath();ctx.arc(pos.x,pos.y,r*2.4,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
+    const isHov=hoveredBubble&&hoveredBubble.type==='firm'&&hoveredBubble.fi===fi;
+    const isPinned=pinnedBubble&&pinnedBubble.type==='firm'&&pinnedBubble.fi===fi;
+    const sc=(isHov||isPinned?1.12:1)+Math.sin(bPhase*0.016+fi*1.4)*0.018;
+    const r=(22+(fTot[fi]/mFT)*32)*sc;
+    const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2.2);
+    glow.addColorStop(0,hexA(firm.color,(isHov||isPinned)?0.22:0.12));glow.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r*2.2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
     const bg=ctx.createRadialGradient(pos.x-r*.3,pos.y-r*.35,0,pos.x,pos.y,r);
     bg.addColorStop(0,hexA(firm.color,1));bg.addColorStop(.55,hexA(firm.color,.88));bg.addColorStop(1,hexA(firm.color,.3));
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
-    ctx.strokeStyle=hexA(firm.color,.5);ctx.lineWidth=1.5;ctx.stroke();
+    ctx.strokeStyle=hexA(firm.color,(isHov||isPinned)?.9:.45);ctx.lineWidth=(isHov||isPinned)?2:1.2;ctx.stroke();
     const shine=ctx.createRadialGradient(pos.x-r*.25,pos.y-r*.28,0,pos.x,pos.y,r*.5);
-    shine.addColorStop(0,'rgba(255,255,255,0.38)');shine.addColorStop(1,'rgba(255,255,255,0)');
+    shine.addColorStop(0,'rgba(255,255,255,0.36)');shine.addColorStop(1,'rgba(255,255,255,0)');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
     ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font=`700 ${clamp(r*.38,7,12)}px 'JetBrains Mono'`;ctx.fillStyle='#05070f';
-    ctx.fillText(firm.short,pos.x,pos.y-r*.14);
-    ctx.font=`400 ${clamp(r*.28,6,9)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(5,7,15,0.7)';
-    ctx.fillText(fTot[fi].toFixed(1)+'% total',pos.x,pos.y+r*.24);ctx.restore();
+    ctx.font=`700 ${clamp(r*.38,6,11)}px 'JetBrains Mono'`;ctx.fillStyle='#05070f';
+    ctx.fillText(firm.short,pos.x,pos.y-r*.12);
+    ctx.font=`400 ${clamp(r*.26,5,8)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(5,7,15,0.65)';
+    ctx.fillText(fTot[fi].toFixed(1)+'%',pos.x,pos.y+r*.22);ctx.restore();
+    bubbleHits.push({x:pos.x,y:pos.y,r,type:'firm',fi,data:firm});
   });
 
-  // Stock bubbles
+  // ── DRAW STOCK BUBBLES ──
   stocks.forEach((stock,si)=>{
     const pos=sPos[si];
-    const sc=1+Math.sin(bPhase*0.014+si*2.2)*0.018;
-    const r=(22+(sTot[si]/mST)*32)*sc;
+    const isHov=hoveredBubble&&hoveredBubble.type==='stock'&&hoveredBubble.si===si;
+    const isPinned=pinnedBubble&&pinnedBubble.type==='stock'&&pinnedBubble.si===si;
+    const sc=(isHov||isPinned?1.12:1)+Math.sin(bPhase*0.014+si*2.2)*0.016;
+    const r=(20+(sTot[si]/mST)*28)*sc;
     const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2);
-    glow.addColorStop(0,'rgba(61,157,255,0.18)');glow.addColorStop(1,'transparent');
+    glow.addColorStop(0,'rgba(61,157,255,'+(isHov||isPinned?.25:.16)+')');glow.addColorStop(1,'transparent');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r*2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
     const bg=ctx.createRadialGradient(pos.x-r*.28,pos.y-r*.3,0,pos.x,pos.y,r);
     bg.addColorStop(0,'#80c8ff');bg.addColorStop(.5,'#3d9dff');bg.addColorStop(1,'#0d2545');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
-    ctx.strokeStyle='rgba(61,157,255,0.45)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.strokeStyle='rgba(61,157,255,'+(isHov||isPinned?.7:.35)+')';ctx.lineWidth=(isHov||isPinned)?2:1.2;ctx.stroke();
+    const shine=ctx.createRadialGradient(pos.x-r*.25,pos.y-r*.28,0,pos.x,pos.y,r*.5);
+    shine.addColorStop(0,'rgba(255,255,255,0.28)');shine.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
+    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=`700 ${clamp(r*.42,7,12)}px 'JetBrains Mono'`;ctx.fillStyle='#fff';
+    ctx.fillText(stock,pos.x,pos.y-r*.12);
+    ctx.font=`400 ${clamp(r*.26,5,8)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(200,230,255,0.75)';
+    ctx.fillText(sTot[si].toFixed(1)+'%',pos.x,pos.y+r*.24);ctx.restore();
+    bubbleHits.push({x:pos.x,y:pos.y,r,type:'stock',si,data:stock,tot:sTot[si]});
+  });
+
+  // ── DRAW BTC HOLDER BUBBLES (smaller, right column) ──
+  holders.forEach((h,i)=>{
+    const pos=bPos[i];
+    const isHov=hoveredBubble&&hoveredBubble.type==='btc'&&hoveredBubble.bi===i;
+    const isPinned=pinnedBubble&&pinnedBubble.type==='btc'&&pinnedBubble.bi===i;
+    const sc=(isHov||isPinned?1.14:1)+Math.sin(bPhase*0.013+i*1.8)*0.015;
+    const logR=Math.log10(h.btc+1)/Math.log10(maxBtc+1);
+    const r=(10+logR*22)*sc;  // smaller than inst/stock bubbles
+    const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2.2);
+    glow.addColorStop(0,hexA(h.color,(isHov||isPinned)?.2:.1));glow.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r*2.2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
+    const bg=ctx.createRadialGradient(pos.x-r*.28,pos.y-r*.3,0,pos.x,pos.y,r);
+    bg.addColorStop(0,hexA(h.color,1));bg.addColorStop(.6,hexA(h.color,.82));bg.addColorStop(1,hexA(h.color,.2));
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
+    ctx.strokeStyle=hexA(h.color,(isHov||isPinned)?.8:.35);ctx.lineWidth=(isHov||isPinned)?1.5:0.8;ctx.stroke();
     const shine=ctx.createRadialGradient(pos.x-r*.25,pos.y-r*.28,0,pos.x,pos.y,r*.5);
     shine.addColorStop(0,'rgba(255,255,255,0.3)');shine.addColorStop(1,'rgba(255,255,255,0)');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
-    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font=`700 ${clamp(r*.44,8,13)}px 'JetBrains Mono'`;ctx.fillStyle='#fff';
-    ctx.fillText(stock,pos.x,pos.y-r*.12);
-    ctx.font=`400 ${clamp(r*.28,6,9)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(200,230,255,0.8)';
-    ctx.fillText(sTot[si].toFixed(1)+'% held',pos.x,pos.y+r*.26);ctx.restore();
+    if(r>12){
+      ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=`700 ${clamp(r*.42,6,10)}px 'JetBrains Mono'`;
+      ctx.fillStyle=r>18?'#05070f':'#fff';
+      ctx.fillText(h.short,pos.x,pos.y+(r>18?-r*.12:0));
+      if(r>16){
+        ctx.font=`400 ${clamp(r*.28,5,7)}px 'JetBrains Mono'`;
+        ctx.fillStyle=r>18?'rgba(5,7,15,0.6)':'rgba(255,255,255,0.65)';
+        ctx.fillText((h.btc>=1000?(h.btc/1000).toFixed(0)+'K':h.btc)+'₿',pos.x,pos.y+r*.26);
+      }
+      ctx.restore();
+    }else{
+      // tiny bubble: just the ₿ symbol
+      ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=`700 ${clamp(r*.7,5,9)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(255,255,255,0.7)';
+      ctx.fillText('₿',pos.x,pos.y);ctx.restore();
+    }
+    bubbleHits.push({x:pos.x,y:pos.y,r:Math.max(r,12),type:'btc',bi:i,data:h});
   });
 
   // Column labels
-  ctx.save();ctx.font=`700 9px 'JetBrains Mono'`;ctx.textAlign='center';
-  ctx.fillStyle='rgba(245,184,0,0.45)';ctx.fillText('INSTITUTIONS',firmX,18);
-  ctx.fillStyle='rgba(61,157,255,0.45)';ctx.fillText('EQUITIES',stockX,18);
+  ctx.save();ctx.font=`700 8px 'JetBrains Mono'`;ctx.textAlign='center';
+  ctx.fillStyle='rgba(245,184,0,0.4)';ctx.fillText('INSTITUTIONS',firmX,20);
+  ctx.fillStyle='rgba(61,157,255,0.4)';ctx.fillText('EQUITIES',stockX,20);
+  ctx.fillStyle='rgba(247,147,26,0.5)';ctx.fillText('₿ BTC TREASURY',btcX,20);
   ctx.restore();
+
   bPhase++;
 }
 
 function startBubble(){
   if(bRaf)cancelAnimationFrame(bRaf);
+  initBubbleEvents();
   (function loop(){drawBubble();bRaf=requestAnimationFrame(loop);})();
 }
 
 function renderBubbleLegend(){
   const el=document.getElementById('bubble-legend');
   if(!el)return;
-  el.innerHTML=OWNERSHIP.firms.map(f=>`<div class="leg-item"><div class="leg-dot" style="background:${f.color}"></div>${f.name}</div>`).join('')
-    +`<div class="leg-item"><div class="leg-dot" style="background:#3d9dff"></div>Stock node (bubble size ∝ total institutional ownership)</div>`;
+  const instLeg=OWNERSHIP.firms.map(f=>`<div class="leg-item"><div class="leg-dot" style="background:${f.color}"></div>${f.name}</div>`).join('');
+  const btcLeg=`<div class="leg-item"><div class="leg-dot" style="background:#f7931a"></div>BTC Treasury (bubble ∝ log BTC held)</div>`;
+  const stockLeg=`<div class="leg-item"><div class="leg-dot" style="background:#3d9dff"></div>Stock (size ∝ institutional ownership)</div>`;
+  el.innerHTML=instLeg+stockLeg+btcLeg+`<div class="leg-item" style="color:var(--muted);font-size:7px;margin-left:auto">Click any bubble to pin details</div>`;
 }
 
 /* ══ RENDER STOCKS ══ */
@@ -943,7 +1154,7 @@ function renderPoly(){
     <div class="poly-q">${m.q}</div>
     <div class="bar-track"><div class="bar-y" style="width:${m.yes}%"></div><div class="bar-n"></div></div>
     <div class="poly-odds"><span class="py">YES ${m.yes}%</span><span class="pn">NO ${m.no}%</span></div>
-    <div class="pvol">Vol ${m.vol} · Polymarket</div>
+    <div class="pvol">Vol ${m.vol} · Polymarket · <span style="color:var(--gold)">${m.ends}</span></div>
   </div>`;
   document.getElementById('poly-grid').innerHTML=POLY.map(card).join('');
 }
@@ -1152,6 +1363,9 @@ let chatOpen=false;
 let chatMessages=[];
 let chatTyping=false;
 let chatGreeted=false;
+// Anthropic key stored in sessionStorage — prompted on first message if missing
+// Get your key at: console.anthropic.com
+let ANTHROPIC_KEY=sessionStorage.getItem('rb_anthropic_key')||'';
 
 const FINANCE_SYSTEM=`You are FINBOT, an expert financial assistant embedded in a professional market terminal called RB Terminal. You ONLY answer finance-related questions. This includes: stocks, equities, bonds, ETFs, options, futures, forex, crypto, commodities, macroeconomics, central banks, interest rates, inflation, earnings, valuations, technical analysis, portfolio theory, risk management, IPOs, M&A, financial news, and market predictions.
 
@@ -1167,9 +1381,38 @@ function toggleChat(){
     :'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
   if(chatOpen&&!chatGreeted){
     chatGreeted=true;
-    appendMsg('bot','👋 <b>FINBOT online.</b> Ask me anything about markets — stocks, crypto, macro, earnings, technical analysis, or commodities.');
+    if(!ANTHROPIC_KEY){
+      appendMsg('bot','👋 <b>FINBOT ready.</b> To activate, enter your Anthropic API key below — get one free at <b>console.anthropic.com</b>');
+      showKeyPrompt();
+    }else{
+      appendMsg('bot','👋 <b>FINBOT online.</b> Ask me anything about markets — stocks, crypto, macro, earnings, technical analysis, or commodities.');
+    }
   }
   if(chatOpen)setTimeout(()=>document.getElementById('chat-input').focus(),300);
+}
+
+function showKeyPrompt(){
+  const msgs=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.id='key-prompt';
+  div.style.cssText='display:flex;gap:6px;padding:6px 0;';
+  div.innerHTML=`<input id="ak-input" type="password" placeholder="sk-ant-..." style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:9px;padding:6px 8px;border-radius:4px;outline:none;" onkeydown="if(event.key==='Enter')saveAnthropicKey()"/>
+    <button onclick="saveAnthropicKey()" style="background:var(--gold);border:none;color:#05070f;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:6px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">CONNECT</button>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>document.getElementById('ak-input')?.focus(),100);
+}
+
+function saveAnthropicKey(){
+  const val=document.getElementById('ak-input')?.value?.trim();
+  if(!val||!val.startsWith('sk-ant-')){
+    appendMsg('err','⚠ Key must start with <b>sk-ant-</b> — get one at console.anthropic.com');
+    return;
+  }
+  ANTHROPIC_KEY=val;
+  sessionStorage.setItem('rb_anthropic_key',val);
+  document.getElementById('key-prompt')?.remove();
+  appendMsg('bot','✓ <b>Key saved.</b> FINBOT online — ask me anything about markets.');
 }
 
 function appendMsg(role,html){
@@ -1195,6 +1438,12 @@ async function sendChat(){
   const input=document.getElementById('chat-input');
   const text=input.value.trim();
   if(!text||chatTyping)return;
+  if(!ANTHROPIC_KEY){
+    if(!chatGreeted){toggleChat();return;}
+    appendMsg('err','⚠ Enter your Anthropic API key first.');
+    if(!document.getElementById('key-prompt'))showKeyPrompt();
+    return;
+  }
   input.value='';
   chatTyping=true;
   document.getElementById('chat-send').disabled=true;
@@ -1204,7 +1453,12 @@ async function sendChat(){
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':ANTHROPIC_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1024,
@@ -1214,21 +1468,29 @@ async function sendChat(){
     });
     const data=await res.json();
     hideTyping();
-    if(data.content&&data.content[0]){
+    if(data.content&&data.content[0]&&data.content[0].text){
       const reply=data.content[0].text;
       chatMessages.push({role:'assistant',content:reply});
-      // Basic markdown: **bold**, - bullets
       const formatted=reply
         .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
         .replace(/^- (.+)$/gm,'<span style="display:block;padding-left:8px">· $1</span>')
         .replace(/\n/g,'<br>');
       appendMsg('bot',formatted);
+    }else if(data.error){
+      // Surface the actual API error message
+      if(data.error.type==='authentication_error'){
+        ANTHROPIC_KEY='';sessionStorage.removeItem('rb_anthropic_key');
+        appendMsg('err','⚠ Invalid API key. <b>Re-enter your key</b> from console.anthropic.com');
+        showKeyPrompt();
+      }else{
+        appendMsg('err','⚠ API error: '+data.error.message);
+      }
     }else{
-      appendMsg('err','⚠ No response from API. Check your connection.');
+      appendMsg('err','⚠ Unexpected response. Try again.');
     }
   }catch(e){
     hideTyping();
-    appendMsg('err','⚠ Connection error. Please try again.');
+    appendMsg('err','⚠ Network error — check your connection and try again.');
   }
   chatTyping=false;
   document.getElementById('chat-send').disabled=false;
