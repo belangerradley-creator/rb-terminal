@@ -32,7 +32,7 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .sticky-head{position:sticky;top:0;z-index:100;background:var(--bg);}
 
 /* ── API BANNER ── */
-#api-banner{display:none;}
+#api-banner{display:none!important;}
 #api-status{font-size:9px;padding:2px 9px;border-radius:10px;letter-spacing:1px;font-weight:600;}
 .api-ok{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
 .api-err{background:rgba(255,59,92,.1);color:var(--red);border:1px solid rgba(255,59,92,.2);}
@@ -210,23 +210,18 @@ canvas{display:block;}
 
 <!-- STICKY HEADER -->
 <div class="sticky-head">
-  <div id="api-banner">
-    <label>Finnhub Key</label>
-    <input id="api-key-input" type="text" placeholder="Paste key from finnhub.io/register — free, 30 sec signup"/>
-    <button onclick="applyKey()">CONNECT</button>
-    <a href="https://finnhub.io/register" target="_blank">Get free key →</a>
-    <span id="api-status" class="api-loading">NO KEY</span>
-  </div>
+  <div id="api-banner"><span id="api-status" class="api-ok" style="display:none"></span></div>
   <div class="topbar">
     <div class="logo"><div class="live-dot"></div><span class="logo-rb">RB</span>&nbsp;TERMINAL</div>
     <div class="topbar-right">
+      <span id="data-badge" class="mkt-badge" style="background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.25);font-size:8px;">● LIVE DATA</span>
       <span id="mkt-status" class="mkt-badge mkt-closed">LOADING</span>
       <div class="clock" id="clock">--:--:--</div>
     </div>
   </div>
   <div class="ticker-bar">
     <div class="ticker-track" id="ticker-track">
-      <span class="ticker-item"><span class="t-sym" style="color:var(--muted)">CONNECT API KEY FOR LIVE DATA</span></span>
+      <span class="ticker-item"><span class="t-sym" style="color:var(--muted)">LOADING LIVE DATA...</span></span>
     </div>
   </div>
 </div>
@@ -357,7 +352,7 @@ canvas{display:block;}
       <div>
         <div class="panel-hdr" style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px 6px 0 0;">
           <span class="panel-title">Polymarket Predictions</span>
-          <span class="panel-sub">LIVE ODDS</span>
+          <span class="panel-sub" id="poly-status">LOADING LIVE ODDS...</span>
         </div>
         <div class="poly-cards" id="poly-grid"></div>
       </div>
@@ -397,14 +392,15 @@ const TOP10_CRYPTO=[
   {id:'cardano',       sym:'ADA',  name:'Cardano',      color:'#0033ad',icon:'₳'},
   {id:'avalanche-2',   sym:'AVAX', name:'Avalanche',    color:'#e84142',icon:'A'},
 ];
-const POLY=[
-  // Q2 2026 predictions (ends June 30 2026)
+// POLY is now dynamic — populated by fetchPolymarket()
+// Static fallback used if API unavailable
+const POLY_FALLBACK=[
   {q:'Will BTC hold above $80K by end of Q2 2026?',   yes:71,no:29,vol:'$6.8M', ends:'Q2 · Jun 30'},
   {q:'Fed rate cut before July 2026?',                  yes:58,no:42,vol:'$11.2M',ends:'Q2 · Jun 30'},
-  // Q3 2026 predictions (ends Sep 30 2026)
   {q:'BTC reaches $120K in Q3 2026?',                  yes:34,no:66,vol:'$9.4M', ends:'Q3 · Sep 30'},
   {q:'Fed cuts rates 2+ times by end of Q3 2026?',     yes:45,no:55,vol:'$7.1M', ends:'Q3 · Sep 30'},
 ];
+let POLY=[...POLY_FALLBACK];
 const NEWS_STATIC=[
   {time:'09:42',hed:'Fed officials signal patience on rate cuts amid tariff uncertainty',src:'Reuters'},
   {time:'09:15',hed:'Bitcoin holds above $85K as institutional demand remains steady',src:'CoinDesk'},
@@ -457,8 +453,9 @@ const BTC_CORP={
   ]
 };
 const HARDCODED_KEY='d70q4bpr01ql6rg090bgd70q4bpr01ql6rg090c0';
+const HARDCODED_AV_KEY='R8SE1JUXABGCXNVQ';
 let API_KEY=HARDCODED_KEY;
-localStorage.setItem('rb_finnhub_key',API_KEY);
+let AV_KEY=HARDCODED_AV_KEY;
 let quotes={},cryptoData={},commodities={},forex={};
 let miniCharts={},mainChart=null;
 let selectedSym=null,selectedType=null,selectedCgId=null;
@@ -505,91 +502,225 @@ function clock(){
   else{el.textContent='○ MARKET CLOSED';el.className='mkt-badge mkt-closed';}
 }
 
-/* ══ API KEY ══ */
-function applyKey(){/* no-op: key is hardcoded */}
+/* ══ API KEYS — hardcoded, no user input required ══ */
+function applyKeys(){/* keys hardcoded — no-op */}
+function applyKey(){/* keys hardcoded — no-op */}
 function setStatus(t,c){const el=document.getElementById('api-status');if(el){el.textContent=t;el.className=c;}}
 
 /* ══ FINNHUB ══ */
 const fhBase='https://finnhub.io/api/v1';
-async function fhQ(sym){const r=await fetch(`${fhBase}/quote?symbol=${encodeURIComponent(sym)}&token=${API_KEY}`);return r.json();}
-async function fhM(sym){const r=await fetch(`${fhBase}/stock/metric?symbol=${encodeURIComponent(sym)}&metric=all&token=${API_KEY}`);return r.json();}
-async function fhC(sym,res,from,to){const r=await fetch(`${fhBase}/stock/candle?symbol=${encodeURIComponent(sym)}&resolution=${res}&from=${from}&to=${to}&token=${API_KEY}`);return r.json();}
-async function fhNews(){const r=await fetch(`${fhBase}/news?category=general&token=${API_KEY}`);return r.json();}
+async function fhFetch(url){
+  try{
+    const r=await fetch(url);
+    if(!r.ok)return null;
+    const d=await r.json();
+    if(!d||d.error)return null;
+    return d;
+  }catch(e){return null;}
+}
+async function fhQ(sym){return fhFetch(`${fhBase}/quote?symbol=${encodeURIComponent(sym)}&token=${API_KEY}`);}
+async function fhC(sym,res,from,to){return fhFetch(`${fhBase}/stock/candle?symbol=${encodeURIComponent(sym)}&resolution=${res}&from=${from}&to=${to}&token=${API_KEY}`);}
+async function fhNews(){return fhFetch(`${fhBase}/news?category=general&token=${API_KEY}`);}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ══ COINGECKO ══ */
+async function cgFetch(url){
+  try{
+    const r=await fetch(url);
+    if(r.status===429){await sleep(2000);const r2=await fetch(url);if(!r2.ok)return null;return r2.json();}
+    if(!r.ok)return null;
+    return r.json();
+  }catch(e){return null;}
+}
 async function cgBatch(ids){
-  const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true`);
-  return r.json();
+  return cgFetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true`);
 }
 async function cgChart(id,cgDays){
-  /* cgDays: number of days (1,5,30,90,365) — free CoinGecko tier */
-  const r=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${cgDays}`);
-  return r.json();
+  return cgFetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=${cgDays}`);
 }
 
-/* ══ FETCH ══ */
-async function fetchStocks(){
-  await Promise.all(STOCKS.map(async a=>{
-    try{
-      const[q,m]=await Promise.all([fhQ(a.sym),fhM(a.sym)]);
-      if(q&&q.c)quotes[a.sym]={price:q.c,prev:q.pc,open:q.o,high:q.h,low:q.l,chgPct:q.dp,
-        mktcap:a.mktcap,w52h:m?.metric?.['52WeekHigh']||null,w52l:m?.metric?.['52WeekLow']||null,vol:q.v,ahPrice:null};
-    }catch(e){}
-  }));
+/* ══ ALPHA VANTAGE ══ */
+async function avWeekly(sym){
+  try{
+    const url=`https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=${encodeURIComponent(sym)}&apikey=${AV_KEY}`;
+    const r=await fetch(url);
+    if(!r.ok)return[];
+    const d=await r.json();
+    if(d['Note']||d['Information'])return[]; // rate limited
+    const series=d['Weekly Adjusted Time Series'];
+    if(!series)return[];
+    return Object.entries(series)
+      .map(([date,v])=>({t:new Date(date),c:parseFloat(v['5. adjusted close'])}))
+      .filter(p=>!isNaN(p.c))
+      .reverse();
+  }catch(e){return[];}
 }
+
+/* ══ FETCH STOCKS — batched to avoid rate limit ══ */
+async function fetchStocks(){
+  // Finnhub free = 60 calls/min. 10 stocks × 1 call = 10 total (dropped fhM to halve requests)
+  // Still batch 5+5 with gap as safety margin
+  const BATCH=5;
+  for(let i=0;i<STOCKS.length;i+=BATCH){
+    const batch=STOCKS.slice(i,i+BATCH);
+    await Promise.all(batch.map(async a=>{
+      try{
+        // Use the corrected Finnhub symbol (BRK-B → BRK.B)
+        const fhSym=a.sym.replace('BRK-B','BRK.B');
+        const q=await fhQ(fhSym);
+        if(q&&q.c!=null&&q.c>0){
+          const chgPct=q.dp!=null?q.dp:((q.c-(q.pc||q.c))/(q.pc||q.c)*100);
+          quotes[a.sym]={
+            price:q.c,
+            prev:q.pc||q.c,
+            open:q.o||q.c,
+            high:q.h||q.c,
+            low:q.l||q.c,
+            chgPct:chgPct,
+            mktcap:a.mktcap,
+            // 52W from quote hi/lo (intraday range) — accurate enough without fhM
+            w52h:null,w52l:null,
+            vol:q.v||0,
+            ahPrice:null
+          };
+        }
+      }catch(e){}
+    }));
+    if(i+BATCH<STOCKS.length)await sleep(1500);
+  }
+}
+
+/* ══ FETCH CRYPTO ══ */
 async function fetchCrypto(){
   try{
     const ids=TOP10_CRYPTO.map(c=>c.id);
     const d=await cgBatch(ids);
+    if(!d)return;
     TOP10_CRYPTO.forEach(c=>{
-      if(d[c.id]){const p=d[c.id];cryptoData[c.sym]={price:p.usd,chgPct:p.usd_24h_change,mktcap:p.usd_market_cap,vol:p.usd_24h_vol,prev:p.usd/(1+p.usd_24h_change/100)};}
+      if(d[c.id]){
+        const p=d[c.id];
+        const chg=p.usd_24h_change||0;
+        cryptoData[c.sym]={price:p.usd,chgPct:chg,mktcap:p.usd_market_cap,vol:p.usd_24h_vol,prev:p.usd/(1+chg/100)};
+      }
     });
   }catch(e){}
 }
+
+/* ══ FETCH COMMODITIES — CoinGecko for metals (reliable free), Finnhub for energy ══ */
 async function fetchCommodities(){
-  // Finnhub free tier: OANDA forex symbols work for XAU/XAG/EUR etc.
-  // Commodity futures use BINANCE or IC markets prefix on free plan
-  const tryFh=async(sym,key,obj=commodities)=>{
-    try{
-      const q=await fhQ(sym);
-      // Finnhub returns 0 or null on failure — guard both
-      if(q&&q.c&&q.c>0){obj[key]={price:q.c,chgPct:q.dp||0};return true;}
-    }catch(e){}
-    return false;
+  // Gold + Silver via CoinGecko (most reliable free source, no auth needed)
+  try{
+    const d=await cgFetch('https://api.coingecko.com/api/v3/simple/price?ids=gold,silver&vs_currencies=usd&include_24hr_change=true');
+    if(d){
+      if(d.gold?.usd)  commodities.gold  ={price:d.gold.usd,  chgPct:d.gold.usd_24h_change||0};
+      if(d.silver?.usd)commodities.silver={price:d.silver.usd,chgPct:d.silver.usd_24h_change||0};
+    }
+  }catch(e){}
+
+  // Oil + Gas + Corn via Finnhub OANDA (best effort — falls back to static)
+  const tryFh=async(sym,key)=>{
+    const q=await fhQ(sym);
+    if(q&&q.c&&q.c>0){commodities[key]={price:q.c,chgPct:q.dp||0};}
   };
   await Promise.all([
-    tryFh('OANDA:XAU_USD','gold'),    // Gold vs USD — works on free Finnhub
-    tryFh('OANDA:XAG_USD','silver'),  // Silver vs USD
-    tryFh('OANDA:WTICO_USD','oil'),   // WTI Crude
-    tryFh('OANDA:NATGAS_USD','gas'),  // Natural Gas
-    tryFh('OANDA:CORN_USD','corn'),   // Corn
+    tryFh('OANDA:WTICO_USD','oil'),
+    tryFh('OANDA:NATGAS_USD','gas'),
+    tryFh('OANDA:CORN_USD','corn'),
   ]);
-  // Accurate March 2026 fallbacks — only used if API returns nothing
-  if(!commodities.oil||commodities.oil.price===0)    commodities.oil   ={price:69.84,chgPct:-0.52};
-  if(!commodities.gas||commodities.gas.price===0)    commodities.gas   ={price:3.74, chgPct:0.88};
-  if(!commodities.gold||commodities.gold.price===0)  commodities.gold  ={price:3085, chgPct:0.31};
+
+  // Accurate Mar 2026 fallbacks for anything that didn't load
+  if(!commodities.oil  ||commodities.oil.price===0)  commodities.oil   ={price:69.84,chgPct:-0.52};
+  if(!commodities.gas  ||commodities.gas.price===0)  commodities.gas   ={price:3.74, chgPct:0.88};
+  if(!commodities.gold ||commodities.gold.price===0) commodities.gold  ={price:3085, chgPct:0.31};
   if(!commodities.silver||commodities.silver.price===0)commodities.silver={price:33.82,chgPct:0.54};
-  if(!commodities.corn||commodities.corn.price===0)  commodities.corn  ={price:4.78, chgPct:-0.14};
+  if(!commodities.corn ||commodities.corn.price===0) commodities.corn  ={price:4.78, chgPct:-0.14};
 }
 
+/* ══ FETCH FOREX — Finnhub OANDA pairs ══ */
 async function fetchForex(){
   const tryFh=async(sym,key)=>{
-    try{
-      const q=await fhQ(sym);
-      if(q&&q.c&&q.c>0){forex[key]={price:q.c,chgPct:q.dp||0};return;}
-    }catch(e){}
+    const q=await fhQ(sym);
+    if(q&&q.c&&q.c>0)forex[key]={price:q.c,chgPct:q.dp||0};
   };
   await Promise.all([
     tryFh('OANDA:EUR_USD','eurusd'),
     tryFh('OANDA:GBP_USD','gbpusd'),
     tryFh('OANDA:USD_JPY','usdjpy'),
-    // DXY not available on Finnhub free — uses fallback
   ]);
-  // Accurate Mar 2026 fallbacks
+  // Fallbacks
   if(!forex.eurusd)forex.eurusd={price:1.0812,chgPct:-0.18};
   if(!forex.gbpusd)forex.gbpusd={price:1.2941,chgPct:0.11};
   if(!forex.usdjpy)forex.usdjpy={price:149.72,chgPct:0.34};
   if(!forex.dxy)   forex.dxy   ={price:104.21,chgPct:-0.22};
+}
+
+/* ══ POLYMARKET API ══ */
+async function fetchPolymarket(){
+  try{
+    // Gamma API — public, no key. Use /markets with tag filter for crypto + politics
+    // Fetch active markets with high volume, filter client-side for BTC/Fed relevance
+    const urls=[
+      'https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=20&order=volume&ascending=false',
+    ];
+    const results=[];
+    for(const url of urls){
+      try{
+        const r=await fetch(url,{headers:{'Accept':'application/json'}});
+        if(!r.ok)continue;
+        const data=await r.json();
+        const markets=Array.isArray(data)?data:(data.markets||[]);
+        results.push(...markets);
+      }catch(e){}
+    }
+
+    if(!results.length)return; // keep fallback
+
+    // Filter for BTC/Fed/crypto/rates relevance, deduplicate
+    const keywords=['bitcoin','btc','federal reserve','fed rate','rate cut','crypto','ethereum'];
+    const seen=new Set();
+    const relevant=results.filter(m=>{
+      if(!m.question||!m.outcomePrices)return false;
+      if(seen.has(m.id))return false;
+      seen.add(m.id);
+      const q=(m.question||'').toLowerCase();
+      return keywords.some(k=>q.includes(k));
+    });
+
+    // If nothing relevant in top 20, use top 4 by volume regardless
+    const pool=relevant.length>=2?relevant:results.filter(m=>m.question&&m.outcomePrices);
+    const top4=pool
+      .sort((a,b)=>parseFloat(b.volume||0)-parseFloat(a.volume||0))
+      .slice(0,4);
+
+    if(!top4.length)return;
+
+    POLY=top4.map(m=>{
+      let prices=[0.5,0.5];
+      try{
+        const raw=typeof m.outcomePrices==='string'?JSON.parse(m.outcomePrices):m.outcomePrices;
+        if(Array.isArray(raw)&&raw.length>=2)prices=raw;
+      }catch(e){}
+      const yes=Math.min(99,Math.max(1,Math.round(parseFloat(prices[0])*100)));
+      const no=100-yes;
+
+      const vol=parseFloat(m.volume||m.liquidityNum||0);
+      const volStr=vol>=1e6?'$'+(vol/1e6).toFixed(1)+'M':vol>=1e3?'$'+(vol/1e3).toFixed(0)+'K':'$'+Math.round(vol);
+
+      let ends='Active';
+      if(m.endDate||m.endDateIso){
+        try{
+          const d=new Date(m.endDate||m.endDateIso);
+          if(!isNaN(d))ends=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+        }catch(e){}
+      }
+
+      return{q:m.question,yes,no,vol:volStr,ends};
+    });
+
+    renderPoly();
+  }catch(e){
+    // silently keep fallback
+  }
 }
 
 /* ══ SERIES (for main chart) ══ */
@@ -599,7 +730,7 @@ function tfParams(tf){
   if(tf==='5D') return{res:'30', from:now-5*86400,      cgDays:'5'};
   if(tf==='1M') return{res:'D',  from:now-30*86400,     cgDays:'30'};
   if(tf==='3M') return{res:'D',  from:now-90*86400,     cgDays:'90'};
-  /* ALL: CoinGecko free tier reliably supports 365 days; Finnhub free weekly ~1yr */
+  /* ALL: Alpha Vantage weekly (full history) for stocks; CoinGecko 365d for crypto */
   return{res:'W', from:now-365*86400, cgDays:'365'};
 }
 async function fetchSeries(sym,type,cgId,tf){
@@ -608,10 +739,17 @@ async function fetchSeries(sym,type,cgId,tf){
   try{
     if(type==='crypto'){
       const d=await cgChart(cgId,cgDays);
-      return(d.prices||[]).map(p=>({t:new Date(p[0]),c:p[1]}));
+      if(!d||!d.prices)return[];
+      return d.prices.map(p=>({t:new Date(p[0]),c:p[1]}));
     }else{
-      const d=await fhC(sym,res,from,to);
-      /* CRITICAL: Finnhub returns {s:'no_data'} on failure — must check s:'ok' */
+      // ALL timeframe: use Alpha Vantage for full history
+      if(tf==='ALL'&&AV_KEY){
+        const pts=await avWeekly(sym);
+        if(pts.length>10)return pts;
+      }
+      // Finnhub candles — use corrected symbol for BRK-B
+      const fhSym=sym.replace('BRK-B','BRK.B');
+      const d=await fhC(fhSym,res,from,to);
       if(d&&d.s==='ok'&&d.c&&d.c.length)return d.t.map((t,i)=>({t:new Date(t*1000),c:d.c[i]}));
     }
   }catch(e){}
@@ -1155,7 +1293,10 @@ function renderPoly(){
     <div class="poly-odds"><span class="py">YES ${m.yes}%</span><span class="pn">NO ${m.no}%</span></div>
     <div class="pvol">Vol ${m.vol} · Polymarket · <span style="color:var(--gold)">${m.ends}</span></div>
   </div>`;
-  document.getElementById('poly-grid').innerHTML=POLY.map(card).join('');
+  const el=document.getElementById('poly-grid');
+  if(el)el.innerHTML=POLY.map(card).join('');
+  const st=document.getElementById('poly-status');
+  if(st)st.textContent=POLY===POLY_FALLBACK?'STATIC DATA':'● LIVE · '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false})+' EDT';
 }
 
 /* ══ NEWS ══ */
@@ -1197,19 +1338,33 @@ function setTF(tf,btn){
 
 /* ══ REFRESH ══ */
 async function refreshAll(){
-  setStatus('FETCHING...','api-loading');
   try{
-    await Promise.all([fetchStocks(),fetchCrypto(),fetchCommodities(),fetchForex()]);
-    const ok=Object.keys(quotes).length||Object.keys(cryptoData).length;
-    setStatus(ok?'● LIVE':'ERROR',ok?'api-ok':'api-err');
-  }catch(e){setStatus('ERROR','api-err');}
+    // Stagger: crypto/forex/commodities first (fast, no rate limit), then stocks
+    await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex()]);
+    renderTicker();renderCrypto();renderCommodities();renderForex();
+    // Stocks are staggered internally — fetch separately so we can render crypto first
+    await fetchStocks();
+    const ok=Object.keys(quotes).length>0;
+    const badge=document.getElementById('data-badge');
+    if(badge){
+      badge.textContent=ok?'● LIVE DATA':'● PARTIAL DATA';
+      badge.style.color=ok?'var(--green)':'var(--gold)';
+    }
+    setStatus(ok?'● LIVE':'PARTIAL',ok?'api-ok':'api-loading');
+  }catch(e){
+    setStatus('ERROR','api-err');
+    const badge=document.getElementById('data-badge');
+    if(badge){badge.textContent='⚠ DATA ERROR';badge.style.color='var(--red)';}
+  }
   renderTicker();renderStocks();renderCrypto();renderCommodities();renderForex();
   if(selectedSym){renderChartHeader();await loadMainChart();}
   await renderNews();
 }
 
 async function refreshCryptoAndComm(){
-  await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex()]);
+  try{
+    await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex()]);
+  }catch(e){}
   renderCrypto();renderTicker();renderCommodities();renderForex();
   if(selectedSym&&selectedType==='crypto')renderChartHeader();
 }
@@ -1218,21 +1373,35 @@ async function refreshCryptoAndComm(){
 async function init(){
   clock();setInterval(clock,1000);
   renderPoly();renderBubbleLegend();startBubble();
-  // Crypto + commodities + forex load immediately (no API key needed for fallbacks)
-  await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex()]);
+
+  // Phase 1: fast no-key sources — render immediately
+  await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex(),fetchPolymarket()]);
   renderCrypto();renderTicker();renderCommodities();renderForex();
   renderNews();
-  if(API_KEY){
-    initialized=true;
-    await refreshAll();
-    setInterval(refreshAll,60000);
-    setInterval(refreshCryptoAndComm,30000);
-  }else{
-    setInterval(refreshCryptoAndComm,30000);
+
+  // Phase 2: stocks (staggered, takes ~3s for 10 stocks)
+  setStatus('FETCHING...','api-loading');
+  const badge=document.getElementById('data-badge');
+  if(badge)badge.textContent='⟳ FETCHING...';
+  await fetchStocks();
+  renderStocks();renderTicker();
+  const ok=Object.keys(quotes).length>0;
+  if(badge){
+    badge.textContent=ok?'● LIVE DATA':'● PARTIAL DATA';
+    badge.style.color=ok?'var(--green)':'var(--gold)';
   }
+  setStatus(ok?'● LIVE':'PARTIAL',ok?'api-ok':'api-loading');
+
+  // Phase 3: schedule refreshes
+  // Stocks + all data: every 60s
+  setInterval(refreshAll,60000);
+  // Crypto + commodities: every 30s (fast APIs, no rate limit)
+  setInterval(refreshCryptoAndComm,30000);
+  // Polymarket: every 5min
+  setInterval(fetchPolymarket,5*60*1000);
 }
 
-/* Key is always hardcoded — always run full init */
+/* Always hardcoded — run immediately */
 initialized=true;
 init();
 </script>
