@@ -52,6 +52,62 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .clock{font-size:11px;color:var(--muted);}
 .clock b{color:var(--text);font-weight:600;}
 
+/* ── TOPBAR TABS ── */
+.topbar-tabs{display:flex;gap:2px;background:var(--bg3);border-radius:4px;padding:2px;}
+.top-tab{background:transparent;border:none;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:2px;padding:5px 14px;cursor:pointer;border-radius:3px;transition:all .15s;}
+.top-tab:hover{color:var(--text);}
+.top-tab.active{background:rgba(245,184,0,.12);color:var(--gold);border:1px solid rgba(245,184,0,.2);}
+
+/* ── ASSETS PAGE ── */
+#assets-page{display:none;max-width:1200px;margin:0 auto;padding:20px;}
+#assets-page.visible{display:block;}
+#terminal-page{display:block;}
+#terminal-page.hidden{display:none;}
+.nw-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.nw-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;position:relative;overflow:hidden;}
+.nw-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
+.nw-card.assets-card::before{background:var(--green);}
+.nw-card.liab-card::before{background:var(--red);}
+.nw-card.net-card::before{background:var(--gold);}
+.nw-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.nw-value{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;margin-top:4px;}
+.nw-value.pos{color:var(--green);}
+.nw-value.neg{color:var(--red);}
+.nw-value.net{color:var(--gold);}
+.nw-section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;}
+.nw-section-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.nw-section-title{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
+.nw-add-btn{background:rgba(245,184,0,.1);border:1px solid rgba(245,184,0,.25);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:4px 10px;border-radius:3px;cursor:pointer;letter-spacing:1px;transition:all .12s;}
+.nw-add-btn:hover{background:rgba(245,184,0,.2);}
+.nw-list{padding:0;}
+.nw-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:background .1s;}
+.nw-row:last-child{border-bottom:none;}
+.nw-row:hover{background:rgba(255,255,255,.015);}
+.nw-row-icon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.nw-row-info{flex:1;min-width:0;}
+.nw-row-name{font-size:10px;font-weight:700;color:var(--text);}
+.nw-row-detail{font-size:8px;color:var(--muted);}
+.nw-row-val{text-align:right;flex-shrink:0;}
+.nw-row-price{font-size:11px;font-weight:700;color:var(--text);}
+.nw-row-chg{font-size:8px;font-weight:600;}
+.nw-row-del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:10px;padding:2px 6px;border-radius:3px;transition:color .12s;flex-shrink:0;}
+.nw-row-del:hover{color:var(--red);}
+.nw-empty{padding:20px;text-align:center;color:var(--muted);font-size:9px;letter-spacing:1px;}
+.nw-modal-overlay{position:fixed;inset:0;background:rgba(5,7,15,.85);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeIn .15s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.nw-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:20px;width:380px;max-width:90vw;box-shadow:0 12px 48px rgba(0,0,0,.7);}
+.nw-modal-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;}
+.nw-field{margin-bottom:10px;}
+.nw-field label{display:block;font-size:7px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.nw-field input,.nw-field select{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;padding:7px 10px;border-radius:4px;outline:none;transition:border-color .15s;}
+.nw-field input:focus,.nw-field select:focus{border-color:var(--gold);}
+.nw-modal-btns{display:flex;gap:8px;margin-top:14px;}
+.nw-modal-btns button{flex:1;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:8px;border-radius:4px;cursor:pointer;transition:all .12s;}
+.nw-btn-cancel{background:transparent;border:1px solid var(--border2);color:var(--muted);}
+.nw-btn-cancel:hover{color:var(--text);}
+.nw-btn-save{background:var(--gold);border:none;color:#05070f;}
+.nw-btn-save:hover{opacity:.85;}
+
 /* ── TICKER ── */
 .ticker-bar{background:var(--bg2);border-bottom:1px solid var(--border);height:32px;display:flex;align-items:center;overflow:hidden;position:relative;}
 .ticker-track{display:flex;white-space:nowrap;animation:tickerScroll 60s linear infinite;}
@@ -124,7 +180,7 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
    SECTION 2: CHART + SELECTED ASSET
 ────────────────────────────────────── */
 .chart-section{padding:16px 20px;background:var(--bg);}
-.chart-layout{display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start;}
+.chart-layout{display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start;max-width:1000px;}
 .chart-panel{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;}
 .chart-hero{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
 .ch-sym{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
@@ -277,6 +333,10 @@ canvas{display:block;}
   <div id="api-banner"><span id="api-status" class="api-ok" style="display:none"></span></div>
   <div class="topbar">
     <div class="logo"><div class="live-dot"></div><span class="logo-rb">RB</span>&nbsp;TERMINAL</div>
+    <div class="topbar-tabs">
+      <button class="top-tab active" id="tab-terminal" onclick="switchTab('terminal')">TERMINAL</button>
+      <button class="top-tab" id="tab-assets" onclick="switchTab('assets')">ASSETS</button>
+    </div>
     <div class="topbar-right">
       <span id="data-badge" class="mkt-badge" style="background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.25);font-size:8px;">● LIVE DATA</span>
       <span id="mkt-status" class="mkt-badge mkt-closed">LOADING</span>
@@ -291,21 +351,21 @@ canvas{display:block;}
   <!-- FED RATE BAR -->
   <div class="fed-bar">
     <span class="fed-label">Fed Funds Rate</span>
-    <span class="fed-rate" id="fed-rate">3.50–3.75%</span>
+    <span class="fed-rate" id="fed-rate">4.25–4.50%</span>
     <div class="fed-divider"></div>
     <div class="fed-stat">
       <span class="fed-stat-l">Last Change</span>
-      <span class="fed-stat-v dn" id="fed-last-chg">-25bps</span>
+      <span class="fed-stat-v" id="fed-last-chg">HOLD</span>
     </div>
     <div class="fed-divider"></div>
     <div class="fed-stat">
       <span class="fed-stat-l">Decision</span>
-      <span class="fed-stat-v" id="fed-decision">Mar 19, 2025</span>
+      <span class="fed-stat-v" id="fed-decision">May 7, 2026</span>
     </div>
     <div class="fed-divider"></div>
     <div class="fed-stat">
-      <span class="fed-stat-l">CPI (Latest)</span>
-      <span class="fed-stat-v" id="fed-cpi">2.8%</span>
+      <span class="fed-stat-l">CPI (Apr '26)</span>
+      <span class="fed-stat-v up" id="fed-cpi">3.8%</span>
     </div>
     <div class="fed-divider"></div>
     <div class="fed-stat">
@@ -317,10 +377,13 @@ canvas{display:block;}
     </div>
     <div class="fed-next" id="fed-next">
       <div style="font-size:7px;color:var(--muted);letter-spacing:1px">NEXT FOMC</div>
-      <b id="fed-next-date">May 7, 2025</b>
+      <b id="fed-next-date">Jun 18, 2026</b>
     </div>
   </div>
 </div>
+
+<!-- ══ TERMINAL PAGE ══ -->
+<div id="terminal-page">
 
 <!-- ════════════════════════════════════════════
   SECTION 1: OWNERSHIP + BTC BUBBLE MAP
@@ -459,26 +522,22 @@ canvas{display:block;}
 <div class="divider"></div>
 
 <!-- ════════════════════════════════════════════
-  SECTION 4: COMMODITIES + POLYMARKET
+  SECTION 4: TOP 8 ASSETS BY MARKET CAP + POLYMARKET
 ═════════════════════════════════════════════ -->
 <div class="page-section">
   <div class="sec-hdr">
-    <span class="sec-title">Commodities & Markets</span>
-    <span class="sec-sub" id="news-date">TODAY</span>
+    <span class="sec-title">Top Assets & Markets</span>
+    <span class="sec-sub" id="news-date">BY MARKET CAP</span>
   </div>
   <div class="bottom-section">
     <div class="bottom-layout">
       <div>
         <div class="panel-hdr" style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px 6px 0 0;">
-          <span class="panel-title">Commodities</span>
-          <span class="panel-sub">LIVE PRICES</span>
+          <span class="panel-title">Top 8 Assets by Market Cap</span>
+          <span class="panel-sub">GLOBAL RANKING</span>
         </div>
-        <div class="panel" style="border-radius:0 0 6px 6px;">
-          <div class="comm-row" style="padding:7px 14px;"><div class="comm-label"><span>🛢️</span>WTI Crude Oil</div><div class="comm-val"><div class="comm-price" id="c-oil">--</div><div class="comm-chg" id="c-oil-c">--</div></div></div>
-          <div class="comm-row" style="padding:7px 14px;"><div class="comm-label"><span>⛽</span>Natural Gas</div><div class="comm-val"><div class="comm-price" id="c-gas">--</div><div class="comm-chg" id="c-gas-c">--</div></div></div>
-          <div class="comm-row" style="padding:7px 14px;"><div class="comm-label"><span>🥇</span>Gold (XAU/USD)</div><div class="comm-val"><div class="comm-price" id="c-gold">--</div><div class="comm-chg" id="c-gold-c">--</div></div></div>
-          <div class="comm-row" style="padding:7px 14px;"><div class="comm-label"><span>🥈</span>Silver (XAG/USD)</div><div class="comm-val"><div class="comm-price" id="c-silver">--</div><div class="comm-chg" id="c-silver-c">--</div></div></div>
-          <div class="comm-row" style="padding:7px 14px;border-bottom:none;"><div class="comm-label"><span>🌽</span>Corn Futures</div><div class="comm-val"><div class="comm-price" id="c-corn">--</div><div class="comm-chg" id="c-corn-c">--</div></div></div>
+        <div class="panel" style="border-radius:0 0 6px 6px;" id="top8-assets-panel">
+          <div class="loading" style="padding:12px 14px;">Loading...</div>
         </div>
       </div>
       <div>
@@ -495,106 +554,106 @@ canvas{display:block;}
 <div class="divider"></div>
 
 <!-- ════════════════════════════════════════════
-  SECTION 5: CHARIZARD COLLECTIBLES TRACKER
+  SECTION 5: POKÉDEX COLLECTIBLES INDEX
 ═════════════════════════════════════════════ -->
 <div class="page-section">
   <div class="sec-hdr">
     <span class="sec-title">📖 Pokédex — Collectibles Price Index</span>
-    <span class="sec-sub">PSA GRADED · AUCTION SALES · ALL-TIME RECORDS</span>
+    <span class="sec-sub">PSA 10 GRADED · 1ST EDITION BASE SET · POPULATION DATA</span>
   </div>
-  <div class="charizard-section">
-    <div class="charizard-layout">
-      <!-- Chart Panel -->
-      <div class="charizard-chart-panel">
-        <div class="char-hero">
-          <div class="char-flame">📖</div>
-          <div>
-            <div class="char-title">Pokédex Price Index</div>
-            <div class="char-sub">PSA 10 · AVG SALE PRICE · SELECT CARDS</div>
-          </div>
-          <div class="char-price-badge">
-            <div class="char-current" id="char-current-price">$8,200</div>
-            <span class="char-chg-badge up" id="char-chg-badge" style="background:rgba(0,230,118,.12);color:var(--green)">+12.4% YTD</span>
-          </div>
-        </div>
-        <div class="char-tf-row">
-          <button class="tf-btn active" onclick="setCharTF('1Y',this)">1Y</button>
-          <button class="tf-btn" onclick="setCharTF('3Y',this)">3Y</button>
-          <button class="tf-btn" onclick="setCharTF('5Y',this)">5Y</button>
-          <button class="tf-btn" onclick="setCharTF('ALL',this)">ALL</button>
-        </div>
-        <!-- Pokemon legend toggles -->
-        <div id="poke-legend" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
-        <div class="char-chart-wrap" style="height:240px;">
-          <canvas id="char-chart"></canvas>
-        </div>
-        <div class="char-stats">
-          <div class="char-stat"><div class="char-stat-l">Base Set PSA10</div><div class="char-stat-v" id="cs-base">$8,200</div></div>
-          <div class="char-stat"><div class="char-stat-l">Shadowless PSA10</div><div class="char-stat-v" id="cs-shadow">$24,500</div></div>
-          <div class="char-stat"><div class="char-stat-l">1st Ed. PSA10</div><div class="char-stat-v" id="cs-first">$420,000</div></div>
-          <div class="char-stat"><div class="char-stat-l">Total Sales (Est)</div><div class="char-stat-v" id="cs-vol">$47M+</div></div>
-        </div>
-        <!-- Notable Cards Row -->
-        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
-          <div style="font-size:7px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Other Sought-After Pokémon Cards (PSA 10 Avg)</div>
-          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
-            <div class="char-stat" style="border-left:2px solid #f7931a;">
-              <div class="char-stat-l">Pikachu Illus.</div>
-              <div class="char-stat-v" style="color:var(--gold)">$900K+</div>
-              <div style="font-size:6px;color:var(--muted);margin-top:2px;">Promo · 1998</div>
-            </div>
-            <div class="char-stat" style="border-left:2px solid #a855f7;">
-              <div class="char-stat-l">Blastoise 1st Ed.</div>
-              <div class="char-stat-v" style="color:var(--purple)">$45,000</div>
-              <div style="font-size:6px;color:var(--muted);margin-top:2px;">Base Set · 1999</div>
-            </div>
-            <div class="char-stat" style="border-left:2px solid #3d9dff;">
-              <div class="char-stat-l">Venusaur 1st Ed.</div>
-              <div class="char-stat-v" style="color:var(--blue)">$28,500</div>
-              <div style="font-size:6px;color:var(--muted);margin-top:2px;">Base Set · 1999</div>
-            </div>
-            <div class="char-stat" style="border-left:2px solid #00e676;">
-              <div class="char-stat-l">Lugia 1st Ed.</div>
-              <div class="char-stat-v" style="color:var(--green)">$144,000</div>
-              <div style="font-size:6px;color:var(--muted);margin-top:2px;">Neo Genesis · 2000</div>
-            </div>
-            <div class="char-stat" style="border-left:2px solid #00d4ff;">
-              <div class="char-stat-l">Mewtwo 1st Ed.</div>
-              <div class="char-stat-v" style="color:var(--cyan)">$11,800</div>
-              <div style="font-size:6px;color:var(--muted);margin-top:2px;">Base Set · 1999</div>
-            </div>
-          </div>
-        </div>
+  <div style="padding:16px 20px;">
+    <!-- Pokédex Card Grid -->
+    <div id="pokedex-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;"></div>
+    <!-- Horizontal Bar Chart — price comparison (log scale visual) -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Price Comparison · Log Scale</div>
+        <div style="font-size:7px;color:var(--muted);">PSA 10 · 1ST ED. BASE SET</div>
       </div>
-      <!-- Record Sale Card -->
-      <div class="char-record-panel">
-        <div class="char-record-hdr">
-          <div class="char-record-title">🏆 Most Expensive Sale</div>
-          <div class="char-record-sub">All-Time Record · Verified Auction</div>
-        </div>
-        <div class="char-record-body">
-          <div class="char-card-img">
-            <span class="char-psa">PSA 10</span>
-            <span class="char-card-hp">HP 120</span>
-            <div class="char-pokemon-art">🦎</div>
-            <div class="char-card-name">CHARIZARD</div>
-            <div class="char-card-set">1999 · 1ST EDITION · SHADOWLESS</div>
-          </div>
-          <div class="char-sale-price">$420,000</div>
-          <div style="text-align:center;font-size:7px;color:var(--muted);margin-bottom:10px;letter-spacing:.5px;">RECORD ALL-TIME SALE</div>
-          <div class="char-sale-row"><span class="char-sale-l">CARD</span><span class="char-sale-v">Base Set 1st Ed. Holo</span></div>
-          <div class="char-sale-row"><span class="char-sale-l">GRADE</span><span class="char-sale-v" style="color:var(--orange)">PSA 10 (Gem Mint)</span></div>
-          <div class="char-sale-row"><span class="char-sale-l">AUCTION</span><span class="char-sale-v">Goldin Auctions</span></div>
-          <div class="char-sale-row"><span class="char-sale-l">DATE</span><span class="char-sale-v">March 2022</span></div>
-          <div class="char-sale-row"><span class="char-sale-l">SET #</span><span class="char-sale-v">4/102</span></div>
-          <div class="char-sale-row" style="border-bottom:none;"><span class="char-sale-l">SELLER</span><span class="char-sale-v">Logan Paul</span></div>
-        </div>
+      <div id="poke-bars"></div>
+    </div>
+    <!-- Additional notable cards -->
+    <div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid #f7931a;">
+        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">PIKACHU ILLUSTRATOR</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f7931a;margin:2px 0;">$2M+</div>
+        <div style="font-size:6px;color:var(--muted);">Promo · 1998 · Pop 41</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid #00e676;">
+        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">LUGIA 1ST ED.</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--green);margin:2px 0;">$130K</div>
+        <div style="font-size:6px;color:var(--muted);">Neo Genesis · 2000</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid #e84142;">
+        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">VENUSAUR 1ST ED.</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#e84142;margin:2px 0;">$55K</div>
+        <div style="font-size:6px;color:var(--muted);">Base Set · 1999 · Pop ~95</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid var(--gold);">
+        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">COMPLETE SET</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--gold);margin:2px 0;">$911K</div>
+        <div style="font-size:6px;color:var(--muted);">All 103 cards PSA 10 · 9 exist</div>
       </div>
     </div>
   </div>
 </div>
 
 <div class="divider"></div>
+
+</div><!-- END #terminal-page -->
+
+<!-- ══ ASSETS PAGE (Net Worth Calculator) ══ -->
+<div id="assets-page">
+  <div class="nw-summary">
+    <div class="nw-card assets-card">
+      <div class="nw-label">Total Assets</div>
+      <div class="nw-value pos" id="nw-total-assets">$0</div>
+    </div>
+    <div class="nw-card liab-card">
+      <div class="nw-label">Total Liabilities</div>
+      <div class="nw-value neg" id="nw-total-liab">$0</div>
+    </div>
+    <div class="nw-card net-card">
+      <div class="nw-label">Net Worth</div>
+      <div class="nw-value net" id="nw-net-worth">$0</div>
+    </div>
+  </div>
+
+  <!-- Market Holdings -->
+  <div class="nw-section">
+    <div class="nw-section-hdr">
+      <span class="nw-section-title">📈 Market Holdings</span>
+      <button class="nw-add-btn" onclick="openNwModal('market')">+ ADD HOLDING</button>
+    </div>
+    <div class="nw-list" id="nw-market-list">
+      <div class="nw-empty">No market holdings yet. Add stocks or crypto above.</div>
+    </div>
+  </div>
+
+  <!-- Manual Assets -->
+  <div class="nw-section">
+    <div class="nw-section-hdr">
+      <span class="nw-section-title">🏠 Other Assets</span>
+      <button class="nw-add-btn" onclick="openNwModal('asset')">+ ADD ASSET</button>
+    </div>
+    <div class="nw-list" id="nw-asset-list">
+      <div class="nw-empty">No manual assets yet. Add real estate, vehicles, cash, etc.</div>
+    </div>
+  </div>
+
+  <!-- Liabilities -->
+  <div class="nw-section">
+    <div class="nw-section-hdr">
+      <span class="nw-section-title">💳 Liabilities</span>
+      <button class="nw-add-btn" onclick="openNwModal('liability')">+ ADD LIABILITY</button>
+    </div>
+    <div class="nw-list" id="nw-liab-list">
+      <div class="nw-empty">No liabilities yet. Add mortgages, loans, credit cards, etc.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nw-modal-root"></div>
 
 <script>
 /* ══ DATA ══ */
@@ -827,9 +886,8 @@ async function fetchCrypto(){
   }catch(e){}
 }
 
-/* ══ FETCH COMMODITIES — Yahoo Finance via proxy (no key required) ══ */
+/* ══ FETCH COMMODITIES — Alpha Vantage (oil/gas/corn) + Finnhub (gold/silver) ══ */
 async function fetchCommodities(){
-  // Accurate Apr 2026 fallbacks — always shown immediately
   const defaults={
     oil:  {price:71.42, chgPct:-0.38},
     gas:  {price:3.92,  chgPct:1.24},
@@ -839,26 +897,43 @@ async function fetchCommodities(){
   };
   Object.keys(defaults).forEach(k=>{if(!commodities[k]||!commodities[k].price)commodities[k]=defaults[k];});
 
-  // Yahoo Finance symbols: CL=F (WTI), NG=F (Natural Gas), GC=F (Gold), SI=F (Silver), ZC=F (Corn)
-  const YF_SYMS={oil:'CL=F',gas:'NG=F',gold:'GC=F',silver:'SI=F',corn:'ZC=F'};
-  const yqFetch=async(sym,key)=>{
+  // Gold & Silver via Finnhub OANDA forex quotes (free, no extra key)
+  const tryMetal=async(sym,key)=>{
+    const q=await fhQ(sym);
+    if(q&&q.c&&q.c>0){
+      const chgPct=q.dp||((q.c-(q.pc||q.c))/(q.pc||q.c)*100);
+      commodities[key]={price:q.c,chgPct};
+    }
+  };
+  await Promise.all([
+    tryMetal('OANDA:XAU_USD','gold'),
+    tryMetal('OANDA:XAG_USD','silver'),
+  ]);
+
+  // Oil, Gas, Corn via Alpha Vantage commodity endpoints (free key already hardcoded)
+  const avCommodity=async(func,key)=>{
     try{
-      // Use allorigins to sidestep CORS — Yahoo Finance /v8/finance/quote
-      const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=5d`;
-      const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-      const r=await fetch(proxy,{signal:AbortSignal.timeout(5000)});
+      const url=`https://www.alphavantage.co/query?function=${func}&interval=daily&apikey=${AV_KEY}`;
+      const r=await fetch(url,{signal:AbortSignal.timeout(6000)});
       if(!r.ok)return;
       const d=await r.json();
-      const meta=d?.chart?.result?.[0]?.meta;
-      if(meta&&meta.regularMarketPrice&&meta.regularMarketPrice>0){
-        const price=meta.regularMarketPrice;
-        const prev=meta.chartPreviousClose||meta.previousClose||price;
-        const chgPct=prev?((price-prev)/prev*100):0;
-        commodities[key]={price,chgPct};
-      }
+      if(d['Note']||d['Information'])return; // rate limited
+      const data=d.data||d.dataset;
+      if(!data||!data.length)return;
+      const latest=data[0];
+      const prev=data.length>1?data[1]:null;
+      const price=parseFloat(latest.value);
+      if(isNaN(price)||price<=0)return;
+      const prevPrice=prev?parseFloat(prev.value):price;
+      const chgPct=prevPrice?((price-prevPrice)/prevPrice*100):0;
+      commodities[key]={price,chgPct};
     }catch(e){}
   };
-  await Promise.all(Object.entries(YF_SYMS).map(([key,sym])=>yqFetch(sym,key)));
+  // Stagger AV calls to stay within free rate limit (5/min)
+  await avCommodity('WTI','oil');
+  await avCommodity('NATURAL_GAS','gas');
+  await avCommodity('CORN','corn');
+
   // Final safety net
   Object.keys(defaults).forEach(k=>{if(!commodities[k]||!commodities[k].price||commodities[k].price===0)commodities[k]=defaults[k];});
 }
@@ -990,6 +1065,19 @@ async function fetchSeries(sym,type,cgId,tf){
       const fhSym=sym.replace('BRK-B','BRK.B');
       const d=await fhC(fhSym,res,from,to);
       if(d&&d.s==='ok'&&d.c&&d.c.length)return d.t.map((t,i)=>({t:new Date(t*1000),c:d.c[i]}));
+
+      // Fallback for 1M/3M/5D: use Alpha Vantage weekly and filter to date range
+      if(AV_KEY&&(tf==='1M'||tf==='3M'||tf==='5D')){
+        const pts=await avWeekly(sym);
+        if(pts.length>2){
+          const cutoff=new Date(Date.now()-(tf==='1M'?30:tf==='3M'?90:5)*86400000);
+          const filtered=pts.filter(p=>p.t>=cutoff);
+          if(filtered.length>2)return filtered;
+          // If too few points after filter, return last N points
+          const n=tf==='5D'?5:tf==='1M'?8:15;
+          return pts.slice(-Math.min(n,pts.length));
+        }
+      }
     }
   }catch(e){}
   return[];
@@ -1159,175 +1247,179 @@ function drawBubble(){
   bubbleHits=[];
 
   const firms=OWNERSHIP.firms,stocks=OWNERSHIP.stocks,data=OWNERSHIP.data;
-
-  /* ── LAYOUT: 3 columns
-     col 0 (x=18%): institution bubbles
-     col 1 (x=50%): stock bubbles  (center)
-     col 2 (x=82%): btc holder bubbles  */
-  const firmX=W*0.18, stockX=W*0.50, btcX=W*0.82;
-  const pad=50;
-  const fPos=firms.map((_,i)=>({x:firmX,y:pad+(H-pad*2)*(i/(firms.length-1))}));
-  const sPos=stocks.map((_,i)=>({x:stockX,y:pad+(H-pad*2)*(i/(stocks.length-1))}));
-
-  // BTC holders — stacked in right column
   const holders=BTC_CORP.holders;
-  const bPos=holders.map((_,i)=>({
-    x:btcX+(i%2===0?-28:28),
-    y:pad+(H-pad*2)*(i/(holders.length-1))
-  }));
+  const maxBtc=Math.max(...holders.map(h=>h.btc));
+
+  const cx=W*0.5, cy=H*0.5; // center
+
+  // ── CENTRAL HUB ──
+  const hubR=36+Math.sin(bPhase*0.012)*2;
+  const hubGlow=ctx.createRadialGradient(cx,cy,0,cx,cy,hubR*2.5);
+  hubGlow.addColorStop(0,'rgba(245,184,0,0.18)');hubGlow.addColorStop(1,'transparent');
+  ctx.beginPath();ctx.arc(cx,cy,hubR*2.5,0,Math.PI*2);ctx.fillStyle=hubGlow;ctx.fill();
+  const hubBg=ctx.createRadialGradient(cx-hubR*.2,cy-hubR*.25,0,cx,cy,hubR);
+  hubBg.addColorStop(0,'#ffe066');hubBg.addColorStop(.5,'#f5b800');hubBg.addColorStop(1,'#8a6800');
+  ctx.beginPath();ctx.arc(cx,cy,hubR,0,Math.PI*2);ctx.fillStyle=hubBg;ctx.fill();
+  ctx.strokeStyle='rgba(245,184,0,0.6)';ctx.lineWidth=2;ctx.stroke();
+  const hubShine=ctx.createRadialGradient(cx-hubR*.2,cy-hubR*.25,0,cx,cy,hubR*.5);
+  hubShine.addColorStop(0,'rgba(255,255,255,0.4)');hubShine.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.beginPath();ctx.arc(cx,cy,hubR,0,Math.PI*2);ctx.fillStyle=hubShine;ctx.fill();
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font="700 13px 'Space Grotesk'";ctx.fillStyle='#05070f';
+  ctx.fillText('$154T',cx,cy-5);
+  ctx.font="400 6px 'JetBrains Mono'";ctx.fillStyle='rgba(5,7,15,0.55)';
+  ctx.fillText('GLOBAL EQUITY',cx,cy+8);
+  ctx.restore();
+
+  // ── RADIAL POSITIONS ──
+  // Ring 1 (inner): stocks — 5 items
+  const ring1R=Math.min(W,H)*0.22;
+  const sPos=stocks.map((s,i)=>{
+    const angle=-Math.PI/2+(i/(stocks.length))*Math.PI*2+Math.sin(bPhase*0.008+i)*0.02;
+    return{x:cx+Math.cos(angle)*ring1R,y:cy+Math.sin(angle)*ring1R};
+  });
+  // Ring 2 (middle): institutions — 6 items
+  const ring2R=Math.min(W,H)*0.38;
+  const fPos=firms.map((f,i)=>{
+    const angle=-Math.PI/2+(i/(firms.length))*Math.PI*2+0.3+Math.sin(bPhase*0.007+i*1.1)*0.015;
+    return{x:cx+Math.cos(angle)*ring2R,y:cy+Math.sin(angle)*ring2R};
+  });
+  // Ring 3 (outer): BTC holders — 10 items
+  const ring3R=Math.min(W,H)*0.48;
+  const bPos=holders.map((h,i)=>{
+    const angle=-Math.PI/2+(i/(holders.length))*Math.PI*2+Math.sin(bPhase*0.006+i*0.8)*0.012;
+    return{x:cx+Math.cos(angle)*ring3R,y:cy+Math.sin(angle)*ring3R};
+  });
 
   const fTot=firms.map((_,fi)=>data[fi].reduce((a,b)=>a+b,0));
   const sTot=stocks.map((_,si)=>firms.reduce((s,_,fi)=>s+data[fi][si],0));
   const mFT=Math.max(...fTot),mST=Math.max(...sTot);
-  const maxBtc=Math.max(...holders.map(h=>h.btc));
 
-  // Faint grid
-  ctx.save();ctx.setLineDash([2,8]);ctx.strokeStyle='rgba(255,255,255,0.02)';ctx.lineWidth=1;
-  for(let i=0;i<=8;i++){const x=W*i/8;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  // Faint orbital rings
+  ctx.save();ctx.setLineDash([2,6]);ctx.lineWidth=0.5;
+  [ring1R,ring2R,ring3R].forEach(r=>{
+    ctx.strokeStyle='rgba(255,255,255,0.03)';
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+  });
   ctx.restore();
 
-  // ── LEFT SECTION: Inst→Stock connection lines ──
+  // ── CONNECTION LINES: Hub → Stocks ──
+  stocks.forEach((stock,si)=>{
+    const sp=sPos[si];
+    const isHov=hoveredBubble&&((hoveredBubble.type==='stock'&&hoveredBubble.si===si));
+    const alpha=isHov?0.5:0.08;
+    const grad=ctx.createLinearGradient(cx,cy,sp.x,sp.y);
+    grad.addColorStop(0,hexA('#f5b800',alpha));grad.addColorStop(1,hexA('#3d9dff',alpha));
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(sp.x,sp.y);
+    ctx.strokeStyle=grad;ctx.lineWidth=isHov?2:0.8;ctx.stroke();
+  });
+
+  // ── CONNECTION LINES: Firms → Stocks ──
   firms.forEach((firm,fi)=>{
     stocks.forEach((stock,si)=>{
       const pct=data[fi][si];
       const fp=fPos[fi],sp=sPos[si];
       const isHov=(hoveredBubble&&(hoveredBubble.fi===fi||hoveredBubble.si===si));
-      const alpha=(isHov?0.55:0.05)+(pct/9)*0.35+Math.sin(bPhase*0.02+fi*0.9+si*1.3)*0.03;
-      const lw=(isHov?2:0.3)+(pct/9)*3.5;
-      const cpX=(fp.x+sp.x)/2,bend=(sp.y-fp.y)*0.06;
+      const alpha=(isHov?0.45:0.03)+(pct/9)*0.25;
+      const lw=(isHov?1.5:0.3)+(pct/9)*2;
       const grad=ctx.createLinearGradient(fp.x,fp.y,sp.x,sp.y);
-      grad.addColorStop(0,hexA(firm.color,alpha));
-      grad.addColorStop(1,hexA('#3d9dff',alpha*0.6));
-      ctx.beginPath();ctx.moveTo(fp.x,fp.y);
-      ctx.bezierCurveTo(cpX,fp.y+bend,cpX,sp.y-bend,sp.x,sp.y);
+      grad.addColorStop(0,hexA(firm.color,alpha));grad.addColorStop(1,hexA('#3d9dff',alpha*0.5));
+      ctx.beginPath();ctx.moveTo(fp.x,fp.y);ctx.lineTo(sp.x,sp.y);
       ctx.strokeStyle=grad;ctx.lineWidth=lw;ctx.stroke();
-      if(pct>=5&&isHov){
-        const tx=(fp.x+sp.x)/2,ty=(fp.y+sp.y)/2;
-        ctx.save();ctx.font=`600 9px 'JetBrains Mono'`;ctx.fillStyle=hexA(firm.color,0.95);
-        ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor=firm.color;ctx.shadowBlur=4;
-        ctx.fillText(pct.toFixed(1)+'%',tx,ty);ctx.restore();
-      }
     });
   });
 
-  // ── RIGHT SECTION: Stock→BTC connection lines ──
-  // Connect the BTC bubbles to the center stock column with a faint arc
+  // ── CONNECTION LINES: Stocks → BTC ──
   holders.forEach((h,i)=>{
     const bp=bPos[i];
-    // Connect to nearest stock node for visual flow
-    const nearestSi=Math.round(i/(holders.length-1)*(stocks.length-1));
-    const sp=sPos[Math.min(nearestSi,sPos.length-1)];
+    const nearSi=Math.round(i/(holders.length-1)*(stocks.length-1));
+    const sp=sPos[Math.min(nearSi,sPos.length-1)];
     const isHov=(hoveredBubble&&hoveredBubble.type==='btc'&&hoveredBubble.bi===i);
-    const alpha=(isHov?0.5:0.04)+(h.btc/maxBtc)*0.28+Math.sin(bPhase*0.016+i*1.2)*0.025;
-    const lw=(isHov?1.8:0.3)+(h.btc/maxBtc)*2.5;
-    const cpX=(sp.x+bp.x)/2;
+    const alpha=(isHov?0.4:0.03)+(h.btc/maxBtc)*0.2;
     const grad=ctx.createLinearGradient(sp.x,sp.y,bp.x,bp.y);
-    grad.addColorStop(0,hexA('#3d9dff',alpha*0.5));
-    grad.addColorStop(1,hexA(h.color,alpha));
-    ctx.beginPath();ctx.moveTo(sp.x,sp.y);
-    ctx.quadraticCurveTo(cpX,(sp.y+bp.y)/2,bp.x,bp.y);
-    ctx.strokeStyle=grad;ctx.lineWidth=lw;ctx.stroke();
-    if(isHov){
-      const tx=(sp.x+bp.x)/2,ty=(sp.y+bp.y)/2-8;
-      ctx.save();ctx.font=`600 8px 'JetBrains Mono'`;ctx.fillStyle=hexA(h.color,0.9);
-      ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor=h.color;ctx.shadowBlur=4;
-      ctx.fillText(h.btc.toLocaleString()+' ₿',tx,ty);ctx.restore();
-    }
+    grad.addColorStop(0,hexA('#3d9dff',alpha*0.4));grad.addColorStop(1,hexA(h.color,alpha));
+    ctx.beginPath();ctx.moveTo(sp.x,sp.y);ctx.lineTo(bp.x,bp.y);
+    ctx.strokeStyle=grad;ctx.lineWidth=isHov?1.5:0.4;ctx.stroke();
   });
 
-  // ── DRAW FIRM BUBBLES ──
-  firms.forEach((firm,fi)=>{
-    const pos=fPos[fi];
-    const isHov=hoveredBubble&&hoveredBubble.type==='firm'&&hoveredBubble.fi===fi;
-    const isPinned=pinnedBubble&&pinnedBubble.type==='firm'&&pinnedBubble.fi===fi;
-    const sc=(isHov||isPinned?1.12:1)+Math.sin(bPhase*0.016+fi*1.4)*0.018;
-    const r=(22+(fTot[fi]/mFT)*32)*sc;
-    const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2.2);
-    glow.addColorStop(0,hexA(firm.color,(isHov||isPinned)?0.22:0.12));glow.addColorStop(1,'transparent');
-    ctx.beginPath();ctx.arc(pos.x,pos.y,r*2.2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
-    const bg=ctx.createRadialGradient(pos.x-r*.3,pos.y-r*.35,0,pos.x,pos.y,r);
-    bg.addColorStop(0,hexA(firm.color,1));bg.addColorStop(.55,hexA(firm.color,.88));bg.addColorStop(1,hexA(firm.color,.3));
-    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
-    ctx.strokeStyle=hexA(firm.color,(isHov||isPinned)?.9:.45);ctx.lineWidth=(isHov||isPinned)?2:1.2;ctx.stroke();
-    const shine=ctx.createRadialGradient(pos.x-r*.25,pos.y-r*.28,0,pos.x,pos.y,r*.5);
-    shine.addColorStop(0,'rgba(255,255,255,0.36)');shine.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
-    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font=`700 ${clamp(r*.38,6,11)}px 'JetBrains Mono'`;ctx.fillStyle='#05070f';
-    ctx.fillText(firm.short,pos.x,pos.y-r*.12);
-    ctx.font=`400 ${clamp(r*.26,5,8)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(5,7,15,0.65)';
-    ctx.fillText(fTot[fi].toFixed(1)+'%',pos.x,pos.y+r*.22);ctx.restore();
-    bubbleHits.push({x:pos.x,y:pos.y,r,type:'firm',fi,data:firm});
-  });
-
-  // ── DRAW STOCK BUBBLES ──
+  // ── DRAW STOCK BUBBLES (ring 1) ──
   stocks.forEach((stock,si)=>{
     const pos=sPos[si];
     const isHov=hoveredBubble&&hoveredBubble.type==='stock'&&hoveredBubble.si===si;
     const isPinned=pinnedBubble&&pinnedBubble.type==='stock'&&pinnedBubble.si===si;
     const sc=(isHov||isPinned?1.12:1)+Math.sin(bPhase*0.014+si*2.2)*0.016;
-    const r=(20+(sTot[si]/mST)*28)*sc;
+    const r=(16+(sTot[si]/mST)*18)*sc;
     const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2);
-    glow.addColorStop(0,'rgba(61,157,255,'+(isHov||isPinned?.25:.16)+')');glow.addColorStop(1,'transparent');
+    glow.addColorStop(0,'rgba(61,157,255,'+(isHov||isPinned?.25:.12)+')');glow.addColorStop(1,'transparent');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r*2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
     const bg=ctx.createRadialGradient(pos.x-r*.28,pos.y-r*.3,0,pos.x,pos.y,r);
     bg.addColorStop(0,'#80c8ff');bg.addColorStop(.5,'#3d9dff');bg.addColorStop(1,'#0d2545');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
-    ctx.strokeStyle='rgba(61,157,255,'+(isHov||isPinned?.7:.35)+')';ctx.lineWidth=(isHov||isPinned)?2:1.2;ctx.stroke();
-    const shine=ctx.createRadialGradient(pos.x-r*.25,pos.y-r*.28,0,pos.x,pos.y,r*.5);
-    shine.addColorStop(0,'rgba(255,255,255,0.28)');shine.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
+    ctx.strokeStyle='rgba(61,157,255,'+(isHov||isPinned?.7:.35)+')';ctx.lineWidth=(isHov||isPinned)?2:1;ctx.stroke();
     ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font=`700 ${clamp(r*.42,7,12)}px 'JetBrains Mono'`;ctx.fillStyle='#fff';
-    ctx.fillText(stock,pos.x,pos.y-r*.12);
-    ctx.font=`400 ${clamp(r*.26,5,8)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(200,230,255,0.75)';
-    ctx.fillText(sTot[si].toFixed(1)+'%',pos.x,pos.y+r*.24);ctx.restore();
-    bubbleHits.push({x:pos.x,y:pos.y,r,type:'stock',si,data:stock,tot:sTot[si]});
+    ctx.font=`700 ${clamp(r*.42,7,11)}px 'JetBrains Mono'`;ctx.fillStyle='#fff';
+    ctx.fillText(stock,pos.x,pos.y);ctx.restore();
+    bubbleHits.push({x:pos.x,y:pos.y,r:Math.max(r,14),type:'stock',si,data:stock,tot:sTot[si]});
   });
 
-  // ── DRAW BTC HOLDER BUBBLES (smaller, right column) ──
+  // ── DRAW FIRM BUBBLES (ring 2) ──
+  firms.forEach((firm,fi)=>{
+    const pos=fPos[fi];
+    const isHov=hoveredBubble&&hoveredBubble.type==='firm'&&hoveredBubble.fi===fi;
+    const isPinned=pinnedBubble&&pinnedBubble.type==='firm'&&pinnedBubble.fi===fi;
+    const sc=(isHov||isPinned?1.12:1)+Math.sin(bPhase*0.016+fi*1.4)*0.018;
+    const r=(18+(fTot[fi]/mFT)*22)*sc;
+    const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2);
+    glow.addColorStop(0,hexA(firm.color,(isHov||isPinned)?0.22:0.1));glow.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r*2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
+    const bg=ctx.createRadialGradient(pos.x-r*.3,pos.y-r*.35,0,pos.x,pos.y,r);
+    bg.addColorStop(0,hexA(firm.color,1));bg.addColorStop(.55,hexA(firm.color,.88));bg.addColorStop(1,hexA(firm.color,.3));
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
+    ctx.strokeStyle=hexA(firm.color,(isHov||isPinned)?.9:.4);ctx.lineWidth=(isHov||isPinned)?2:1;ctx.stroke();
+    const shine=ctx.createRadialGradient(pos.x-r*.25,pos.y-r*.28,0,pos.x,pos.y,r*.5);
+    shine.addColorStop(0,'rgba(255,255,255,0.3)');shine.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
+    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=`700 ${clamp(r*.36,6,10)}px 'JetBrains Mono'`;ctx.fillStyle='#05070f';
+    ctx.fillText(firm.short,pos.x,pos.y-r*.1);
+    ctx.font=`400 ${clamp(r*.24,5,7)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(5,7,15,0.6)';
+    ctx.fillText(fTot[fi].toFixed(1)+'%',pos.x,pos.y+r*.2);ctx.restore();
+    bubbleHits.push({x:pos.x,y:pos.y,r,type:'firm',fi,data:firm});
+  });
+
+  // ── DRAW BTC HOLDER BUBBLES (ring 3) ──
   holders.forEach((h,i)=>{
     const pos=bPos[i];
     const isHov=hoveredBubble&&hoveredBubble.type==='btc'&&hoveredBubble.bi===i;
     const isPinned=pinnedBubble&&pinnedBubble.type==='btc'&&pinnedBubble.bi===i;
     const sc=(isHov||isPinned?1.14:1)+Math.sin(bPhase*0.013+i*1.8)*0.015;
     const logR=Math.log10(h.btc+1)/Math.log10(maxBtc+1);
-    const r=(10+logR*22)*sc;  // smaller than inst/stock bubbles
-    const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2.2);
-    glow.addColorStop(0,hexA(h.color,(isHov||isPinned)?.2:.1));glow.addColorStop(1,'transparent');
-    ctx.beginPath();ctx.arc(pos.x,pos.y,r*2.2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
+    const r=(8+logR*16)*sc;
+    const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2);
+    glow.addColorStop(0,hexA(h.color,(isHov||isPinned)?.2:.08));glow.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(pos.x,pos.y,r*2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
     const bg=ctx.createRadialGradient(pos.x-r*.28,pos.y-r*.3,0,pos.x,pos.y,r);
     bg.addColorStop(0,hexA(h.color,1));bg.addColorStop(.6,hexA(h.color,.82));bg.addColorStop(1,hexA(h.color,.2));
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
-    ctx.strokeStyle=hexA(h.color,(isHov||isPinned)?.8:.35);ctx.lineWidth=(isHov||isPinned)?1.5:0.8;ctx.stroke();
-    const shine=ctx.createRadialGradient(pos.x-r*.25,pos.y-r*.28,0,pos.x,pos.y,r*.5);
-    shine.addColorStop(0,'rgba(255,255,255,0.3)');shine.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
-    if(r>12){
+    ctx.strokeStyle=hexA(h.color,(isHov||isPinned)?.8:.3);ctx.lineWidth=(isHov||isPinned)?1.5:0.6;ctx.stroke();
+    if(r>10){
       ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.font=`700 ${clamp(r*.42,6,10)}px 'JetBrains Mono'`;
-      ctx.fillStyle=r>18?'#05070f':'#fff';
-      ctx.fillText(h.short,pos.x,pos.y+(r>18?-r*.12:0));
-      if(r>16){
-        ctx.font=`400 ${clamp(r*.28,5,7)}px 'JetBrains Mono'`;
-        ctx.fillStyle=r>18?'rgba(5,7,15,0.6)':'rgba(255,255,255,0.65)';
-        ctx.fillText((h.btc>=1000?(h.btc/1000).toFixed(0)+'K':h.btc)+'₿',pos.x,pos.y+r*.26);
-      }
-      ctx.restore();
+      ctx.font=`700 ${clamp(r*.42,5,9)}px 'JetBrains Mono'`;
+      ctx.fillStyle=r>14?'#05070f':'#fff';
+      ctx.fillText(h.short,pos.x,pos.y);ctx.restore();
     }else{
-      // tiny bubble: just the ₿ symbol
       ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.font=`700 ${clamp(r*.7,5,9)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(255,255,255,0.7)';
+      ctx.font=`700 ${clamp(r*.65,4,8)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(255,255,255,0.7)';
       ctx.fillText('₿',pos.x,pos.y);ctx.restore();
     }
-    bubbleHits.push({x:pos.x,y:pos.y,r:Math.max(r,12),type:'btc',bi:i,data:h});
+    bubbleHits.push({x:pos.x,y:pos.y,r:Math.max(r,10),type:'btc',bi:i,data:h});
   });
 
-  // Column labels
-  ctx.save();ctx.font=`700 8px 'JetBrains Mono'`;ctx.textAlign='center';
-  ctx.fillStyle='rgba(245,184,0,0.4)';ctx.fillText('INSTITUTIONS',firmX,20);
-  ctx.fillStyle='rgba(61,157,255,0.4)';ctx.fillText('EQUITIES',stockX,20);
-  ctx.fillStyle='rgba(247,147,26,0.5)';ctx.fillText('₿ BTC TREASURY',btcX,20);
+  // Ring labels
+  ctx.save();ctx.font=`700 7px 'JetBrains Mono'`;ctx.textAlign='center';ctx.fillStyle='rgba(61,157,255,0.3)';
+  ctx.fillText('EQUITIES',cx,cy-ring1R-12);
+  ctx.fillStyle='rgba(245,184,0,0.3)';ctx.fillText('INSTITUTIONS',cx+ring2R*0.7,cy-ring2R*0.7-10);
+  ctx.fillStyle='rgba(247,147,26,0.35)';ctx.fillText('₿ BTC TREASURY',cx-ring3R*0.7,cy+ring3R*0.7+14);
   ctx.restore();
 
   bPhase++;
@@ -1416,19 +1508,54 @@ function renderCrypto(){
   });
 }
 
-/* ══ RENDER COMMODITIES ══ */
-function renderCommodities(){
-  const setCom=(pid,cid,data,decimals=2)=>{
-    const pe=document.getElementById(pid),ce=document.getElementById(cid);
-    if(!data){if(pe)pe.textContent='--';if(ce)ce.textContent='--';return;}
-    if(pe)pe.textContent='$'+fmt(data.price,decimals);
-    if(ce){const up=data.chgPct>=0;ce.textContent=(up?'▲':'▼')+Math.abs(data.chgPct).toFixed(2)+'%';ce.style.color=up?'var(--green)':'var(--red)';}
-  };
-  setCom('c-oil',   'c-oil-c',   commodities.oil,   2);
-  setCom('c-gas',   'c-gas-c',   commodities.gas,   3);
-  setCom('c-gold',  'c-gold-c',  commodities.gold,  2);
-  setCom('c-silver','c-silver-c',commodities.silver,2);
-  setCom('c-corn',  'c-corn-c',  commodities.corn,  2);
+/* ══ RENDER TOP 8 ASSETS BY MARKET CAP ══ */
+const TOP8_ASSETS=[
+  {name:'Gold',       icon:'🥇', mktcap:31.591e12, color:'var(--gold)'},
+  {name:'Nvidia',     icon:'🟢', sym:'NVDA', fallbackCap:5.46e12, color:'var(--green)'},
+  {name:'Alphabet',   icon:'🔤', sym:'GOOGL',fallbackCap:4.77e12, color:'var(--cyan)'},
+  {name:'Apple',      icon:'🍎', sym:'AAPL', fallbackCap:4.41e12, color:'var(--text)'},
+  {name:'Silver',     icon:'🥈', mktcap:4.295e12, color:'var(--muted)'},
+  {name:'Microsoft',  icon:'🟦', sym:'MSFT', fallbackCap:3.13e12, color:'var(--blue)'},
+  {name:'Amazon',     icon:'📦', sym:'AMZN', fallbackCap:2.84e12, color:'var(--orange)'},
+  {name:'TSMC',       icon:'🔲', sym:'TSM',  fallbackCap:2.10e12, color:'var(--purple)'},
+];
+function renderTop8Assets(){
+  const panel=document.getElementById('top8-assets-panel');
+  if(!panel)return;
+  panel.innerHTML=TOP8_ASSETS.map((a,i)=>{
+    let cap='--',price='--',chg=0;
+    if(a.sym){
+      const q=quotes[a.sym];
+      if(q){
+        price='$'+fmt(q.price,2);
+        // Use live mktcap if Finnhub returned it, otherwise use fallback
+        const liveCap=q.mktcap&&q.mktcap>1e9?q.mktcap:a.fallbackCap;
+        cap='$'+fmtL(liveCap);
+        chg=q.chgPct||0;
+      }else{
+        cap='$'+fmtL(a.fallbackCap);
+      }
+    }else if(a.crypto){
+      const d=cryptoData[a.crypto];
+      if(d){price='$'+fmt(d.price,2);cap=d.mktcap?'$'+fmtL(d.mktcap):'--';chg=d.chgPct||0;}
+    }else{
+      cap='$'+fmtL(a.mktcap);
+    }
+    const up=chg>=0;
+    const chgStr=a.sym||a.crypto?`<div class="comm-chg" style="color:${up?'var(--green)':'var(--red)'};font-size:8px;">${up?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:'';
+    const priceStr=a.sym?`<div style="font-size:7px;color:var(--muted);margin-top:1px;">${price}</div>`:'';
+    return`<div class="comm-row" style="padding:8px 14px;${i===TOP8_ASSETS.length-1?'border-bottom:none;':''}">
+      <div class="comm-label" style="gap:8px;">
+        <span style="font-size:9px;color:var(--gold);font-weight:700;width:16px;">#${i+1}</span>
+        <span style="font-size:12px;">${a.icon}</span>
+        <span style="color:var(--text);font-weight:600;font-size:10px;">${a.name}</span>
+      </div>
+      <div class="comm-val" style="text-align:right;">
+        <div class="comm-price" style="font-size:10px;color:${a.color};">${cap}</div>
+        ${chgStr}${priceStr}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 /* ══ RENDER FOREX ══ */
@@ -1611,7 +1738,7 @@ async function refreshAll(){
   try{
     // Stagger: crypto/forex/commodities first (fast, no rate limit), then stocks
     await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex()]);
-    renderTicker();renderCrypto();renderCommodities();renderForex();
+    renderTicker();renderCrypto();renderTop8Assets();renderForex();
     // Stocks are staggered internally — fetch separately so we can render crypto first
     await fetchStocks();
     const ok=Object.keys(quotes).length>0;
@@ -1626,7 +1753,7 @@ async function refreshAll(){
     const badge=document.getElementById('data-badge');
     if(badge){badge.textContent='⚠ DATA ERROR';badge.style.color='var(--red)';}
   }
-  renderTicker();renderStocks();renderCrypto();renderCommodities();renderForex();
+  renderTicker();renderStocks();renderCrypto();renderTop8Assets();renderForex();
   if(selectedSym){renderChartHeader();await loadMainChart();}
   await renderNews();
 }
@@ -1635,28 +1762,33 @@ async function refreshCryptoAndComm(){
   try{
     await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex()]);
   }catch(e){}
-  renderCrypto();renderTicker();renderCommodities();renderForex();
+  renderCrypto();renderTicker();renderTop8Assets();renderForex();
   if(selectedSym&&selectedType==='crypto')renderChartHeader();
 }
 
 /* ══ FED RATE ══ */
 // FOMC meeting dates 2025-2026
 const FOMC_DATES=[
-  {date:'Jan 29, 2025',action:'HOLD',rate:'4.25–4.50%'},
-  {date:'Mar 19, 2025',action:'CUT',rate:'3.75–4.00%'},
-  {date:'May 7, 2025',action:'CUT',rate:'3.50–3.75%'},
-  {date:'Jun 18, 2025',action:'HOLD?',rate:'3.50–3.75%'},
-  {date:'Jul 30, 2025',action:'CUT?',rate:'3.25–3.50%'},
-  {date:'Sep 17, 2025',action:'CUT?',rate:'3.00–3.25%'},
-  {date:'Oct 29, 2025',action:'HOLD?',rate:'3.00–3.25%'},
-  {date:'Dec 10, 2025',action:'CUT?',rate:'2.75–3.00%'},
+  {date:'Jan 29, 2026',action:'HOLD',rate:'4.25–4.50%'},
+  {date:'Mar 19, 2026',action:'HOLD',rate:'4.25–4.50%'},
+  {date:'May 7, 2026',action:'HOLD',rate:'4.25–4.50%'},
+  {date:'Jun 18, 2026',action:'HOLD',rate:'4.25–4.50%'},
+  {date:'Jul 30, 2026',action:'HOLD?',rate:'4.25–4.50%'},
+  {date:'Sep 17, 2026',action:'HOLD?',rate:'4.25–4.50%'},
+  {date:'Nov 5, 2026',action:'CUT?',rate:'4.00–4.25%'},
+  {date:'Dec 17, 2026',action:'CUT?',rate:'3.75–4.00%'},
 ];
 
 async function fetchFedRate(){
   // Hardcode the correct current rate — FRED API often blocked by CORS in browser
-  // Current rate: 3.50–3.75% (as of March 19, 2025 FOMC cut)
-  document.getElementById('fed-rate').textContent='3.50–3.75%';
-  document.getElementById('fed-decision').textContent='Mar 19, 2025';
+  // Current rate: 4.25–4.50% (Fed has held steady since Jan 2025 amid rising inflation)
+  // CPI: 3.8% YoY (Apr 2026), Core CPI: 2.8% — rate cuts off the table
+  document.getElementById('fed-rate').textContent='4.25–4.50%';
+  document.getElementById('fed-decision').textContent='May 7, 2026';
+  document.getElementById('fed-last-chg').textContent='HOLD';
+  document.getElementById('fed-last-chg').className='fed-stat-v';
+  document.getElementById('fed-cpi').textContent='3.8%';
+  document.getElementById('fed-cpi').className='fed-stat-v up';
 
   // Try to fetch live from FRED (may fail due to CORS — graceful fallback above)
   try{
@@ -1699,155 +1831,307 @@ function renderFedPath(){
     </div>`).join('');
 }
 
-/* ══ POKÉDEX CHART — multi-card price index ══ */
-let charChart=null;
-let charTF='3Y';
+/* ══ POKÉDEX — Stat Card Grid + Horizontal Bar Chart ══ */
 
-// All prices = PSA 10 average sale price in USD, sourced from auction records
-// Labels per timeframe
-const POKE_LABELS={
-  ALL:['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'],
-  '5Y':['Q1\'22','Q2\'22','Q3\'22','Q4\'22','Q1\'23','Q2\'23','Q3\'23','Q4\'23','Q1\'24','Q2\'24','Q3\'24','Q4\'24','Q1\'25','Q2\'25','Q3\'25','Q4\'25','Q1\'26'],
-  '3Y':['Jan\'24','Mar\'24','May\'24','Jul\'24','Sep\'24','Nov\'24','Jan\'25','Mar\'25','May\'25','Jul\'25','Sep\'25','Nov\'25','Jan\'26','Mar\'26'],
-  '1Y':['Apr\'25','May\'25','Jun\'25','Jul\'25','Aug\'25','Sep\'25','Oct\'25','Nov\'25','Dec\'25','Jan\'26','Feb\'26','Mar\'26','Apr\'26'],
-};
-
+// Add PSA 10 population data and total graded to each card
 const POKE_CARDS=[
   {
-    name:'Charizard 1st Ed.',emoji:'🔥',color:'#ff7c2a',
-    ALL:  [550,700,900,1200,2800,9500,7200,5800,7100,8000,8200],
-    '5Y': [9200,7800,6800,6200,5800,5600,5900,6200,6800,7200,7600,7900,8000,8400,8800,8600,8200],
-    '3Y': [6800,7000,7300,7600,7800,7950,8000,8150,8300,8500,8700,8500,8200,8400],
-    '1Y': [8200,8300,8400,8500,8600,8700,8600,8500,8400,8200,8300,8400,8200],
+    name:'Charizard',emoji:'🔥',color:'#ff7c2a',set:'4/102',
+    price:550000,pop10:124,totalGraded:2800,rarity:10,
+    desc:'The king. Highest sale: $954,800 (Feb 2026, Goldin).',
   },
   {
-    name:'Pikachu Illus.',emoji:'⚡',color:'#f5b800',
-    ALL:  [50000,65000,80000,120000,280000,900000,750000,620000,780000,920000,950000],
-    '5Y': [900000,760000,650000,580000,540000,560000,600000,650000,720000,780000,850000,900000,920000,960000,1000000,980000,950000],
-    '3Y': [720000,750000,800000,840000,880000,900000,920000,950000,970000,1000000,1010000,990000,950000,960000],
-    '1Y': [920000,940000,960000,980000,1000000,1010000,990000,980000,970000,950000,955000,960000,950000],
+    name:'Alakazam',emoji:'🔮',color:'#a855f7',set:'1/102',
+    price:22000,pop10:85,totalGraded:2100,rarity:7,
+    desc:'Psychic powerhouse. Scarce in PSA 10 due to holo bleed.',
   },
   {
-    name:'Lugia 1st Ed.',emoji:'🌊',color:'#00d4ff',
-    ALL:  [800,1200,2000,3500,12000,144000,105000,82000,100000,120000,130000],
-    '5Y': [140000,115000,95000,80000,75000,78000,82000,90000,100000,110000,118000,122000,125000,130000,138000,132000,128000],
-    '3Y': [100000,105000,110000,115000,118000,120000,125000,128000,132000,136000,140000,135000,128000,130000],
-    '1Y': [125000,128000,132000,134000,136000,140000,138000,135000,132000,128000,129000,130000,130000],
+    name:'Sealed Pack',emoji:'📦',color:'#f5b800',set:'Booster',
+    price:11000,pop10:0,totalGraded:0,rarity:8,
+    desc:'Unopened 1st Ed. booster pack. Artworks vary (3 types).',
   },
   {
-    name:'Blastoise 1st Ed.',emoji:'💧',color:'#3d9dff',
-    ALL:  [180,250,400,700,4000,42000,32000,24000,30000,38000,45000],
-    '5Y': [42000,34000,28000,22000,20000,21000,23000,26000,30000,34000,37000,40000,42000,44000,46000,44000,45000],
-    '3Y': [30000,31000,33000,35000,37000,38000,40000,42000,44000,45000,46000,45000,45000,45000],
-    '1Y': [42000,43000,44000,44500,45000,46000,45500,45000,44500,45000,45200,45000,45000],
+    name:'Blastoise',emoji:'💧',color:'#3d9dff',set:'2/102',
+    price:20000,pop10:100,totalGraded:2200,rarity:8,
+    desc:'Record: $138,880 (Feb 2026). Big 3 starter evolution.',
   },
   {
-    name:'Venusaur 1st Ed.',emoji:'🌿',color:'#00e676',
-    ALL:  [120,180,280,500,3200,28000,20000,15000,20000,25000,28500],
-    '5Y': [28000,22000,17000,13000,12000,13000,14000,16000,19000,22000,24000,26000,27000,28000,30000,29000,28500],
-    '3Y': [19000,20000,21000,22000,23000,24000,25000,26000,27000,28000,29000,28500,28000,28500],
-    '1Y': [27000,27500,28000,28200,28500,29000,28800,28500,28200,28000,28200,28500,28500],
-  },
-  {
-    name:'Mewtwo 1st Ed.',emoji:'🔮',color:'#a855f7',
-    ALL:  [90,130,200,380,1800,12000,9000,7000,8500,10500,11800],
-    '5Y': [12000,9500,7800,6500,6000,6500,7000,7800,8500,9500,10000,10800,11000,11500,12000,11800,11800],
-    '3Y': [8500,8800,9200,9600,10000,10400,10800,11000,11300,11600,11800,11700,11800,11800],
-    '1Y': [11000,11100,11300,11500,11600,11800,11700,11600,11500,11800,11750,11800,11800],
+    name:'Mewtwo',emoji:'👁️',color:'#00d4ff',set:'10/102',
+    price:15000,pop10:130,totalGraded:2500,rarity:6,
+    desc:'Most popular Psychic. Higher pop than Charizard in PSA 10.',
   },
 ];
 
-// Track which cards are visible (toggle by clicking legend)
 let pokeVisible=POKE_CARDS.map(()=>true);
 
-function buildPokeLegend(){
-  const wrap=document.getElementById('poke-legend');
-  if(!wrap)return;
-  wrap.innerHTML=POKE_CARDS.map((c,i)=>`
-    <div onclick="togglePoke(${i})" id="pleg-${i}" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;border:1px solid ${c.color};background:${c.color}22;cursor:pointer;transition:all .15s;user-select:none;">
-      <span style="font-size:10px;">${c.emoji}</span>
-      <span style="font-size:7px;font-weight:700;color:${c.color};letter-spacing:.5px;">${c.name}</span>
-    </div>`).join('');
+function drawPokedex(){
+  const grid=document.getElementById('pokedex-grid');
+  const bars=document.getElementById('poke-bars');
+  if(!grid||!bars)return;
+
+  const maxPrice=Math.max(...POKE_CARDS.filter(c=>c.price>0).map(c=>c.price));
+  const maxPop=Math.max(...POKE_CARDS.filter(c=>c.pop10>0).map(c=>c.pop10));
+
+  // ── Stat Card Grid ──
+  grid.innerHTML=POKE_CARDS.map((c,i)=>{
+    const pricePct=c.price/maxPrice*100;
+    const popPct=c.pop10>0?(c.pop10/maxPop*100):0;
+    const rarityPct=c.rarity*10;
+    const priceStr=c.price>=1000?'$'+fmtL(c.price):'$'+c.price;
+    const popStr=c.pop10>0?c.pop10.toLocaleString():'N/A';
+    const gradedStr=c.totalGraded>0?c.totalGraded.toLocaleString():'N/A';
+    return`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;position:relative;overflow:hidden;border-top:3px solid ${c.color};">
+      <div style="position:absolute;top:8px;right:10px;font-size:7px;background:${c.color}18;border:1px solid ${c.color}33;color:${c.color};padding:2px 6px;border-radius:3px;font-weight:700;letter-spacing:1px;">PSA 10</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+        <span style="font-size:20px;">${c.emoji}</span>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--text);">${c.name}</div>
+          <div style="font-size:7px;color:var(--muted);">#${c.set} · 1st Ed.</div>
+        </div>
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:${c.color};margin-bottom:8px;">${priceStr}</div>
+      <div style="margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;font-size:7px;margin-bottom:2px;"><span style="color:var(--muted);">PRICE</span><span style="color:${c.color};">${pricePct.toFixed(0)}%</span></div>
+        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:${pricePct}%;height:100%;background:${c.color};border-radius:2px;transition:width .5s;"></div></div>
+      </div>
+      <div style="margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;font-size:7px;margin-bottom:2px;"><span style="color:var(--muted);">PSA 10 POP</span><span style="color:var(--text);">${popStr}</span></div>
+        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:${popPct}%;height:100%;background:var(--cyan);border-radius:2px;transition:width .5s;"></div></div>
+      </div>
+      <div style="margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;font-size:7px;margin-bottom:2px;"><span style="color:var(--muted);">RARITY</span><span style="color:var(--gold);">${c.rarity}/10</span></div>
+        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:${rarityPct}%;height:100%;background:var(--gold);border-radius:2px;transition:width .5s;"></div></div>
+      </div>
+      <div style="font-size:6px;color:var(--muted);margin-top:6px;line-height:1.4;">${c.totalGraded>0?'Total graded: '+gradedStr:''}</div>
+      <div style="font-size:6.5px;color:${c.color}55;margin-top:4px;line-height:1.3;font-style:italic;">${c.desc}</div>
+    </div>`;
+  }).join('');
+
+  // ── Horizontal Bar Chart (log scale visual) ──
+  // Use log scale so Charizard doesn't crush others
+  const logMax=Math.log10(maxPrice);
+  bars.innerHTML=POKE_CARDS.map(c=>{
+    const logVal=c.price>0?Math.log10(c.price):0;
+    const pct=(logVal/logMax*100).toFixed(1);
+    const priceStr=c.price>=1000?'$'+fmtL(c.price):'$'+c.price;
+    return`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="width:90px;display:flex;align-items:center;gap:5px;flex-shrink:0;">
+        <span style="font-size:12px;">${c.emoji}</span>
+        <span style="font-size:8px;font-weight:700;color:var(--text);">${c.name}</span>
+      </div>
+      <div style="flex:1;height:18px;background:var(--bg3);border-radius:3px;overflow:hidden;position:relative;">
+        <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,${c.color}88,${c.color});border-radius:3px;transition:width .8s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
+          <span style="font-size:7px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);white-space:nowrap;">${priceStr}</span>
+        </div>
+      </div>
+      <div style="width:55px;text-align:right;flex-shrink:0;">
+        <div style="font-size:7px;color:var(--muted);">Pop ${c.pop10>0?c.pop10:'—'}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function togglePoke(i){
-  pokeVisible[i]=!pokeVisible[i];
-  const el=document.getElementById(`pleg-${i}`);
-  if(el)el.style.opacity=pokeVisible[i]?'1':'0.35';
-  drawCharChart(charTF);
+/* ══ TAB SWITCHING ══ */
+function switchTab(tab){
+  document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='terminal'){
+    document.getElementById('terminal-page').classList.remove('hidden');
+    document.getElementById('assets-page').classList.remove('visible');
+  }else{
+    document.getElementById('terminal-page').classList.add('hidden');
+    document.getElementById('assets-page').classList.add('visible');
+    renderNwPage();
+  }
 }
 
-function drawCharChart(tf){
-  const canvas=document.getElementById('char-chart');
-  if(!canvas)return;
-  const labels=POKE_LABELS[tf]||POKE_LABELS['3Y'];
-  if(charChart){charChart.destroy();charChart=null;}
+/* ══ NET WORTH CALCULATOR ══ */
+const NW_STORAGE_KEY='rb_nw_data';
+function loadNwData(){
+  try{const d=localStorage.getItem(NW_STORAGE_KEY);return d?JSON.parse(d):{market:[],assets:[],liabilities:[]};}
+  catch(e){return{market:[],assets:[],liabilities:[]};}
+}
+function saveNwData(d){try{localStorage.setItem(NW_STORAGE_KEY,JSON.stringify(d));}catch(e){}}
 
-  const datasets=POKE_CARDS.map((c,i)=>({
-    label:c.emoji+' '+c.name,
-    data:(c[tf]||c['3Y']),
-    borderColor:c.color,
-    backgroundColor:'transparent',
-    borderWidth:pokeVisible[i]?2:0,
-    pointRadius:pokeVisible[i]?3:0,
-    pointBackgroundColor:c.color,
-    pointBorderColor:'transparent',
-    tension:0.35,
-    hidden:!pokeVisible[i],
-  }));
+function renderNwPage(){
+  const d=loadNwData();
+  renderNwMarket(d);
+  renderNwAssets(d);
+  renderNwLiab(d);
+  updateNwTotals(d);
+}
 
-  // Use log scale because Pikachu Illus. dwarfs others
-  charChart=new Chart(canvas,{
-    type:'line',
-    data:{labels,datasets},
-    options:{
-      responsive:true,maintainAspectRatio:false,animation:{duration:500},
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          mode:'index',intersect:false,
-          backgroundColor:'#090d18',borderColor:'#162030',borderWidth:1,
-          titleColor:'#f5b800',bodyColor:'#dce8f5',
-          titleFont:{family:'JetBrains Mono',size:8},bodyFont:{family:'JetBrains Mono',size:9},
-          callbacks:{
-            label:ctx=>!pokeVisible[ctx.datasetIndex]?null:
-              ` ${POKE_CARDS[ctx.datasetIndex].emoji} ${POKE_CARDS[ctx.datasetIndex].name}: $${ctx.parsed.y.toLocaleString()}`
-          },
-          filter:item=>pokeVisible[item.datasetIndex],
-        }
-      },
-      scales:{
-        x:{ticks:{color:'#1e2e45',font:{family:'JetBrains Mono',size:7},maxTicksLimit:12,maxRotation:0},grid:{color:'#0d1220'},border:{color:'#162030'}},
-        y:{
-          type:'logarithmic',
-          position:'right',
-          ticks:{color:'#3d5470',font:{family:'JetBrains Mono',size:8},maxTicksLimit:6,
-            callback:v=>v>=1000000?'$'+(v/1000000).toFixed(1)+'M':v>=1000?'$'+(v/1000).toFixed(0)+'K':'$'+v},
-          grid:{color:'#0d1220'},border:{color:'#162030'}
-        }
-      }
+async function renderNwMarket(d){
+  const list=document.getElementById('nw-market-list');
+  if(!d.market.length){list.innerHTML='<div class="nw-empty">No market holdings yet. Add stocks or crypto above.</div>';return;}
+  let html='';
+  for(let idx=0;idx<d.market.length;idx++){
+    const h=d.market[idx];
+    let livePrice=h.manualPrice||0, chg=0, icon='📊', iconBg='rgba(61,157,255,.15)', iconColor='var(--blue)';
+    let priceSource='manual';
+    if(h.type==='stock'){
+      const q=quotes[h.ticker];
+      if(q&&!h.manualPrice){livePrice=q.price;chg=q.chgPct||0;priceSource='live';}
+      else if(h.manualPrice)livePrice=h.manualPrice;
+      icon='📈';iconBg='rgba(0,230,118,.1)';iconColor='var(--green)';
+    }else if(h.type==='crypto'){
+      const c=cryptoData[h.ticker];
+      if(c&&!h.manualPrice){livePrice=c.price;chg=c.chgPct||0;priceSource='live';}
+      else if(h.manualPrice)livePrice=h.manualPrice;
+      icon='₿';iconBg='rgba(168,85,247,.15)';iconColor='var(--purple)';
+    }else{
+      // custom asset
+      livePrice=h.manualPrice||0;
+      icon='💎';iconBg='rgba(245,184,0,.1)';iconColor='var(--gold)';
     }
-  });
-
-  // Update price badge to show Charizard 1st Ed. current
-  const char=POKE_CARDS[0];
-  const prices=char[tf]||char['3Y'];
-  const cur=prices[prices.length-1];
-  const start=prices[0];
-  const chgPct=((cur-start)/start*100);
-  const up=chgPct>=0;
-  document.getElementById('char-current-price').textContent='$'+cur.toLocaleString();
-  const badge=document.getElementById('char-chg-badge');
-  badge.textContent='🔥 Char. '+(up?'+':'')+chgPct.toFixed(1)+'% ('+tf+')';
-  badge.style.background=up?'rgba(0,230,118,.12)':'rgba(255,59,92,.12)';
-  badge.style.color=up?'var(--green)':'var(--red)';
+    const totalVal=livePrice*h.qty;
+    const up=chg>=0;
+    const chgHtml=priceSource==='live'?`<div class="nw-row-chg" style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:`<div class="nw-row-chg" style="color:var(--muted);">manual</div>`;
+    html+=`<div class="nw-row">
+      <div class="nw-row-icon" style="background:${iconBg};color:${iconColor}">${icon}</div>
+      <div class="nw-row-info"><div class="nw-row-name">${h.ticker} × ${h.qty}</div><div class="nw-row-detail">${h.type==='custom'?'Custom':h.type==='stock'?'Stock':'Crypto'} · $${fmt(livePrice,2)} each</div></div>
+      <div class="nw-row-val"><div class="nw-row-price">$${fmtL(totalVal)}</div>${chgHtml}</div>
+      <button class="nw-row-del" onclick="deleteNwItem('market',${idx})">✕</button>
+    </div>`;
+  }
+  list.innerHTML=html;
 }
 
-function setCharTF(tf,btn){
-  charTF=tf;
-  document.querySelectorAll('.char-tf-row .tf-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  drawCharChart(tf);
+function renderNwAssets(d){
+  const list=document.getElementById('nw-asset-list');
+  if(!d.assets.length){list.innerHTML='<div class="nw-empty">No manual assets yet. Add real estate, vehicles, cash, etc.</div>';return;}
+  list.innerHTML=d.assets.map((a,i)=>{
+    const icons={real_estate:'🏠',vehicle:'🚗',cash:'💵',retirement:'📊',collectibles:'💎',business:'🏢',other:'📋'};
+    const noteHtml=a.notes?`<div style="font-size:7px;color:var(--muted);margin-top:1px;">${a.notes}</div>`:'';
+    return`<div class="nw-row">
+      <div class="nw-row-icon" style="background:rgba(0,230,118,.1);color:var(--green)">${icons[a.category]||'💎'}</div>
+      <div class="nw-row-info"><div class="nw-row-name">${a.name}</div><div class="nw-row-detail">${(a.category||'other').replace(/_/g,' ')}</div>${noteHtml}</div>
+      <div class="nw-row-val"><div class="nw-row-price">$${fmtL(a.value)}</div></div>
+      <button class="nw-row-del" onclick="deleteNwItem('assets',${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function renderNwLiab(d){
+  const list=document.getElementById('nw-liab-list');
+  if(!d.liabilities.length){list.innerHTML='<div class="nw-empty">No liabilities yet. Add mortgages, loans, credit cards, etc.</div>';return;}
+  list.innerHTML=d.liabilities.map((l,i)=>{
+    const icons={mortgage:'🏦',auto_loan:'🚗',student_loan:'🎓',credit_card:'💳',personal_loan:'📋',medical:'🏥',other:'📋'};
+    const rateHtml=l.rate?`<div style="font-size:7px;color:var(--orange);margin-top:1px;">${l.rate}% APR</div>`:'';
+    return`<div class="nw-row">
+      <div class="nw-row-icon" style="background:rgba(255,59,92,.1);color:var(--red)">${icons[l.category]||'📋'}</div>
+      <div class="nw-row-info"><div class="nw-row-name">${l.name}</div><div class="nw-row-detail">${(l.category||'other').replace(/_/g,' ')}</div>${rateHtml}</div>
+      <div class="nw-row-val"><div class="nw-row-price" style="color:var(--red)">-$${fmtL(l.value)}</div></div>
+      <button class="nw-row-del" onclick="deleteNwItem('liabilities',${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function updateNwTotals(d){
+  let assetTotal=0,liabTotal=0;
+  d.market.forEach(h=>{
+    let price=h.manualPrice||0;
+    if(h.type==='stock'&&quotes[h.ticker]&&!h.manualPrice)price=quotes[h.ticker].price;
+    if(h.type==='crypto'&&cryptoData[h.ticker]&&!h.manualPrice)price=cryptoData[h.ticker].price;
+    if(h.type==='custom')price=h.manualPrice||0;
+    assetTotal+=price*h.qty;
+  });
+  d.assets.forEach(a=>assetTotal+=a.value);
+  d.liabilities.forEach(l=>liabTotal+=l.value);
+  const net=assetTotal-liabTotal;
+  document.getElementById('nw-total-assets').textContent='$'+fmtL(assetTotal);
+  document.getElementById('nw-total-liab').textContent='-$'+fmtL(liabTotal);
+  const nwEl=document.getElementById('nw-net-worth');
+  nwEl.textContent=(net>=0?'$':'-$')+fmtL(Math.abs(net));
+  nwEl.className='nw-value '+(net>=0?'net':'neg');
+}
+
+function deleteNwItem(cat,idx){
+  const d=loadNwData();
+  d[cat].splice(idx,1);
+  saveNwData(d);
+  renderNwPage();
+}
+
+function openNwModal(type){
+  const root=document.getElementById('nw-modal-root');
+  let fields='';
+  if(type==='market'){
+    fields=`
+      <div class="nw-field"><label>Type</label><select id="nwm-type" onchange="nwMarketTypeChange()"><option value="stock">Stock</option><option value="crypto">Crypto</option><option value="custom">Custom Asset</option></select></div>
+      <div class="nw-field" id="nwm-ticker-wrap"><label>Ticker Symbol</label><input id="nwm-ticker" placeholder="e.g. AAPL, BTC" /></div>
+      <div class="nw-field" id="nwm-cname-wrap" style="display:none;"><label>Asset Name</label><input id="nwm-cname" placeholder="e.g. Gold, Real Estate Fund" /></div>
+      <div class="nw-field"><label>Quantity / Shares</label><input id="nwm-qty" type="number" step="any" placeholder="e.g. 10" /></div>
+      <div class="nw-field"><label>Price Per Unit ($) <span style="color:var(--muted);font-weight:400;text-transform:none;">(leave blank for live price)</span></label><input id="nwm-price" type="number" step="any" placeholder="Auto from market data" /></div>`;
+  }else if(type==='asset'){
+    fields=`
+      <div class="nw-field"><label>Name</label><input id="nwm-name" placeholder="e.g. Primary Home, Savings Account" /></div>
+      <div class="nw-field"><label>Category</label><select id="nwm-cat"><option value="real_estate">Real Estate</option><option value="vehicle">Vehicle</option><option value="cash">Cash / Savings</option><option value="retirement">Retirement Account</option><option value="collectibles">Collectibles</option><option value="business">Business Equity</option><option value="other">Other</option></select></div>
+      <div class="nw-field"><label>Estimated Value ($)</label><input id="nwm-val" type="number" step="any" placeholder="e.g. 350000" /></div>
+      <div class="nw-field"><label>Notes <span style="color:var(--muted);font-weight:400;text-transform:none;">(optional)</span></label><input id="nwm-notes" placeholder="e.g. Purchased 2020, Zestimate $380K" /></div>`;
+  }else{
+    fields=`
+      <div class="nw-field"><label>Name</label><input id="nwm-name" placeholder="e.g. Mortgage, Car Loan" /></div>
+      <div class="nw-field"><label>Category</label><select id="nwm-cat"><option value="mortgage">Mortgage</option><option value="auto_loan">Auto Loan</option><option value="student_loan">Student Loan</option><option value="credit_card">Credit Card</option><option value="personal_loan">Personal Loan</option><option value="medical">Medical Debt</option><option value="other">Other</option></select></div>
+      <div class="nw-field"><label>Amount Owed ($)</label><input id="nwm-val" type="number" step="any" placeholder="e.g. 280000" /></div>
+      <div class="nw-field"><label>Interest Rate (%) <span style="color:var(--muted);font-weight:400;text-transform:none;">(optional)</span></label><input id="nwm-rate" type="number" step="any" placeholder="e.g. 6.5" /></div>`;
+  }
+  root.innerHTML=`<div class="nw-modal-overlay" onclick="if(event.target===this)closeNwModal()">
+    <div class="nw-modal">
+      <div class="nw-modal-title">${type==='market'?'Add Market Holding':type==='asset'?'Add Asset':'Add Liability'}</div>
+      ${fields}
+      <div class="nw-modal-btns">
+        <button class="nw-btn-cancel" onclick="closeNwModal()">CANCEL</button>
+        <button class="nw-btn-save" onclick="saveNwItem('${type}')">ADD</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>{const inp=root.querySelector('input');if(inp)inp.focus();},100);
+}
+
+function nwMarketTypeChange(){
+  const type=document.getElementById('nwm-type').value;
+  document.getElementById('nwm-ticker-wrap').style.display=type==='custom'?'none':'';
+  const cw=document.getElementById('nwm-cname-wrap');
+  if(cw)cw.style.display=type==='custom'?'':'none';
+}
+
+function closeNwModal(){document.getElementById('nw-modal-root').innerHTML='';}
+
+function saveNwItem(type){
+  const d=loadNwData();
+  if(type==='market'){
+    const mtype=document.getElementById('nwm-type').value;
+    const qty=parseFloat(document.getElementById('nwm-qty').value)||0;
+    const manualPrice=parseFloat(document.getElementById('nwm-price').value)||0;
+    if(qty<=0)return;
+    if(mtype==='custom'){
+      const name=(document.getElementById('nwm-cname').value||'').trim();
+      if(!name)return;
+      d.market.push({type:'custom',ticker:name,qty,manualPrice});
+    }else{
+      const ticker=(document.getElementById('nwm-ticker').value||'').toUpperCase().trim();
+      if(!ticker)return;
+      d.market.push({type:mtype,ticker,qty,manualPrice});
+    }
+  }else if(type==='asset'){
+    const name=document.getElementById('nwm-name').value.trim();
+    const cat=document.getElementById('nwm-cat').value;
+    const value=parseFloat(document.getElementById('nwm-val').value)||0;
+    const notes=(document.getElementById('nwm-notes')||{}).value||'';
+    if(!name||value<=0)return;
+    d.assets.push({name,category:cat,value,notes});
+  }else{
+    const name=document.getElementById('nwm-name').value.trim();
+    const cat=document.getElementById('nwm-cat').value;
+    const value=parseFloat(document.getElementById('nwm-val').value)||0;
+    const rate=parseFloat((document.getElementById('nwm-rate')||{}).value)||0;
+    if(!name||value<=0)return;
+    d.liabilities.push({name,category:cat,value,rate});
+  }
+  saveNwData(d);
+  closeNwModal();
+  renderNwPage();
 }
 
 /* ══ INIT ══ */
@@ -1855,14 +2139,13 @@ async function init(){
   clock();setInterval(clock,1000);
   renderPoly();renderBubbleLegend();startBubble();
   fetchFedRate();
-  buildPokeLegend();
-  drawCharChart('3Y');
+  drawPokedex();
   // Pre-render commodities & forex with defaults immediately so panels never show --
-  renderCommodities();renderForex();
+  renderTop8Assets();renderForex();
 
   // Phase 1: fast no-key sources — render immediately
   await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex(),fetchPolymarket()]);
-  renderCrypto();renderTicker();renderCommodities();renderForex();
+  renderCrypto();renderTicker();renderTop8Assets();renderForex();
   renderNews();
 
   // Phase 2: stocks (staggered, takes ~3s for 10 stocks)
