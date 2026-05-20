@@ -1,6 +1,9 @@
 
 
 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,55 +61,124 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .top-tab:hover{color:var(--text);}
 .top-tab.active{background:rgba(245,184,0,.12);color:var(--gold);border:1px solid rgba(245,184,0,.2);}
 
-/* ── ASSETS PAGE ── */
+/* ── ASSETS PAGE (Vault) ── */
 #assets-page{display:none;max-width:1200px;margin:0 auto;padding:20px;}
 #assets-page.visible{display:block;}
 #terminal-page{display:block;}
 #terminal-page.hidden{display:none;}
-.nw-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
-.nw-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;position:relative;overflow:hidden;}
-.nw-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
-.nw-card.assets-card::before{background:var(--green);}
-.nw-card.liab-card::before{background:var(--red);}
-.nw-card.net-card::before{background:var(--gold);}
-.nw-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-.nw-value{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;margin-top:4px;}
-.nw-value.pos{color:var(--green);}
-.nw-value.neg{color:var(--red);}
-.nw-value.net{color:var(--gold);}
-.nw-section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;}
-.nw-section-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.nw-section-title{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
-.nw-add-btn{background:rgba(245,184,0,.1);border:1px solid rgba(245,184,0,.25);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:4px 10px;border-radius:3px;cursor:pointer;letter-spacing:1px;transition:all .12s;}
-.nw-add-btn:hover{background:rgba(245,184,0,.2);}
-.nw-list{padding:0;}
-.nw-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:background .1s;}
-.nw-row:last-child{border-bottom:none;}
-.nw-row:hover{background:rgba(255,255,255,.015);}
-.nw-row-icon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.nw-row-info{flex:1;min-width:0;}
-.nw-row-name{font-size:10px;font-weight:700;color:var(--text);}
-.nw-row-detail{font-size:8px;color:var(--muted);}
-.nw-row-val{text-align:right;flex-shrink:0;}
-.nw-row-price{font-size:11px;font-weight:700;color:var(--text);}
-.nw-row-chg{font-size:8px;font-weight:600;}
-.nw-row-del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:10px;padding:2px 6px;border-radius:3px;transition:color .12s;flex-shrink:0;}
-.nw-row-del:hover{color:var(--red);}
-.nw-empty{padding:20px;text-align:center;color:var(--muted);font-size:9px;letter-spacing:1px;}
-.nw-modal-overlay{position:fixed;inset:0;background:rgba(5,7,15,.85);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeIn .15s ease;}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.nw-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:20px;width:380px;max-width:90vw;box-shadow:0 12px 48px rgba(0,0,0,.7);}
-.nw-modal-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;}
-.nw-field{margin-bottom:10px;}
-.nw-field label{display:block;font-size:7px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
-.nw-field input,.nw-field select{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;padding:7px 10px;border-radius:4px;outline:none;transition:border-color .15s;}
-.nw-field input:focus,.nw-field select:focus{border-color:var(--gold);}
-.nw-modal-btns{display:flex;gap:8px;margin-top:14px;}
-.nw-modal-btns button{flex:1;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:8px;border-radius:4px;cursor:pointer;transition:all .12s;}
-.nw-btn-cancel{background:transparent;border:1px solid var(--border2);color:var(--muted);}
-.nw-btn-cancel:hover{color:var(--text);}
-.nw-btn-save{background:var(--gold);border:none;color:#05070f;}
-.nw-btn-save:hover{opacity:.85;}
+@keyframes vaultFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes vaultSlideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* View toggle */
+.vault-views{display:flex;gap:3px;background:var(--bg3);border-radius:6px;padding:3px;}
+.vault-view-btn{background:transparent;border:none;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:7px 18px;border-radius:4px;cursor:pointer;transition:all .15s;text-transform:uppercase;}
+.vault-view-btn:hover{color:var(--text);}
+.vault-view-btn.active{background:rgba(245,184,0,.12);color:var(--gold);border:1px solid rgba(245,184,0,.2);}
+
+/* Summary cards */
+.vault-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.vault-stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;}
+.vault-stat.accent{background:linear-gradient(135deg,rgba(245,184,0,.06),rgba(245,184,0,.01));border-color:rgba(245,184,0,.15);}
+.vault-stat-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.vault-stat-val{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--text);}
+.vault-stat.accent .vault-stat-val{color:var(--gold);}
+
+/* Donut + holdings split */
+.vault-dash-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:16px;align-items:start;margin-top:20px;}
+.vault-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;animation:vaultFadeIn .3s ease;}
+.vault-panel-title{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
+
+/* Holdings list */
+.vault-hold-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;transition:background .15s;cursor:default;}
+.vault-hold-row:hover{background:rgba(255,255,255,.025);}
+.vault-hold-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.vault-hold-name{font-size:11px;font-weight:600;color:var(--text);}
+.vault-hold-cat{font-size:8px;color:var(--muted);}
+.vault-hold-val{font-size:11px;font-weight:700;color:var(--gold);}
+.vault-hold-pct{font-size:8px;color:var(--muted);}
+
+/* Category pills */
+.vault-cat-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;}
+.vault-cat-pill{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.vault-cat-pill:hover{color:var(--text);border-color:var(--border2);}
+.vault-cat-pill.active{border-color:currentColor;color:var(--gold);}
+.vault-cat-pill .cat-icon{font-size:14px;}
+.vault-cat-count{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--bg);flex-shrink:0;}
+
+/* Asset grid cards */
+.vault-asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;animation:vaultSlideUp .3s ease;}
+.vault-asset-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;transition:all .2s;position:relative;}
+.vault-asset-card.has-value{border-color:rgba(245,184,0,.2);background:linear-gradient(135deg,rgba(245,184,0,.04),transparent);}
+.vault-asset-card .va-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.vault-asset-card .va-custom-badge{position:absolute;top:8px;right:10px;font-size:7px;padding:2px 6px;border-radius:3px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.vault-asset-card .va-value-row{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.vault-asset-card .va-value-label{font-size:8px;color:var(--muted);letter-spacing:1px;}
+.vault-asset-card .va-value-num{font-size:13px;font-weight:700;}
+.vault-add-card{background:transparent;border:2px dashed var(--border);border-radius:10px;padding:30px 16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:all .2s;min-height:110px;}
+.vault-add-card:hover{border-color:var(--gold);background:rgba(245,184,0,.03);}
+.vault-add-card span:first-child{font-size:24px;opacity:.4;}
+.vault-add-card span:last-child{font-size:9px;color:var(--muted);letter-spacing:1px;}
+
+/* Vault input fields */
+.vault-field{margin-bottom:8px;}
+.vault-field label{display:block;font-size:7px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.vault-field input,.vault-field select{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border-radius:6px;outline:none;transition:border-color .15s;box-sizing:border-box;}
+.vault-field input:focus,.vault-field select:focus{border-color:var(--gold);}
+.vault-field input::placeholder{color:var(--muted);opacity:.5;}
+.vault-field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.vault-btn-del{background:rgba(255,59,92,.1);border:none;color:var(--red);width:22px;height:22px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;}
+.vault-btn-del:hover{background:rgba(255,59,92,.2);}
+
+/* Vault rename input */
+.vault-rename{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;width:100%;padding:2px 0;outline:none;}
+.vault-rename:focus{border-bottom-color:var(--gold);}
+
+/* Empty state */
+.vault-empty{text-align:center;padding:60px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;}
+.vault-empty-icon{font-size:42px;opacity:.2;margin-bottom:12px;}
+.vault-empty h3{font-family:'Space Grotesk',sans-serif;color:var(--text);font-size:16px;margin:0 0 6px;}
+.vault-empty p{color:var(--muted);font-size:10px;margin:0 0 18px;}
+.vault-empty button{background:var(--gold);border:none;color:#05070f;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:10px 28px;border-radius:6px;cursor:pointer;letter-spacing:1px;transition:opacity .15s;}
+.vault-empty button:hover{opacity:.85;}
+
+/* Manage totals bar */
+.vault-totals-bar{margin-top:20px;padding:16px 20px;background:linear-gradient(135deg,rgba(245,184,0,.06),rgba(245,184,0,.02));border:1px solid rgba(245,184,0,.12);border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.vault-totals-bar .vtb-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.vault-totals-bar .vtb-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--gold);}
+.vault-totals-bar .vtb-btn{background:var(--gold);border:none;color:#05070f;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:10px 24px;border-radius:6px;cursor:pointer;letter-spacing:1px;transition:opacity .15s;}
+.vault-totals-bar .vtb-btn:hover{opacity:.85;}
+
+/* Modal */
+.vault-modal-overlay{position:fixed;inset:0;background:rgba(5,7,15,.88);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center;animation:vaultFadeIn .15s ease;padding:16px;}
+.vault-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:22px;width:400px;max-width:90vw;box-shadow:0 16px 64px rgba(0,0,0,.7);animation:vaultSlideUp .2s ease;}
+.vault-modal-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.vault-modal-btns{display:flex;gap:8px;margin-top:16px;}
+.vault-modal-btns button{flex:1;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:10px;border-radius:6px;cursor:pointer;transition:all .12s;letter-spacing:1px;}
+.vault-btn-cancel{background:transparent;border:1px solid var(--border2);color:var(--muted);}
+.vault-btn-cancel:hover{color:var(--text);}
+.vault-btn-save{background:var(--gold);border:none;color:#05070f;}
+.vault-btn-save:hover{opacity:.85;}
+
+/* ── Mobile: Assets page ── */
+@media(max-width:768px){
+  #assets-page{padding:12px;}
+  .vault-summary{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .vault-stat{padding:14px 16px;}
+  .vault-stat-val{font-size:20px;}
+  .vault-dash-grid{grid-template-columns:1fr;}
+  .vault-cat-pills{gap:4px;}
+  .vault-cat-pill{padding:6px 12px;font-size:9px;}
+  .vault-asset-grid{grid-template-columns:1fr;}
+  .vault-totals-bar{flex-direction:column;text-align:center;}
+  .vault-modal{padding:18px;}
+}
+@media(max-width:420px){
+  .vault-summary{grid-template-columns:1fr 1fr;}
+  .vault-stat-val{font-size:18px;}
+  .vault-cat-pill{padding:5px 10px;font-size:8px;}
+}
+.vault-field input[type="number"]::-webkit-inner-spin-button,.vault-field input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.vault-field input[type="number"]{-moz-appearance:textfield;}
 
 /* ── TICKER ── */
 .ticker-bar{background:var(--bg2);border-bottom:1px solid var(--border);height:32px;display:flex;align-items:center;overflow:hidden;position:relative;}
@@ -604,56 +676,49 @@ canvas{display:block;}
 
 <!-- ══ ASSETS PAGE (Net Worth Calculator) ══ -->
 <div id="assets-page">
-  <div class="nw-summary">
-    <div class="nw-card assets-card">
-      <div class="nw-label">Total Assets</div>
-      <div class="nw-value pos" id="nw-total-assets">$0</div>
+  <!-- Header with view toggle -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+        <span style="font-size:18px;color:var(--gold);">◈</span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:1px;">Vault</span>
+      </div>
+      <div style="font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;">Portfolio Tracker</div>
     </div>
-    <div class="nw-card liab-card">
-      <div class="nw-label">Total Liabilities</div>
-      <div class="nw-value neg" id="nw-total-liab">$0</div>
-    </div>
-    <div class="nw-card net-card">
-      <div class="nw-label">Net Worth</div>
-      <div class="nw-value net" id="nw-net-worth">$0</div>
-    </div>
-  </div>
-
-  <!-- Market Holdings -->
-  <div class="nw-section">
-    <div class="nw-section-hdr">
-      <span class="nw-section-title">📈 Market Holdings</span>
-      <button class="nw-add-btn" onclick="openNwModal('market')">+ ADD HOLDING</button>
-    </div>
-    <div class="nw-list" id="nw-market-list">
-      <div class="nw-empty">No market holdings yet. Add stocks or crypto above.</div>
+    <div class="vault-views">
+      <button class="vault-view-btn active" id="vault-view-dash" onclick="switchVaultView('dashboard')">Dashboard</button>
+      <button class="vault-view-btn" id="vault-view-manage" onclick="switchVaultView('manage')">Manage</button>
     </div>
   </div>
 
-  <!-- Manual Assets -->
-  <div class="nw-section">
-    <div class="nw-section-hdr">
-      <span class="nw-section-title">🏠 Other Assets</span>
-      <button class="nw-add-btn" onclick="openNwModal('asset')">+ ADD ASSET</button>
-    </div>
-    <div class="nw-list" id="nw-asset-list">
-      <div class="nw-empty">No manual assets yet. Add real estate, vehicles, cash, etc.</div>
+  <!-- DASHBOARD VIEW -->
+  <div id="vault-dashboard" style="animation:vaultFadeIn .3s ease;">
+    <div class="vault-summary" id="vault-summary-cards"></div>
+    <div id="vault-empty-state"></div>
+    <div id="vault-filled-state" style="display:none;">
+      <div class="vault-dash-grid">
+        <div class="vault-panel">
+          <div class="vault-panel-title">Allocation</div>
+          <div id="vault-donut-wrap" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;"></div>
+        </div>
+        <div class="vault-panel">
+          <div class="vault-panel-title">Holdings</div>
+          <div id="vault-holdings-list" style="display:flex;flex-direction:column;gap:4px;max-height:380px;overflow-y:auto;"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Liabilities -->
-  <div class="nw-section">
-    <div class="nw-section-hdr">
-      <span class="nw-section-title">💳 Liabilities</span>
-      <button class="nw-add-btn" onclick="openNwModal('liability')">+ ADD LIABILITY</button>
-    </div>
-    <div class="nw-list" id="nw-liab-list">
-      <div class="nw-empty">No liabilities yet. Add mortgages, loans, credit cards, etc.</div>
-    </div>
+  <!-- MANAGE VIEW -->
+  <div id="vault-manage" style="display:none;animation:vaultFadeIn .3s ease;">
+    <div style="font-size:10px;color:var(--muted);margin-bottom:16px;">Select a category to add or edit assets. Use <span style="color:var(--gold);">+ Add Custom</span> to create your own.</div>
+    <div class="vault-cat-pills" id="vault-cat-pills"></div>
+    <div id="vault-cat-content"></div>
+    <div id="vault-manage-totals"></div>
   </div>
 </div>
 
-<div id="nw-modal-root"></div>
+<div id="vault-modal-root"></div>
 
 <script>
 /* ══ DATA ══ */
@@ -714,16 +779,16 @@ const OWNERSHIP={
 /* Corporate Bitcoin Holdings — sourced from BitcoinTreasuries.net (Apr 2026) */
 const BTC_CORP={
   holders:[
-    {name:'Strategy (MSTR)',short:'MSTR',btc:528185,usdB:44.8,color:'#f7931a',sector:'Software'},
-    {name:'Marathon Digital',short:'MARA',btc:47531, usdB:4.03,color:'#ff7c2a',sector:'Mining'},
-    {name:'Riot Platforms', short:'RIOT',btc:19225, usdB:1.63,color:'#ff3b5c',sector:'Mining'},
-    {name:'CleanSpark',     short:'CLSK',btc:11177, usdB:0.95,color:'#00e676',sector:'Mining'},
-    {name:'Tesla',          short:'TSLA',btc:11509, usdB:0.98,color:'#e31937',sector:'Auto'},
-    {name:'Coinbase',       short:'COIN',btc:9267,  usdB:0.79,color:'#0052ff',sector:'Exchange'},
-    {name:'Block Inc',      short:'SQ',  btc:8027,  usdB:0.68,color:'#00d4ff',sector:'Fintech'},
-    {name:'Metaplanet',     short:'3350',btc:4855,  usdB:0.41,color:'#a855f7',sector:'Japan'},
-    {name:'Semler Sci.',    short:'SMLR',btc:3808,  usdB:0.32,color:'#627eea',sector:'Health'},
-    {name:'Boyaa Inter.',   short:'BOYA',btc:3183,  usdB:0.27,color:'#9945ff',sector:'Gaming'},
+    {name:'Strategy (MSTR)',short:'MSTR',btc:843738,usdB:68.5,color:'#f7931a',sector:'Software'},
+    {name:'Twenty One Cap.',short:'XXI', btc:43514, usdB:3.53,color:'#ff7c2a',sector:'BTC Treasury'},
+    {name:'Metaplanet',     short:'3350',btc:40177, usdB:3.26,color:'#a855f7',sector:'Japan'},
+    {name:'MARA Holdings',  short:'MARA',btc:35303, usdB:2.87,color:'#00e676',sector:'Mining'},
+    {name:'Riot Platforms',  short:'RIOT',btc:19225, usdB:1.56,color:'#ff3b5c',sector:'Mining'},
+    {name:'CleanSpark',      short:'CLSK',btc:11177, usdB:0.91,color:'#3d9dff',sector:'Mining'},
+    {name:'Trump Media',     short:'DJT', btc:11542, usdB:0.94,color:'#e31937',sector:'Media'},
+    {name:'Tesla',           short:'TSLA',btc:11509, usdB:0.93,color:'#c0c0c0',sector:'Auto'},
+    {name:'Block Inc',       short:'SQ',  btc:8780,  usdB:0.71,color:'#00d4ff',sector:'Fintech'},
+    {name:'Coinbase',        short:'COIN',btc:9267,  usdB:0.75,color:'#0052ff',sector:'Exchange'},
   ],
   tiers:[
     {label:'<1K BTC',    min:0,    max:999,   color:'rgba(247,147,26,0.4)'},
@@ -1945,193 +2010,410 @@ function switchTab(tab){
   }
 }
 
-/* ══ NET WORTH CALCULATOR ══ */
-const NW_STORAGE_KEY='rb_nw_data';
-function loadNwData(){
-  try{const d=localStorage.getItem(NW_STORAGE_KEY);return d?JSON.parse(d):{market:[],assets:[],liabilities:[]};}
-  catch(e){return{market:[],assets:[],liabilities:[]};}
-}
-function saveNwData(d){try{localStorage.setItem(NW_STORAGE_KEY,JSON.stringify(d));}catch(e){}}
+/* ══ VAULT — Portfolio Tracker ══ */
+const VAULT_KEY='rb_vault_data';
+const VAULT_CATEGORIES={
+  precious_metals:{label:'Precious Metals',icon:'⬡',color:'#D4A017',unitOptions:['oz','grams','$'],
+    assets:[
+      {id:'gold_oz',name:'Gold',unit:'oz',defaultPrice:2350},
+      {id:'silver_oz',name:'Silver',unit:'oz',defaultPrice:29.5},
+      {id:'platinum_oz',name:'Platinum',unit:'oz',defaultPrice:1020},
+      {id:'palladium_oz',name:'Palladium',unit:'oz',defaultPrice:980},
+    ]},
+  stocks:{label:'Stocks',icon:'◈',color:'var(--green)',colorHex:'#00e676',unitOptions:['shares','$'],
+    assets:[
+      {id:'v_aapl',name:'Apple (AAPL)',unit:'shares',defaultPrice:195},
+      {id:'v_msft',name:'Microsoft (MSFT)',unit:'shares',defaultPrice:420},
+      {id:'v_googl',name:'Alphabet (GOOGL)',unit:'shares',defaultPrice:175},
+      {id:'v_amzn',name:'Amazon (AMZN)',unit:'shares',defaultPrice:185},
+      {id:'v_tsla',name:'Tesla (TSLA)',unit:'shares',defaultPrice:175},
+      {id:'v_nvda',name:'NVIDIA (NVDA)',unit:'shares',defaultPrice:880},
+      {id:'v_spy',name:'S&P 500 ETF (SPY)',unit:'shares',defaultPrice:525},
+      {id:'v_voo',name:'Vanguard S&P (VOO)',unit:'shares',defaultPrice:482},
+    ]},
+  crypto:{label:'Crypto',icon:'◇',color:'var(--orange)',colorHex:'#ff7c2a',unitOptions:['coins','$'],
+    assets:[
+      {id:'v_btc',name:'Bitcoin (BTC)',unit:'coins',defaultPrice:67500},
+      {id:'v_eth',name:'Ethereum (ETH)',unit:'coins',defaultPrice:3400},
+      {id:'v_sol',name:'Solana (SOL)',unit:'coins',defaultPrice:155},
+      {id:'v_xrp',name:'Ripple (XRP)',unit:'coins',defaultPrice:0.52},
+      {id:'v_ada',name:'Cardano (ADA)',unit:'coins',defaultPrice:0.45},
+    ]},
+  real_estate:{label:'Real Estate',icon:'⊞',color:'var(--blue)',colorHex:'#3d9dff',unitOptions:['$'],
+    assets:[
+      {id:'v_home',name:'Primary Residence',unit:'$',defaultPrice:1},
+      {id:'v_rental',name:'Rental Property',unit:'$',defaultPrice:1},
+      {id:'v_commercial',name:'Commercial Property',unit:'$',defaultPrice:1},
+      {id:'v_land',name:'Land',unit:'$',defaultPrice:1},
+    ]},
+  vehicles:{label:'Vehicles',icon:'◬',color:'var(--red)',colorHex:'#ff3b5c',unitOptions:['$'],
+    assets:[
+      {id:'v_car1',name:'Vehicle 1',unit:'$',defaultPrice:1},
+      {id:'v_car2',name:'Vehicle 2',unit:'$',defaultPrice:1},
+      {id:'v_moto',name:'Motorcycle',unit:'$',defaultPrice:1},
+      {id:'v_classic',name:'Classic / Collector Car',unit:'$',defaultPrice:1},
+    ]},
+  collectibles:{label:'Collectibles',icon:'◉',color:'var(--purple)',colorHex:'#a855f7',unitOptions:['$'],
+    assets:[
+      {id:'v_art',name:'Art',unit:'$',defaultPrice:1},
+      {id:'v_watches',name:'Watches',unit:'$',defaultPrice:1},
+      {id:'v_wine',name:'Wine Collection',unit:'$',defaultPrice:1},
+      {id:'v_cards',name:'Trading Cards',unit:'$',defaultPrice:1},
+      {id:'v_coins',name:'Coin Collection',unit:'$',defaultPrice:1},
+    ]},
+};
 
-function renderNwPage(){
-  const d=loadNwData();
-  renderNwMarket(d);
-  renderNwAssets(d);
-  renderNwLiab(d);
-  updateNwTotals(d);
-}
+const VAULT_COLOR_MAP={precious_metals:'#D4A017',stocks:'#00e676',crypto:'#ff7c2a',real_estate:'#3d9dff',vehicles:'#ff3b5c',collectibles:'#a855f7'};
+let vaultData={holdings:{},customNames:{},customAssets:{}};
+let vaultView='dashboard';
+let vaultActiveCat=null;
 
-async function renderNwMarket(d){
-  const list=document.getElementById('nw-market-list');
-  if(!d.market.length){list.innerHTML='<div class="nw-empty">No market holdings yet. Add stocks or crypto above.</div>';return;}
-  let html='';
-  for(let idx=0;idx<d.market.length;idx++){
-    const h=d.market[idx];
-    let livePrice=h.manualPrice||0, chg=0, icon='📊', iconBg='rgba(61,157,255,.15)', iconColor='var(--blue)';
-    let priceSource='manual';
-    if(h.type==='stock'){
-      const q=quotes[h.ticker];
-      if(q&&!h.manualPrice){livePrice=q.price;chg=q.chgPct||0;priceSource='live';}
-      else if(h.manualPrice)livePrice=h.manualPrice;
-      icon='📈';iconBg='rgba(0,230,118,.1)';iconColor='var(--green)';
-    }else if(h.type==='crypto'){
-      const c=cryptoData[h.ticker];
-      if(c&&!h.manualPrice){livePrice=c.price;chg=c.chgPct||0;priceSource='live';}
-      else if(h.manualPrice)livePrice=h.manualPrice;
-      icon='₿';iconBg='rgba(168,85,247,.15)';iconColor='var(--purple)';
-    }else{
-      // custom asset
-      livePrice=h.manualPrice||0;
-      icon='💎';iconBg='rgba(245,184,0,.1)';iconColor='var(--gold)';
+function loadVault(){
+  try{
+    const raw=localStorage.getItem(VAULT_KEY);
+    if(raw){
+      const d=JSON.parse(raw);
+      vaultData.holdings=d.holdings||{};
+      vaultData.customNames=d.customNames||{};
+      vaultData.customAssets=d.customAssets||{};
     }
-    const totalVal=livePrice*h.qty;
-    const up=chg>=0;
-    const chgHtml=priceSource==='live'?`<div class="nw-row-chg" style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:`<div class="nw-row-chg" style="color:var(--muted);">manual</div>`;
-    html+=`<div class="nw-row">
-      <div class="nw-row-icon" style="background:${iconBg};color:${iconColor}">${icon}</div>
-      <div class="nw-row-info"><div class="nw-row-name">${h.ticker} × ${h.qty}</div><div class="nw-row-detail">${h.type==='custom'?'Custom':h.type==='stock'?'Stock':'Crypto'} · $${fmt(livePrice,2)} each</div></div>
-      <div class="nw-row-val"><div class="nw-row-price">$${fmtL(totalVal)}</div>${chgHtml}</div>
-      <button class="nw-row-del" onclick="deleteNwItem('market',${idx})">✕</button>
-    </div>`;
-  }
-  list.innerHTML=html;
+    // Migrate old NW data if exists
+    const old=localStorage.getItem('rb_nw_data');
+    if(old&&!raw){
+      try{
+        const od=JSON.parse(old);
+        if(od.market)od.market.forEach(m=>{
+          const id='migrated_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+          vaultData.holdings[id]={quantity:m.qty||0,pricePerUnit:m.manualPrice||0,value:(m.qty||0)*(m.manualPrice||0),category:m.type==='crypto'?'crypto':'stocks'};
+          vaultData.customNames[id]=m.ticker;
+        });
+        if(od.assets)od.assets.forEach(a=>{
+          const id='migrated_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+          const cat=a.category==='vehicle'?'vehicles':a.category==='cash'?'precious_metals':a.category==='retirement'?'stocks':a.category==='real_estate'?'real_estate':'collectibles';
+          vaultData.holdings[id]={quantity:a.value,pricePerUnit:1,value:a.value,category:cat};
+          vaultData.customNames[id]=a.name;
+        });
+        saveVault();
+      }catch(e){}
+    }
+  }catch(e){vaultData={holdings:{},customNames:{},customAssets:{}};}
+}
+function saveVault(){try{localStorage.setItem(VAULT_KEY,JSON.stringify(vaultData));}catch(e){}}
+
+function vaultFmt(n){
+  if(n>=1e9)return '$'+(n/1e9).toFixed(2)+'B';
+  if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1e3)return '$'+(n/1e3).toFixed(1)+'K';
+  return '$'+n.toFixed(n<10?2:0);
 }
 
-function renderNwAssets(d){
-  const list=document.getElementById('nw-asset-list');
-  if(!d.assets.length){list.innerHTML='<div class="nw-empty">No manual assets yet. Add real estate, vehicles, cash, etc.</div>';return;}
-  list.innerHTML=d.assets.map((a,i)=>{
-    const icons={real_estate:'🏠',vehicle:'🚗',cash:'💵',retirement:'📊',collectibles:'💎',business:'🏢',other:'📋'};
-    const noteHtml=a.notes?`<div style="font-size:7px;color:var(--muted);margin-top:1px;">${a.notes}</div>`:'';
-    return`<div class="nw-row">
-      <div class="nw-row-icon" style="background:rgba(0,230,118,.1);color:var(--green)">${icons[a.category]||'💎'}</div>
-      <div class="nw-row-info"><div class="nw-row-name">${a.name}</div><div class="nw-row-detail">${(a.category||'other').replace(/_/g,' ')}</div>${noteHtml}</div>
-      <div class="nw-row-val"><div class="nw-row-price">$${fmtL(a.value)}</div></div>
-      <button class="nw-row-del" onclick="deleteNwItem('assets',${i})">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function renderNwLiab(d){
-  const list=document.getElementById('nw-liab-list');
-  if(!d.liabilities.length){list.innerHTML='<div class="nw-empty">No liabilities yet. Add mortgages, loans, credit cards, etc.</div>';return;}
-  list.innerHTML=d.liabilities.map((l,i)=>{
-    const icons={mortgage:'🏦',auto_loan:'🚗',student_loan:'🎓',credit_card:'💳',personal_loan:'📋',medical:'🏥',other:'📋'};
-    const rateHtml=l.rate?`<div style="font-size:7px;color:var(--orange);margin-top:1px;">${l.rate}% APR</div>`:'';
-    return`<div class="nw-row">
-      <div class="nw-row-icon" style="background:rgba(255,59,92,.1);color:var(--red)">${icons[l.category]||'📋'}</div>
-      <div class="nw-row-info"><div class="nw-row-name">${l.name}</div><div class="nw-row-detail">${(l.category||'other').replace(/_/g,' ')}</div>${rateHtml}</div>
-      <div class="nw-row-val"><div class="nw-row-price" style="color:var(--red)">-$${fmtL(l.value)}</div></div>
-      <button class="nw-row-del" onclick="deleteNwItem('liabilities',${i})">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function updateNwTotals(d){
-  let assetTotal=0,liabTotal=0;
-  d.market.forEach(h=>{
-    let price=h.manualPrice||0;
-    if(h.type==='stock'&&quotes[h.ticker]&&!h.manualPrice)price=quotes[h.ticker].price;
-    if(h.type==='crypto'&&cryptoData[h.ticker]&&!h.manualPrice)price=cryptoData[h.ticker].price;
-    if(h.type==='custom')price=h.manualPrice||0;
-    assetTotal+=price*h.qty;
+function getVaultCategories(){
+  // Merge custom assets into a working copy
+  const cats=JSON.parse(JSON.stringify(VAULT_CATEGORIES));
+  Object.entries(vaultData.customAssets||{}).forEach(([catKey,arr])=>{
+    if(cats[catKey]&&Array.isArray(arr)){
+      arr.forEach(a=>{
+        if(!cats[catKey].assets.find(x=>x.id===a.id))cats[catKey].assets.push(a);
+      });
+    }
   });
-  d.assets.forEach(a=>assetTotal+=a.value);
-  d.liabilities.forEach(l=>liabTotal+=l.value);
-  const net=assetTotal-liabTotal;
-  document.getElementById('nw-total-assets').textContent='$'+fmtL(assetTotal);
-  document.getElementById('nw-total-liab').textContent='-$'+fmtL(liabTotal);
-  const nwEl=document.getElementById('nw-net-worth');
-  nwEl.textContent=(net>=0?'$':'-$')+fmtL(Math.abs(net));
-  nwEl.className='nw-value '+(net>=0?'net':'neg');
+  return cats;
 }
 
-function deleteNwItem(cat,idx){
-  const d=loadNwData();
-  d[cat].splice(idx,1);
-  saveNwData(d);
-  renderNwPage();
+function switchVaultView(v){
+  vaultView=v;
+  document.getElementById('vault-view-dash').classList.toggle('active',v==='dashboard');
+  document.getElementById('vault-view-manage').classList.toggle('active',v==='manage');
+  document.getElementById('vault-dashboard').style.display=v==='dashboard'?'':'none';
+  document.getElementById('vault-manage').style.display=v==='manage'?'':'none';
+  renderVault();
 }
 
-function openNwModal(type){
-  const root=document.getElementById('nw-modal-root');
-  let fields='';
-  if(type==='market'){
-    fields=`
-      <div class="nw-field"><label>Type</label><select id="nwm-type" onchange="nwMarketTypeChange()"><option value="stock">Stock</option><option value="crypto">Crypto</option><option value="custom">Custom Asset</option></select></div>
-      <div class="nw-field" id="nwm-ticker-wrap"><label>Ticker Symbol</label><input id="nwm-ticker" placeholder="e.g. AAPL, BTC" /></div>
-      <div class="nw-field" id="nwm-cname-wrap" style="display:none;"><label>Asset Name</label><input id="nwm-cname" placeholder="e.g. Gold, Real Estate Fund" /></div>
-      <div class="nw-field"><label>Quantity / Shares</label><input id="nwm-qty" type="number" step="any" placeholder="e.g. 10" /></div>
-      <div class="nw-field"><label>Price Per Unit ($) <span style="color:var(--muted);font-weight:400;text-transform:none;">(leave blank for live price)</span></label><input id="nwm-price" type="number" step="any" placeholder="Auto from market data" /></div>`;
-  }else if(type==='asset'){
-    fields=`
-      <div class="nw-field"><label>Name</label><input id="nwm-name" placeholder="e.g. Primary Home, Savings Account" /></div>
-      <div class="nw-field"><label>Category</label><select id="nwm-cat"><option value="real_estate">Real Estate</option><option value="vehicle">Vehicle</option><option value="cash">Cash / Savings</option><option value="retirement">Retirement Account</option><option value="collectibles">Collectibles</option><option value="business">Business Equity</option><option value="other">Other</option></select></div>
-      <div class="nw-field"><label>Estimated Value ($)</label><input id="nwm-val" type="number" step="any" placeholder="e.g. 350000" /></div>
-      <div class="nw-field"><label>Notes <span style="color:var(--muted);font-weight:400;text-transform:none;">(optional)</span></label><input id="nwm-notes" placeholder="e.g. Purchased 2020, Zestimate $380K" /></div>`;
-  }else{
-    fields=`
-      <div class="nw-field"><label>Name</label><input id="nwm-name" placeholder="e.g. Mortgage, Car Loan" /></div>
-      <div class="nw-field"><label>Category</label><select id="nwm-cat"><option value="mortgage">Mortgage</option><option value="auto_loan">Auto Loan</option><option value="student_loan">Student Loan</option><option value="credit_card">Credit Card</option><option value="personal_loan">Personal Loan</option><option value="medical">Medical Debt</option><option value="other">Other</option></select></div>
-      <div class="nw-field"><label>Amount Owed ($)</label><input id="nwm-val" type="number" step="any" placeholder="e.g. 280000" /></div>
-      <div class="nw-field"><label>Interest Rate (%) <span style="color:var(--muted);font-weight:400;text-transform:none;">(optional)</span></label><input id="nwm-rate" type="number" step="any" placeholder="e.g. 6.5" /></div>`;
+function renderVault(){
+  if(vaultView==='dashboard')renderVaultDashboard();
+  else renderVaultManage();
+}
+
+/* ── Dashboard ── */
+function renderVaultDashboard(){
+  const cats=getVaultCategories();
+  const h=vaultData.holdings;
+  let totalNW=0;
+  const catBreak={};
+  let holdingCount=0;
+  Object.values(h).forEach(v=>{
+    if(v.value>0){totalNW+=v.value;catBreak[v.category]=(catBreak[v.category]||0)+v.value;holdingCount++;}
+  });
+  const catCount=Object.keys(catBreak).length;
+
+  // Summary cards
+  const sc=document.getElementById('vault-summary-cards');
+  sc.innerHTML=[
+    {label:'Net Worth',val:vaultFmt(totalNW),accent:true},
+    {label:'Asset Classes',val:catCount,color:'var(--text)'},
+    {label:'Total Holdings',val:holdingCount,color:'var(--text)'},
+    {label:'Categories',val:Object.keys(VAULT_CATEGORIES).length,color:'var(--text)'},
+  ].map(c=>`<div class="vault-stat${c.accent?' accent':''}">
+    <div class="vault-stat-label">${c.label}</div>
+    <div class="vault-stat-val" style="${c.color?'color:'+c.color:''}">${c.val}</div>
+  </div>`).join('');
+
+  // Empty vs filled
+  if(totalNW===0){
+    document.getElementById('vault-empty-state').innerHTML=`<div class="vault-empty">
+      <div class="vault-empty-icon">◈</div>
+      <h3>Your Vault is Empty</h3>
+      <p>Add your first assets to start tracking your portfolio</p>
+      <button onclick="switchVaultView('manage')">ADD ASSETS</button>
+    </div>`;
+    document.getElementById('vault-filled-state').style.display='none';
+    return;
   }
-  root.innerHTML=`<div class="nw-modal-overlay" onclick="if(event.target===this)closeNwModal()">
-    <div class="nw-modal">
-      <div class="nw-modal-title">${type==='market'?'Add Market Holding':type==='asset'?'Add Asset':'Add Liability'}</div>
-      ${fields}
-      <div class="nw-modal-btns">
-        <button class="nw-btn-cancel" onclick="closeNwModal()">CANCEL</button>
-        <button class="nw-btn-save" onclick="saveNwItem('${type}')">ADD</button>
+  document.getElementById('vault-empty-state').innerHTML='';
+  document.getElementById('vault-filled-state').style.display='';
+
+  // Donut chart
+  renderVaultDonut(catBreak,totalNW,cats);
+
+  // Holdings list
+  const list=document.getElementById('vault-holdings-list');
+  const sorted=Object.entries(h).filter(([,v])=>v.value>0).sort((a,b)=>b[1].value-a[1].value);
+  list.innerHTML=sorted.map(([id,v])=>{
+    let name=vaultData.customNames[id]||id;
+    Object.values(cats).forEach(c=>{const f=c.assets.find(a=>a.id===id);if(f&&!vaultData.customNames[id])name=f.name;});
+    const color=VAULT_COLOR_MAP[v.category]||'var(--gold)';
+    const pct=((v.value/totalNW)*100).toFixed(1);
+    return`<div class="vault-hold-row">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <div class="vault-hold-dot" style="background:${color};box-shadow:0 0 6px ${color}60;"></div>
+        <div style="min-width:0;">
+          <div class="vault-hold-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+          <div class="vault-hold-cat">${cats[v.category]?.label||v.category}</div>
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="vault-hold-val">${vaultFmt(v.value)}</div>
+        <div class="vault-hold-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Donut SVG ── */
+function renderVaultDonut(catBreak,total,cats){
+  const wrap=document.getElementById('vault-donut-wrap');
+  const entries=Object.entries(catBreak).filter(([,v])=>v>0);
+  if(!entries.length){wrap.innerHTML='';return;}
+  const size=170,cx=85,cy=85,r=60,sw=20;
+  let cum=-Math.PI/2;
+  let arcsSvg='';
+  let legendHtml='';
+  entries.forEach(([cat,val])=>{
+    const ang=(val/total)*Math.PI*2;
+    const s=cum;cum+=ang;
+    const la=ang>Math.PI?1:0;
+    const color=VAULT_COLOR_MAP[cat]||'#f5b800';
+    const x1=cx+r*Math.cos(s),y1=cy+r*Math.sin(s);
+    const x2=cx+r*Math.cos(cum),y2=cy+r*Math.sin(cum);
+    // If single entry (full circle), use two arcs
+    if(entries.length===1){
+      arcsSvg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" style="filter:drop-shadow(0 0 6px ${color}40);"/>`;
+    }else{
+      arcsSvg+=`<path d="M ${x1} ${y1} A ${r} ${r} 0 ${la} 1 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" style="filter:drop-shadow(0 0 6px ${color}40);"/>`;
+    }
+    const pct=((val/total)*100).toFixed(1);
+    legendHtml+=`<div style="display:flex;align-items:center;gap:8px;font-size:10px;">
+      <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;"></span>
+      <span style="color:var(--muted);min-width:80px;">${cats[cat]?.label||cat}</span>
+      <span style="color:var(--text);font-weight:600;">${pct}%</span>
+    </div>`;
+  });
+  wrap.innerHTML=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    ${arcsSvg}
+    <text x="${cx}" y="${cy-6}" text-anchor="middle" fill="var(--gold)" font-size="16" font-weight="700" font-family="'Space Grotesk',sans-serif">${vaultFmt(total)}</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" fill="var(--muted)" font-size="8" font-family="'JetBrains Mono',monospace" letter-spacing="1.5">NET WORTH</text>
+  </svg>
+  <div style="display:flex;flex-direction:column;gap:6px;">${legendHtml}</div>`;
+}
+
+/* ── Manage ── */
+function renderVaultManage(){
+  const cats=getVaultCategories();
+  const pills=document.getElementById('vault-cat-pills');
+  pills.innerHTML=Object.entries(cats).map(([key,cat])=>{
+    const count=Object.values(vaultData.holdings).filter(h=>h.category===key&&h.quantity>0).length;
+    const color=VAULT_COLOR_MAP[key]||'var(--gold)';
+    const isActive=vaultActiveCat===key;
+    return`<button class="vault-cat-pill${isActive?' active':''}" onclick="toggleVaultCat('${key}')" style="${isActive?'border-color:'+color+';color:'+color+';background:'+color+'12;':''}">
+      <span class="cat-icon">${cat.icon}</span>${cat.label}
+      ${count>0?'<span class="vault-cat-count" style="background:'+color+';">'+count+'</span>':''}
+    </button>`;
+  }).join('');
+
+  // Category content
+  const content=document.getElementById('vault-cat-content');
+  if(!vaultActiveCat){content.innerHTML='';renderVaultManageTotals();return;}
+  const cat=cats[vaultActiveCat];
+  const color=VAULT_COLOR_MAP[vaultActiveCat]||'var(--gold)';
+
+  let cardsHtml=cat.assets.map(asset=>{
+    const h=vaultData.holdings[asset.id];
+    const isDollar=asset.unit==='$';
+    const hasVal=h&&h.quantity>0;
+    const isCustom=asset.custom;
+    const isRenameable=isCustom||isDollar;
+    const displayName=vaultData.customNames[asset.id]||'';
+
+    let fieldsHtml='';
+    if(isDollar){
+      fieldsHtml=`<div class="vault-field">
+        <label>Total Value ($)</label>
+        <input type="number" placeholder="0" value="${h?.value||''}" oninput="vaultUpdateHolding('${asset.id}','${vaultActiveCat}',this.value,1,'${(displayName||asset.name).replace(/'/g,"\\'")}')"/>
+      </div>`;
+    }else{
+      fieldsHtml=`<div class="vault-field-row">
+        <div class="vault-field">
+          <label>Quantity (${asset.unit})</label>
+          <input type="number" placeholder="0" value="${h?.quantity||''}" oninput="vaultUpdateHolding('${asset.id}','${vaultActiveCat}',this.value,this.parentElement.nextElementSibling.querySelector('input').value||${asset.defaultPrice},'${(displayName||asset.name).replace(/'/g,"\\'")}')"/>
+        </div>
+        <div class="vault-field">
+          <label>Price / ${asset.unit==='shares'?'share':asset.unit==='coins'?'coin':asset.unit}</label>
+          <input type="number" placeholder="${asset.defaultPrice||0}" value="${h?.pricePerUnit||''}" oninput="vaultUpdateHolding('${asset.id}','${vaultActiveCat}',this.parentElement.previousElementSibling.querySelector('input').value||0,this.value,'${(displayName||asset.name).replace(/'/g,"\\'")}')"/>
+        </div>
+      </div>`;
+    }
+
+    return`<div class="vault-asset-card${hasVal?' has-value':''}">
+      ${isCustom?'<div class="va-custom-badge" style="background:'+color+'18;color:'+color+';">CUSTOM</div>':''}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;${isCustom?'padding-right:55px;':''}">
+        <div class="va-name" style="flex:1;">
+          ${isRenameable?`<input class="vault-rename" placeholder="${asset.name}" value="${displayName}" oninput="vaultRename('${asset.id}',this.value)"/>`:asset.name}
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0;margin-left:6px;">
+          ${hasVal?`<button class="vault-btn-del" onclick="vaultRemoveHolding('${asset.id}')" title="Clear">×</button>`:''}
+          ${isCustom?`<button class="vault-btn-del" data-cat="${vaultActiveCat}" data-aid="${asset.id}" onclick="vaultRemoveCustom(this.dataset.cat,this.dataset.aid)" title="Delete" style="font-size:9px;">🗑</button>`:''}
+        </div>
+      </div>
+      ${fieldsHtml}
+      ${hasVal?'<div class="va-value-row"><span class="va-value-label">VALUE</span><span class="va-value-num" style="color:'+color+';">'+vaultFmt(h.value)+'</span></div>':''}
+    </div>`;
+  }).join('');
+
+  // Add custom card
+  cardsHtml+=`<div class="vault-add-card" onclick="openVaultAddModal('${vaultActiveCat}')">
+    <span style="color:${color};">+</span>
+    <span>Add Custom Asset</span>
+  </div>`;
+
+  content.innerHTML=`<div style="background:var(--bg2);border:1px solid ${color}20;border-radius:12px;padding:20px;animation:vaultSlideUp .25s ease;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">${cat.icon}</span>
+        <span style="font-size:13px;font-weight:700;color:${color};">${cat.label}</span>
+        <span style="font-size:9px;color:var(--muted);">${cat.assets.length} assets</span>
+      </div>
+      <button onclick="openVaultAddModal('${vaultActiveCat}')" style="display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:6px;border:1px dashed ${color}50;background:${color}08;color:${color};cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.5px;">+ ADD CUSTOM</button>
+    </div>
+    <div class="vault-asset-grid">${cardsHtml}</div>
+  </div>`;
+
+  renderVaultManageTotals();
+}
+
+function renderVaultManageTotals(){
+  const el=document.getElementById('vault-manage-totals');
+  let total=0;
+  Object.values(vaultData.holdings).forEach(h=>{if(h.value>0)total+=h.value;});
+  if(total<=0){el.innerHTML='';return;}
+  el.innerHTML=`<div class="vault-totals-bar">
+    <div><div class="vtb-label">Portfolio Total</div><div class="vtb-val">${vaultFmt(total)}</div></div>
+    <button class="vtb-btn" onclick="switchVaultView('dashboard')">VIEW DASHBOARD →</button>
+  </div>`;
+}
+
+function toggleVaultCat(key){
+  vaultActiveCat=vaultActiveCat===key?null:key;
+  renderVaultManage();
+}
+
+function vaultUpdateHolding(id,category,qty,price,name){
+  const q=parseFloat(qty)||0;
+  const p=parseFloat(price)||0;
+  vaultData.holdings[id]={quantity:q,pricePerUnit:p,value:q*p,category:category};
+  if(name)vaultData.customNames[id]=name;
+  saveVault();
+  // Update value display without full re-render
+  renderVaultManageTotals();
+}
+
+function vaultRename(id,name){
+  vaultData.customNames[id]=name;
+  const h=vaultData.holdings[id];
+  if(h)h.customName=name;
+  saveVault();
+}
+
+function vaultRemoveHolding(id){
+  delete vaultData.holdings[id];
+  saveVault();
+  renderVault();
+}
+
+function vaultRemoveCustom(catKey,assetId){
+  delete vaultData.holdings[assetId];
+  delete vaultData.customNames[assetId];
+  if(!vaultData.customAssets[catKey])vaultData.customAssets[catKey]=[];
+  vaultData.customAssets[catKey]=vaultData.customAssets[catKey].filter(a=>a.id!==assetId);
+  saveVault();
+  renderVaultManage();
+}
+
+function openVaultAddModal(catKey){
+  const cats=getVaultCategories();
+  const cat=cats[catKey];
+  const color=VAULT_COLOR_MAP[catKey]||'var(--gold)';
+  const root=document.getElementById('vault-modal-root');
+  const placeholders={stocks:'e.g. Meta (META)',crypto:'e.g. Dogecoin (DOGE)',vehicles:'e.g. 2024 BMW M4',real_estate:'e.g. Beach House',precious_metals:'e.g. Rhodium',collectibles:'e.g. Vintage Rolex'};
+  root.innerHTML=`<div class="vault-modal-overlay" onclick="if(event.target===this)closeVaultModal()">
+    <div class="vault-modal">
+      <div class="vault-modal-title" style="color:${color};"><span>${cat.icon}</span> Add to ${cat.label}</div>
+      <div class="vault-field"><label>Asset Name *</label><input id="vm-name" placeholder="${placeholders[catKey]||'Enter name'}" onkeydown="if(event.key==='Enter')saveVaultCustom('${catKey}')"/></div>
+      <div class="vault-field-row">
+        <div class="vault-field"><label>Unit Type</label>
+          <select id="vm-unit" onchange="document.getElementById('vm-price').disabled=this.value==='$';document.getElementById('vm-price').style.opacity=this.value==='$'?'.4':'1';">
+            ${(cat.unitOptions||['$']).map(u=>'<option value="'+u+'" style="background:var(--bg2);color:var(--text);">'+u+'</option>').join('')}
+          </select>
+        </div>
+        <div class="vault-field"><label>Default Price / unit</label><input id="vm-price" type="number" placeholder="0.00" onkeydown="if(event.key==='Enter')saveVaultCustom('${catKey}')"/></div>
+      </div>
+      <div class="vault-modal-btns">
+        <button class="vault-btn-cancel" onclick="closeVaultModal()">CANCEL</button>
+        <button class="vault-btn-save" onclick="saveVaultCustom('${catKey}')">ADD ASSET</button>
       </div>
     </div>
   </div>`;
-  setTimeout(()=>{const inp=root.querySelector('input');if(inp)inp.focus();},100);
+  setTimeout(()=>{const inp=root.querySelector('#vm-name');if(inp)inp.focus();},100);
 }
 
-function nwMarketTypeChange(){
-  const type=document.getElementById('nwm-type').value;
-  document.getElementById('nwm-ticker-wrap').style.display=type==='custom'?'none':'';
-  const cw=document.getElementById('nwm-cname-wrap');
-  if(cw)cw.style.display=type==='custom'?'':'none';
+function closeVaultModal(){document.getElementById('vault-modal-root').innerHTML='';}
+
+function saveVaultCustom(catKey){
+  const name=(document.getElementById('vm-name').value||'').trim();
+  if(!name)return;
+  const unit=document.getElementById('vm-unit').value;
+  const price=parseFloat(document.getElementById('vm-price').value)||0;
+  const id='vc_'+catKey+'_'+Date.now();
+  if(!vaultData.customAssets[catKey])vaultData.customAssets[catKey]=[];
+  vaultData.customAssets[catKey].push({id,name,unit,defaultPrice:unit==='$'?1:price,custom:true});
+  saveVault();
+  closeVaultModal();
+  renderVaultManage();
 }
 
-function closeNwModal(){document.getElementById('nw-modal-root').innerHTML='';}
-
-function saveNwItem(type){
-  const d=loadNwData();
-  if(type==='market'){
-    const mtype=document.getElementById('nwm-type').value;
-    const qty=parseFloat(document.getElementById('nwm-qty').value)||0;
-    const manualPrice=parseFloat(document.getElementById('nwm-price').value)||0;
-    if(qty<=0)return;
-    if(mtype==='custom'){
-      const name=(document.getElementById('nwm-cname').value||'').trim();
-      if(!name)return;
-      d.market.push({type:'custom',ticker:name,qty,manualPrice});
-    }else{
-      const ticker=(document.getElementById('nwm-ticker').value||'').toUpperCase().trim();
-      if(!ticker)return;
-      d.market.push({type:mtype,ticker,qty,manualPrice});
-    }
-  }else if(type==='asset'){
-    const name=document.getElementById('nwm-name').value.trim();
-    const cat=document.getElementById('nwm-cat').value;
-    const value=parseFloat(document.getElementById('nwm-val').value)||0;
-    const notes=(document.getElementById('nwm-notes')||{}).value||'';
-    if(!name||value<=0)return;
-    d.assets.push({name,category:cat,value,notes});
-  }else{
-    const name=document.getElementById('nwm-name').value.trim();
-    const cat=document.getElementById('nwm-cat').value;
-    const value=parseFloat(document.getElementById('nwm-val').value)||0;
-    const rate=parseFloat((document.getElementById('nwm-rate')||{}).value)||0;
-    if(!name||value<=0)return;
-    d.liabilities.push({name,category:cat,value,rate});
-  }
-  saveNwData(d);
-  closeNwModal();
-  renderNwPage();
+/* ── Page render entry ── */
+function renderNwPage(){
+  loadVault();
+  renderVault();
 }
 
 /* ══ INIT ══ */
