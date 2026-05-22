@@ -2,8 +2,6 @@
 
 
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -395,7 +393,119 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .char-sale-v{font-weight:600;color:var(--text);}
 .char-tf-row{display:flex;gap:4px;margin-bottom:10px;}
 
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:768px){
+  /* Topbar */
+  .topbar{padding:8px 12px;gap:8px;flex-wrap:wrap;}
+  .logo{font-size:14px;letter-spacing:2px;}
+  .topbar-right{gap:8px;}
+  .mkt-badge{font-size:7px;padding:2px 6px;}
+  .clock{font-size:9px;}
+  #data-badge{display:none!important;}
+
+  /* Fed bar: horizontal scroll */
+  .fed-bar{padding:6px 12px;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;}
+  .fed-rate{font-size:14px;}
+  .fed-dot-wrap{display:none;}
+  .fed-next{margin-left:8px;}
+
+  /* Sections padding */
+  .bubble-hero,.chart-section,.assets-section,.bottom-section,.charizard-section{padding:10px 12px;}
+  .sec-hdr{padding:10px 12px 8px;}
+  .sec-title{font-size:8px;letter-spacing:2px;}
+  .divider{margin:0 12px;}
+
+  /* Chart layout: stack */
+  .chart-layout{grid-template-columns:1fr;max-width:100%;}
+  .chart-side{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+  /* Assets: stack stocks + crypto */
+  .assets-layout{grid-template-columns:1fr;}
+  .stocks-grid{grid-template-columns:1fr 1fr;gap:6px;}
+
+  /* Bottom: stack polymarket + news */
+  .bottom-layout{grid-template-columns:1fr;}
+  .poly-cards{grid-template-columns:1fr 1fr;gap:6px;}
+
+  /* Charizard: stack */
+  .charizard-layout{grid-template-columns:1fr;}
+
+  /* Stats grids */
+  .stats-grid{grid-template-columns:repeat(4,1fr);gap:4px;}
+  .char-stats{grid-template-columns:repeat(2,1fr);gap:4px;}
+}
+
+@media(max-width:480px){
+  .topbar{padding:6px 10px;}
+  .topbar-tabs{display:none;}
+  .logo{font-size:13px;}
+  .topbar-right{gap:6px;}
+  .mkt-badge{display:none!important;}
+
+  .fed-bar{padding:5px 10px;gap:8px;}
+  .fed-label{font-size:7px;}
+  .fed-rate{font-size:13px;}
+  .fed-stat-l{font-size:6px;}
+  .fed-stat-v{font-size:9px;}
+
+  .bubble-hero,.chart-section,.assets-section,.bottom-section,.charizard-section{padding:8px 8px;}
+  .sec-hdr{padding:8px 8px 6px;}
+  .divider{margin:0 8px;}
+
+  .chart-side{grid-template-columns:1fr;}
+  .stocks-grid{grid-template-columns:1fr;}
+  .poly-cards{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .chart-hero{flex-direction:column;gap:4px;}
+  .ch-sym{font-size:16px;}
+  .ch-px{font-size:22px;}
+
+  .crypto-sparkwrap{width:50px;}
+  .crypto-right{min-width:60px;}
+
+  /* Pokedex grids (inline-styled) */
+  #pokedex-grid{grid-template-columns:repeat(2,1fr)!important;}
+  #poke-notable{grid-template-columns:repeat(2,1fr)!important;}
+}
+
 canvas{display:block;}
+
+/* ── GIRL MODE TOGGLE ── */
+.gm-toggle{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;opacity:.45;transition:opacity .2s;}
+.gm-toggle:hover{opacity:.8;}
+.gm-toggle.active{opacity:1;}
+.gm-toggle-track{width:22px;height:12px;border-radius:6px;background:var(--border2);position:relative;transition:background .25s;}
+.gm-toggle.active .gm-toggle-track{background:linear-gradient(135deg,#ff4d94,#d040ff);}
+.gm-toggle-knob{width:8px;height:8px;border-radius:50%;background:#555;position:absolute;top:2px;left:2px;transition:all .25s;}
+.gm-toggle.active .gm-toggle-knob{left:12px;background:#fff;}
+.gm-label{font-size:7px;letter-spacing:.5px;color:var(--muted);transition:color .25s;}
+.gm-toggle.active .gm-label{color:#ff4d94;}
+
+/* ── GIRL MODE THEME ── */
+body.girl-mode{
+  --bg:#1a0a18;--bg2:#251525;--bg3:#321e35;
+  --border:#4a2855;--border2:#5e3568;
+  --gold:#ff4d94;--green:#00ffaa;--red:#ff3d6e;
+  --blue:#d580ff;--cyan:#ff66f9;--purple:#d580ff;--orange:#ff8c42;
+  --text:#ffe0f2;--muted:#a060a0;--dimmed:#5e3568;
+}
+body.girl-mode html,body.girl-mode{background:#1a0a18;}
+body.girl-mode .logo-rb{color:#ff4d94;}
+body.girl-mode .live-dot{background:#ff4d94;animation-name:livepulse-gm;}
+@keyframes livepulse-gm{0%,100%{box-shadow:0 0 0 0 rgba(255,77,148,.6);}50%{box-shadow:0 0 0 6px rgba(255,77,148,0);}}
+body.girl-mode .top-tab.active{background:rgba(255,77,148,.18);color:#ff4d94;border:1px solid rgba(255,77,148,.3);}
+body.girl-mode #chat-fab{background:linear-gradient(135deg,#ff4d94,#d040ff);box-shadow:0 4px 20px rgba(255,77,148,.45);}
+body.girl-mode #share-fab:hover{background:rgba(255,77,148,.12);border-color:#ff4d94;}
+body.girl-mode .tf-btn.active{border-color:#ff4d94;color:#ff4d94;background:rgba(255,77,148,.1);}
+body.girl-mode .vault-view-btn.active{background:rgba(255,77,148,.18);color:#ff4d94;border:1px solid rgba(255,77,148,.3);}
+body.girl-mode .vault-stat.accent{background:linear-gradient(135deg,rgba(255,77,148,.1),rgba(255,77,148,.02));border-color:rgba(255,77,148,.25);}
+body.girl-mode .vault-btn-save{background:#ff4d94;}
+body.girl-mode .fed-bar::before{background:linear-gradient(180deg,#ff4d94,#d040ff);}
+body.girl-mode .asset-card.sel{background:rgba(255,77,148,.07);border-color:rgba(255,77,148,.4);}
+body.girl-mode .asset-card.sel::before{background:#ff4d94;}
+body.girl-mode .vault-cat-pill.active{color:#ff4d94;}
+body.girl-mode .vault-asset-card.has-value{border-color:rgba(255,77,148,.3);background:linear-gradient(135deg,rgba(255,77,148,.07),transparent);}
+body.girl-mode .vault-totals-bar{background:linear-gradient(135deg,rgba(255,77,148,.1),rgba(255,77,148,.03));border:1px solid rgba(255,77,148,.2);}
 </style>
 </head>
 <body>
@@ -413,6 +523,10 @@ canvas{display:block;}
       <span id="data-badge" class="mkt-badge" style="background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.25);font-size:8px;">● LIVE DATA</span>
       <span id="mkt-status" class="mkt-badge mkt-closed">LOADING</span>
       <div class="clock" id="clock">--:--:--</div>
+      <div class="gm-toggle" id="gm-toggle" onclick="toggleGirlMode()" title="Girl Mode">
+        <div class="gm-toggle-track"><div class="gm-toggle-knob"></div></div>
+        <span class="gm-label">♀</span>
+      </div>
     </div>
   </div>
   <div class="ticker-bar">
@@ -645,7 +759,7 @@ canvas{display:block;}
       <div id="poke-bars"></div>
     </div>
     <!-- Additional notable cards -->
-    <div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+    <div id="poke-notable" style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid #f7931a;">
         <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">PIKACHU ILLUSTRATOR</div>
         <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f7931a;margin:2px 0;">$2M+</div>
@@ -2579,6 +2693,21 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('#share-fab')&&!e.target.closest('#share-popover'))closeShare();
 });
 
+/* ══ GIRL MODE ══ */
+function toggleGirlMode(){
+  const on=document.body.classList.toggle('girl-mode');
+  document.getElementById('gm-toggle').classList.toggle('active',on);
+  document.documentElement.style.background=on?'#1a0a18':'#05070f';
+  localStorage.setItem('rb_girl_mode',on?'1':'0');
+}
+(function(){
+  if(localStorage.getItem('rb_girl_mode')==='1'){
+    document.body.classList.add('girl-mode');
+    document.getElementById('gm-toggle').classList.add('active');
+    document.documentElement.style.background='#1a0a18';
+  }
+})();
+
 /* ══ CHATBOT ══ */
 let chatOpen=false;
 let chatMessages=[];
@@ -2720,3 +2849,4 @@ async function sendChat(){
 </script>
 </body>
 </html>
+
