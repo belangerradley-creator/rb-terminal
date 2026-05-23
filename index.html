@@ -3,7 +3,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,7 +199,8 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .up{color:var(--green);font-size:9px;}.dn{color:var(--red);font-size:9px;}
 
 /* ── FED RATE BAR ── */
-.fed-bar{background:linear-gradient(90deg,rgba(9,13,24,0.98) 0%,rgba(13,18,32,0.98) 100%);border-bottom:1px solid var(--border2);padding:6px 20px;display:flex;align-items:center;gap:20px;overflow:hidden;position:relative;}
+.fed-bar{background:linear-gradient(90deg,rgba(9,13,24,0.98) 0%,rgba(13,18,32,0.98) 100%);border-bottom:1px solid var(--border2);padding:6px 20px;display:flex;align-items:center;gap:20px;overflow-x:auto;overflow-y:hidden;position:relative;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.fed-bar::-webkit-scrollbar{display:none;}
 .fed-bar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),#d49a00);border-radius:0 2px 2px 0;}
 .fed-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-left:8px;}
 .fed-rate{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;}
@@ -537,7 +537,7 @@ body.girl-mode .ticker-result-item:hover{border-color:rgba(255,77,148,.3);backgr
   <div class="search-bar-section">
     <div class="search-wrap">
       <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input id="ticker-search" type="text" placeholder="Search any stock ticker (e.g. AAPL, TSLA, MSFT)..." autocomplete="off" onkeydown="if(event.key==='Enter')searchTicker()" oninput="onTickerInput(this.value)"/>
+      <input id="ticker-search" type="text" placeholder="Search any stock ticker (e.g. AAPL, TSLA, MSFT)..." autocomplete="off" onkeydown="if(event.key==='Enter')searchTicker()"/>
       <button id="ticker-search-btn" onclick="searchTicker()">SEARCH</button>
       <div id="ticker-results" class="ticker-results"></div>
     </div>
@@ -2504,51 +2504,47 @@ function renderNwPage(){
 }
 
 /* ══ STOCK TICKER SEARCH ══ */
-let searchDebounce=null;
-function onTickerInput(val){
-  clearTimeout(searchDebounce);
-  const results=document.getElementById('ticker-results');
-  if(!val||val.trim().length<1){results.classList.remove('visible');return;}
-  searchDebounce=setTimeout(()=>searchTicker(),400);
-}
+let searchBusy=false;
 
 async function searchTicker(){
   const input=document.getElementById('ticker-search');
   const query=input.value.trim().toUpperCase();
   const results=document.getElementById('ticker-results');
   if(!query){results.classList.remove('visible');return;}
+  if(searchBusy)return;
+  searchBusy=true;
 
   results.innerHTML='<div class="ticker-result-loading">Searching for '+query+'...</div>';
   results.classList.add('visible');
 
   try{
-    // Use Finnhub symbol lookup
     const lookupUrl=`${fhBase}/search?q=${encodeURIComponent(query)}&token=${API_KEY}`;
     const resp=await fetch(lookupUrl);
     const data=await resp.json();
     
     if(!data||!data.result||!data.result.length){
       results.innerHTML='<div class="ticker-result-empty">No results for "'+query+'"</div>';
-      return;
+      searchBusy=false;return;
     }
 
-    // Filter to common stocks only, limit to 8
     const filtered=data.result
       .filter(r=>r.type==='Common Stock'||r.type==='ADR'||r.type==='ETF'||r.type==='ETP')
-      .slice(0,8);
+      .slice(0,5);
 
     if(!filtered.length){
       results.innerHTML='<div class="ticker-result-empty">No stock results for "'+query+'"</div>';
-      return;
+      searchBusy=false;return;
     }
 
-    // Fetch quotes for all results in parallel
-    const withQuotes=await Promise.all(filtered.map(async r=>{
+    // Fetch quotes sequentially with delay to avoid rate limits
+    const withQuotes=[];
+    for(const r of filtered){
       try{
         const q=await fhQ(r.symbol);
-        return{...r,quote:q};
-      }catch(e){return{...r,quote:null};}
-    }));
+        withQuotes.push({...r,quote:q});
+        await sleep(120);
+      }catch(e){withQuotes.push({...r,quote:null});}
+    }
 
     results.innerHTML=withQuotes.map(r=>{
       const q=r.quote;
@@ -2560,7 +2556,7 @@ async function searchTicker(){
         priceHtml=`<div class="tr-price" style="color:${clr}">$${fmt(q.c,2)}</div>
           <div class="tr-chg" style="color:${clr}">${up?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`;
       }
-      return`<div class="ticker-result-item" onclick="selectSearchResult('${r.symbol}','${r.description.replace(/'/g,"\\'")}')">
+      return`<div class="ticker-result-item" onclick="selectSearchResult('${r.symbol}','${r.description.replace(/'/g,"\'")}')">
         <span class="tr-sym">${r.symbol}</span>
         <span class="tr-name">${r.description}</span>
         <span class="tr-type">${r.type||'Stock'}</span>
@@ -2570,6 +2566,7 @@ async function searchTicker(){
   }catch(e){
     results.innerHTML='<div class="ticker-result-empty">Search error — try again</div>';
   }
+  searchBusy=false;
 }
 
 async function selectSearchResult(sym,name){
@@ -2577,7 +2574,6 @@ async function selectSearchResult(sym,name){
   results.classList.remove('visible');
   document.getElementById('ticker-search').value=sym+' — '+name;
 
-  // Fetch full quote data
   try{
     const q=await fhQ(sym);
     if(q&&q.c&&q.c>0){
@@ -2589,7 +2585,6 @@ async function selectSearchResult(sym,name){
     }
   }catch(e){}
 
-  // Select as stock and load chart
   selectedSym=sym;selectedType='stock';selectedCgId=null;
   document.querySelectorAll('.asset-card').forEach(r=>r.classList.remove('sel'));
   document.querySelectorAll('.crypto-row').forEach(r=>r.classList.remove('sel'));
@@ -3094,3 +3089,4 @@ async function sendChat(){
 </script>
 </body>
 </html>
+
