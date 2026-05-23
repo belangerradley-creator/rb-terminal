@@ -1,8 +1,3 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -199,9 +194,16 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 .up{color:var(--green);font-size:9px;}.dn{color:var(--red);font-size:9px;}
 
 /* ── FED RATE BAR ── */
-.fed-bar{background:linear-gradient(90deg,rgba(9,13,24,0.98) 0%,rgba(13,18,32,0.98) 100%);border-bottom:1px solid var(--border2);padding:6px 20px;display:flex;align-items:center;gap:20px;overflow-x:auto;overflow-y:hidden;position:relative;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.fed-bar::-webkit-scrollbar{display:none;}
+.fed-bar{background:linear-gradient(90deg,rgba(9,13,24,0.98) 0%,rgba(13,18,32,0.98) 100%);border-bottom:1px solid var(--border2);padding:6px 20px;display:flex;align-items:center;gap:12px;overflow:hidden;position:relative;}
 .fed-bar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),#d49a00);border-radius:0 2px 2px 0;}
+.fed-slides-wrap{position:relative;flex:1;min-width:0;height:28px;overflow:hidden;}
+.fed-slide{display:flex;align-items:center;gap:14px;position:absolute;top:0;left:0;right:0;height:100%;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;pointer-events:none;}
+.fed-slide.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+.fed-dots{display:flex;gap:4px;align-items:center;flex-shrink:0;margin-left:auto;}
+.fed-dot-nav{width:5px;height:5px;border-radius:50%;background:var(--border2);cursor:pointer;transition:background .2s,transform .2s;}
+.fed-dot-nav.active{background:var(--gold);transform:scale(1.3);}
+.fed-dot-nav:hover{background:var(--muted);}
+.fed-divider-main{flex-shrink:0;}
 .fed-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-left:8px;}
 .fed-rate{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;}
 .fed-range{font-size:9px;color:var(--muted);flex-shrink:0;}
@@ -495,36 +497,46 @@ body.girl-mode .ticker-result-item:hover{border-color:rgba(255,77,148,.3);backgr
       <span class="ticker-item"><span class="t-sym" style="color:var(--muted)">LOADING LIVE DATA...</span></span>
     </div>
   </div>
-  <!-- FED RATE BAR -->
+  <!-- FED RATE BAR — SLIDESHOW -->
   <div class="fed-bar">
     <span class="fed-label">Fed Funds Rate</span>
     <span class="fed-rate" id="fed-rate">4.25–4.50%</span>
-    <div class="fed-divider"></div>
-    <div class="fed-stat">
-      <span class="fed-stat-l">Last Change</span>
-      <span class="fed-stat-v" id="fed-last-chg">HOLD</span>
+    <div class="fed-divider fed-divider-main"></div>
+    <div class="fed-slides-wrap">
+      <div class="fed-slide active" data-fed-slide="0">
+        <div class="fed-stat">
+          <span class="fed-stat-l">Last Change</span>
+          <span class="fed-stat-v" id="fed-last-chg">HOLD</span>
+        </div>
+        <div class="fed-divider"></div>
+        <div class="fed-stat">
+          <span class="fed-stat-l">Decision</span>
+          <span class="fed-stat-v" id="fed-decision">May 7, 2026</span>
+        </div>
+      </div>
+      <div class="fed-slide" data-fed-slide="1">
+        <div class="fed-stat">
+          <span class="fed-stat-l">CPI (Apr '26)</span>
+          <span class="fed-stat-v up" id="fed-cpi">3.8%</span>
+        </div>
+        <div class="fed-divider"></div>
+        <div class="fed-stat">
+          <span class="fed-stat-l">Market Expects</span>
+          <span class="fed-stat-v" id="fed-expect" style="color:var(--cyan)">HOLD</span>
+        </div>
+      </div>
+      <div class="fed-slide" data-fed-slide="2">
+        <div class="fed-dot-wrap" id="fed-dot-wrap"></div>
+        <div class="fed-next" id="fed-next">
+          <div style="font-size:7px;color:var(--muted);letter-spacing:1px">NEXT FOMC</div>
+          <b id="fed-next-date">Jun 18, 2026</b>
+        </div>
+      </div>
     </div>
-    <div class="fed-divider"></div>
-    <div class="fed-stat">
-      <span class="fed-stat-l">Decision</span>
-      <span class="fed-stat-v" id="fed-decision">May 7, 2026</span>
-    </div>
-    <div class="fed-divider"></div>
-    <div class="fed-stat">
-      <span class="fed-stat-l">CPI (Apr '26)</span>
-      <span class="fed-stat-v up" id="fed-cpi">3.8%</span>
-    </div>
-    <div class="fed-divider"></div>
-    <div class="fed-stat">
-      <span class="fed-stat-l">Market Expects</span>
-      <span class="fed-stat-v" id="fed-expect" style="color:var(--cyan)">HOLD</span>
-    </div>
-    <div class="fed-dot-wrap" id="fed-dot-wrap">
-      <!-- rate path nodes injected by JS -->
-    </div>
-    <div class="fed-next" id="fed-next">
-      <div style="font-size:7px;color:var(--muted);letter-spacing:1px">NEXT FOMC</div>
-      <b id="fed-next-date">Jun 18, 2026</b>
+    <div class="fed-dots">
+      <span class="fed-dot-nav active" onclick="goFedSlide(0)"></span>
+      <span class="fed-dot-nav" onclick="goFedSlide(1)"></span>
+      <span class="fed-dot-nav" onclick="goFedSlide(2)"></span>
     </div>
   </div>
 </div>
@@ -944,6 +956,7 @@ const fhBase='https://finnhub.io/api/v1';
 async function fhFetch(url){
   try{
     const r=await fetch(url);
+    if(r.status===429){await sleep(3000);const r2=await fetch(url);if(!r2.ok)return null;return r2.json();}
     if(!r.ok)return null;
     const d=await r.json();
     if(!d||d.error)return null;
@@ -1018,7 +1031,7 @@ async function fetchStocks(){
         }
       }catch(e){}
     }));
-    if(i+BATCH<STOCKS.length)await sleep(1500);
+    if(i+BATCH<STOCKS.length)await sleep(3000);
   }
 }
 
@@ -2600,42 +2613,107 @@ document.addEventListener('click',e=>{
   }
 });
 
+/* ══ FED SLIDESHOW ══ */
+let fedSlide=0,fedSlideTimer=null;
+function goFedSlide(n){
+  fedSlide=n;
+  document.querySelectorAll('.fed-slide').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.fed-dot-nav').forEach((d,i)=>d.classList.toggle('active',i===n));
+  clearInterval(fedSlideTimer);
+  fedSlideTimer=setInterval(()=>goFedSlide((fedSlide+1)%3),5000);
+}
+fedSlideTimer=setInterval(()=>goFedSlide((fedSlide+1)%3),5000);
+
+/* ══ DATA CACHE ══ */
+const CACHE_KEY='rb_data_cache';
+const CACHE_MAX_AGE=5*60*1000; // 5 minutes — only re-fetch if older than this
+
+function saveCache(){
+  try{
+    const cache={
+      ts:Date.now(),
+      quotes:quotes,
+      cryptoData:cryptoData,
+      commodities:commodities,
+      forex:forex,
+    };
+    localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
+  }catch(e){}
+}
+
+function loadCache(){
+  try{
+    const raw=localStorage.getItem(CACHE_KEY);
+    if(!raw)return null;
+    const cache=JSON.parse(raw);
+    if(!cache||!cache.ts)return null;
+    return cache;
+  }catch(e){return null;}
+}
+
+function isCacheFresh(){
+  const cache=loadCache();
+  return cache&&(Date.now()-cache.ts)<CACHE_MAX_AGE;
+}
+
+function restoreFromCache(cache){
+  if(cache.quotes)Object.assign(quotes,cache.quotes);
+  if(cache.cryptoData)Object.assign(cryptoData,cache.cryptoData);
+  if(cache.commodities)Object.assign(commodities,cache.commodities);
+  if(cache.forex)Object.assign(forex,cache.forex);
+}
+
 /* ══ INIT ══ */
 async function init(){
   clock();setInterval(clock,1000);
   renderPoly();renderBubbleLegend();startBubble();
   fetchFedRate();
   drawPokedex();
-  // Pre-render commodities & forex with defaults immediately so panels never show --
   renderTop8Assets();renderForex();
 
-  // Phase 1: fast no-key sources — render immediately
-  await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex(),fetchPolymarket()]);
-  renderCrypto();renderTicker();renderTop8Assets();renderForex();
-  renderNews();
+  const cache=loadCache();
+  const fresh=cache&&(Date.now()-cache.ts)<CACHE_MAX_AGE;
 
-  // Phase 2: stocks (staggered, takes ~3s for 10 stocks)
-  setStatus('FETCHING...','api-loading');
-  const badge=document.getElementById('data-badge');
-  if(badge)badge.textContent='⟳ FETCHING...';
-  await fetchStocks();
-  renderStocks();renderTicker();
-  const ok=Object.keys(quotes).length>0;
-  if(badge){
-    badge.textContent=ok?'● LIVE DATA':'● PARTIAL DATA';
-    badge.style.color=ok?'var(--green)':'var(--gold)';
+  if(fresh){
+    // USE CACHED DATA — no API calls
+    restoreFromCache(cache);
+    renderCrypto();renderTicker();renderTop8Assets();renderForex();
+    renderStocks();renderNews();
+    const ok=Object.keys(quotes).length>0;
+    const badge=document.getElementById('data-badge');
+    const ageS=Math.round((Date.now()-cache.ts)/1000);
+    if(badge){
+      badge.textContent=ok?`● CACHED (${ageS}s ago)`:'● PARTIAL DATA';
+      badge.style.color=ok?'var(--green)':'var(--gold)';
+    }
+    setStatus(ok?'● CACHED':'PARTIAL',ok?'api-ok':'api-loading');
+    renderPoly();
+  }else{
+    // FRESH FETCH — first load or stale cache
+    // Phase 1: fast no-key sources
+    await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex(),fetchPolymarket()]);
+    renderCrypto();renderTicker();renderTop8Assets();renderForex();
+    renderNews();
+
+    // Phase 2: stocks (staggered)
+    setStatus('FETCHING...','api-loading');
+    const badge=document.getElementById('data-badge');
+    if(badge)badge.textContent='⟳ FETCHING...';
+    await fetchStocks();
+    renderStocks();renderTicker();
+    const ok=Object.keys(quotes).length>0;
+    if(badge){
+      badge.textContent=ok?'● LIVE DATA':'● PARTIAL DATA';
+      badge.style.color=ok?'var(--green)':'var(--gold)';
+    }
+    setStatus(ok?'● LIVE':'PARTIAL',ok?'api-ok':'api-loading');
+
+    // Save fresh data to cache
+    saveCache();
   }
-  setStatus(ok?'● LIVE':'PARTIAL',ok?'api-ok':'api-loading');
 
-  // Phase 3: schedule refreshes
-  // Stocks + all data: every 60s
-  setInterval(refreshAll,60000);
-  // Crypto + commodities: every 30s (fast APIs, no rate limit)
-  setInterval(refreshCryptoAndComm,30000);
-  // Polymarket: every 5min
-  setInterval(fetchPolymarket,5*60*1000);
-  // Fed rate: every 10min
-  setInterval(fetchFedRate,10*60*1000);
+  // NO automatic refresh intervals — data only updates on page reload
+  // This eliminates all recurring API calls
 }
 
 /* Always hardcoded — run immediately */
@@ -3089,4 +3167,3 @@ async function sendChat(){
 </script>
 </body>
 </html>
-
