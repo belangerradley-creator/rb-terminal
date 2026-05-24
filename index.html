@@ -157,11 +157,13 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
 
 /* ── Mobile: Assets page ── */
 @media(max-width:768px){
-  .topbar{padding:8px 12px;flex-wrap:wrap;justify-content:center;gap:8px;}
-  .topbar-tabs{order:3;width:100%;justify-content:center;}
-  .top-tab{flex:1;text-align:center;padding:8px 12px;font-size:10px;}
-  .topbar-right{gap:8px;}
+  .topbar{padding:8px 12px;flex-wrap:wrap;gap:6px;}
+  .topbar .logo{order:1;font-size:11px;}
+  .topbar-right{order:2;gap:6px;margin-left:auto;}
   .topbar-right .clock{display:none;}
+  .topbar-right .mkt-badge{font-size:7px !important;padding:2px 5px !important;}
+  .topbar-tabs{order:3;width:100%;display:flex !important;justify-content:center;margin-top:2px;}
+  .top-tab{flex:1;text-align:center;padding:8px 12px;font-size:10px;}
   #assets-page{padding:12px;}
   .vault-summary{grid-template-columns:repeat(2,1fr);gap:8px;}
   .vault-stat{padding:14px 16px;}
@@ -174,8 +176,10 @@ body{font-family:'JetBrains Mono',monospace;background:#05070f;color:#b0bcd0;fon
   .vault-modal{padding:18px;}
 }
 @media(max-width:420px){
-  .logo{font-size:14px;letter-spacing:2px;}
+  .logo{font-size:11px;letter-spacing:1px;}
   .mkt-badge{font-size:7px;padding:2px 6px;}
+  #data-badge{display:none !important;}
+  .gm-toggle{transform:scale(0.85);}
   .vault-summary{grid-template-columns:1fr 1fr;}
   .vault-stat-val{font-size:18px;}
   .vault-cat-pill{padding:5px 10px;font-size:8px;}
@@ -1405,10 +1409,11 @@ function drawBubble(){
   if(!canvas)return;
   const W=canvas.offsetWidth;
   const H=canvas.offsetHeight||340;
-  canvas.width=W*devicePixelRatio;
-  canvas.height=H*devicePixelRatio;
+  const dpr=Math.min(devicePixelRatio,2); // cap at 2x to prevent mobile crash
+  canvas.width=W*dpr;
+  canvas.height=H*dpr;
   const ctx=canvas.getContext('2d');
-  ctx.scale(devicePixelRatio,devicePixelRatio);
+  ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,W,H);
   bubbleHits=[];
 
@@ -1594,7 +1599,14 @@ function drawBubble(){
 function startBubble(){
   if(bRaf)cancelAnimationFrame(bRaf);
   initBubbleEvents();
-  (function loop(){drawBubble();bRaf=requestAnimationFrame(loop);})();
+  let lastFrame=0;
+  const FPS_INTERVAL=1000/20; // 20fps — smooth enough, won't kill mobile
+  (function loop(ts){
+    bRaf=requestAnimationFrame(loop);
+    if(ts-lastFrame<FPS_INTERVAL)return;
+    lastFrame=ts;
+    drawBubble();
+  })(0);
 }
 
 function renderBubbleLegend(){
@@ -1627,20 +1639,13 @@ function renderStocks(){
     </div>`;
   }).join('');
 
-  // Render sparklines immediately using fake data, then upgrade with real if available
+  // Render sparklines using synthetic data from quote (no API calls)
   STOCKS.forEach((a,i)=>{
     const q=quotes[a.sym];if(!q)return;
     const chg=q.chgPct!=null?q.chgPct:((q.price-q.prev)/q.prev*100);
     const up=chg>=0;
-    // Draw fake sparkline immediately so it's always visible
     const fake=fakeSparkline(q.price,chg);
     drawMini(`sp${i}`,fake,up);
-    // Try to upgrade with real intraday if API key available
-    if(API_KEY){
-      fetchSeries(a.sym,'stock',null,'1D').then(pts=>{
-        if(pts.length>2)drawMini(`sp${i}`,pts.map(p=>p.c),up);
-      });
-    }
   });
 }
 
@@ -2166,8 +2171,8 @@ const VAULT_CATEGORIES={
 
 const VAULT_COLOR_MAP={precious_metals:'#D4A017',stocks:'#00e676',crypto:'#ff7c2a',real_estate:'#3d9dff',vehicles:'#ff3b5c',collectibles:'#a855f7'};
 let vaultData={holdings:{},customNames:{},customAssets:{}};
-let vaultView='dashboard';
-let vaultActiveCat=null;
+let vaultView=localStorage.getItem('rb_vault_view')||'dashboard';
+let vaultActiveCat=localStorage.getItem('rb_vault_cat')||null;
 
 function loadVault(){
   try{
@@ -2223,6 +2228,7 @@ function getVaultCategories(){
 
 function switchVaultView(v){
   vaultView=v;
+  localStorage.setItem('rb_vault_view',v);
   document.getElementById('vault-view-dash').classList.toggle('active',v==='dashboard');
   document.getElementById('vault-view-manage').classList.toggle('active',v==='manage');
   document.getElementById('vault-dashboard').style.display=v==='dashboard'?'':'none';
@@ -2434,6 +2440,7 @@ function renderVaultManageTotals(){
 
 function toggleVaultCat(key){
   vaultActiveCat=vaultActiveCat===key?null:key;
+  localStorage.setItem('rb_vault_cat',vaultActiveCat||'');
   renderVaultManage();
 }
 
@@ -2443,8 +2450,9 @@ function vaultUpdateHolding(id,category,qty,price,name){
   vaultData.holdings[id]={quantity:q,pricePerUnit:p,value:q*p,category:category};
   if(name)vaultData.customNames[id]=name;
   saveVault();
-  // Update value display without full re-render
   renderVaultManageTotals();
+  // Also update dashboard totals in background
+  renderVaultDashboard();
 }
 
 function vaultRename(id,name){
@@ -2456,8 +2464,10 @@ function vaultRename(id,name){
 
 function vaultRemoveHolding(id){
   delete vaultData.holdings[id];
+  delete vaultData.customNames[id];
   saveVault();
-  renderVault();
+  renderVaultManage();
+  renderVaultDashboard();
 }
 
 function vaultRemoveCustom(catKey,assetId){
@@ -2514,6 +2524,16 @@ function saveVaultCustom(catKey){
 /* ── Page render entry ── */
 function renderNwPage(){
   loadVault();
+  // Restore saved view state
+  const savedView=localStorage.getItem('rb_vault_view');
+  if(savedView==='manage'||savedView==='dashboard')vaultView=savedView;
+  const savedCat=localStorage.getItem('rb_vault_cat');
+  if(savedCat)vaultActiveCat=savedCat;
+  // Sync UI toggles
+  document.getElementById('vault-view-dash').classList.toggle('active',vaultView==='dashboard');
+  document.getElementById('vault-view-manage').classList.toggle('active',vaultView==='manage');
+  document.getElementById('vault-dashboard').style.display=vaultView==='dashboard'?'':'none';
+  document.getElementById('vault-manage').style.display=vaultView==='manage'?'':'none';
   renderVault();
 }
 
