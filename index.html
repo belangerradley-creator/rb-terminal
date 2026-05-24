@@ -2867,51 +2867,63 @@ function buildVaultShareText(){
 function generateVaultShareCard(){
   const data=getVaultShareData();
   if(!data)return null;
+  const gm=document.body.classList.contains('girl-mode');
   
   // Create an offscreen canvas to render a share card image
   const canvas=document.createElement('canvas');
   canvas.width=600;canvas.height=400;
   const ctx=canvas.getContext('2d');
   
+  // Theme colors
+  const accent=gm?'#ff4d94':'#f5b800';
+  const bg1=gm?'#1a0a18':'#05070f';
+  const bg2=gm?'#251525':'#0e1424';
+  const borderC=gm?'rgba(255,77,148,0.25)':'rgba(245,184,0,0.2)';
+  const mutedC=gm?'#5e3568':'#3d5470';
+  const barBg=gm?'#3a1a38':'#1e2e45';
+  const textC=gm?'#ffe0f2':'#dce8f5';
+  
   // Background
   const grad=ctx.createLinearGradient(0,0,600,400);
-  grad.addColorStop(0,'#05070f');grad.addColorStop(1,'#0e1424');
+  grad.addColorStop(0,bg1);grad.addColorStop(1,bg2);
   ctx.fillStyle=grad;
   ctx.beginPath();ctx.roundRect(0,0,600,400,16);ctx.fill();
   
   // Border
-  ctx.strokeStyle='rgba(245,184,0,0.2)';ctx.lineWidth=2;
+  ctx.strokeStyle=borderC;ctx.lineWidth=2;
   ctx.beginPath();ctx.roundRect(1,1,598,398,16);ctx.stroke();
   
   // Logo
   ctx.font="700 16px 'Space Grotesk', sans-serif";
-  ctx.fillStyle='#f5b800';ctx.fillText('RB',24,36);
-  ctx.fillStyle='#dce8f5';ctx.fillText(' TERMINAL',46,36);
+  ctx.fillStyle=accent;ctx.fillText('RB',24,36);
+  ctx.fillStyle=textC;ctx.fillText(' TERMINAL',46,36);
   ctx.font="400 8px 'JetBrains Mono', monospace";
-  ctx.fillStyle='#3d5470';ctx.fillText('PORTFOLIO SNAPSHOT',24,52);
+  ctx.fillStyle=mutedC;ctx.fillText('PORTFOLIO SNAPSHOT',24,52);
   
   // Net Worth big
   ctx.font="700 36px 'Space Grotesk', sans-serif";
-  ctx.fillStyle='#f5b800';ctx.fillText(vaultFmt(data.totalNW),24,100);
+  ctx.fillStyle=accent;ctx.fillText(vaultFmt(data.totalNW),24,100);
   ctx.font="600 9px 'JetBrains Mono', monospace";
-  ctx.fillStyle='#3d5470';ctx.fillText('NET WORTH',24,116);
+  ctx.fillStyle=mutedC;ctx.fillText('NET WORTH',24,116);
   
   // Category bars
   const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
-  const catColors={precious_metals:'#D4A017',stocks:'#00e676',crypto:'#ff7c2a',real_estate:'#3d9dff',vehicles:'#ff3b5c',collectibles:'#a855f7'};
+  const catColors=gm
+    ?{precious_metals:'#ffb347',stocks:'#00ffaa',crypto:'#ff8c42',real_estate:'#d580ff',vehicles:'#ff3d6e',collectibles:'#ff66f9'}
+    :{precious_metals:'#D4A017',stocks:'#00e676',crypto:'#ff7c2a',real_estate:'#3d9dff',vehicles:'#ff3b5c',collectibles:'#a855f7'};
   let barY=140;
   Object.entries(data.catBreak).forEach(([cat,val])=>{
     const pct=val/data.totalNW;
     const barW=Math.max(pct*480,4);
-    const color=catColors[cat]||'#f5b800';
+    const color=catColors[cat]||accent;
     
-    ctx.fillStyle='#1e2e45';
+    ctx.fillStyle=barBg;
     ctx.beginPath();ctx.roundRect(24,barY,480,18,4);ctx.fill();
     ctx.fillStyle=color;
     ctx.beginPath();ctx.roundRect(24,barY,barW,18,4);ctx.fill();
     
     ctx.font="600 8px 'JetBrains Mono', monospace";
-    ctx.fillStyle='#dce8f5';
+    ctx.fillStyle=textC;
     ctx.fillText(catNames[cat]||cat,30,barY+13);
     ctx.fillStyle='rgba(255,255,255,0.7)';
     ctx.textAlign='right';
@@ -2923,12 +2935,12 @@ function generateVaultShareCard(){
   // Top holdings
   barY+=10;
   ctx.font="700 8px 'JetBrains Mono', monospace";
-  ctx.fillStyle='#3d5470';ctx.fillText('TOP HOLDINGS',24,barY);
+  ctx.fillStyle=mutedC;ctx.fillText('TOP HOLDINGS',24,barY);
   barY+=16;
   data.holdingsList.slice(0,4).forEach(h=>{
     ctx.font="500 9px 'JetBrains Mono', monospace";
-    ctx.fillStyle='#dce8f5';ctx.fillText(h.name,28,barY);
-    ctx.fillStyle='#f5b800';ctx.textAlign='right';
+    ctx.fillStyle=textC;ctx.fillText(h.name,28,barY);
+    ctx.fillStyle=accent;ctx.textAlign='right';
     ctx.fillText(vaultFmt(h.value),500,barY);
     ctx.textAlign='left';
     barY+=18;
@@ -2936,7 +2948,7 @@ function generateVaultShareCard(){
   
   // Footer
   ctx.font="400 7px 'JetBrains Mono', monospace";
-  ctx.fillStyle='#3d5470';
+  ctx.fillStyle=mutedC;
   ctx.fillText('Generated with RB Terminal · '+new Date().toLocaleDateString(),24,384);
   
   return canvas;
