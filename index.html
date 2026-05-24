@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2179,28 +2178,11 @@ function loadVault(){
     const raw=localStorage.getItem(VAULT_KEY);
     if(raw){
       const d=JSON.parse(raw);
-      vaultData.holdings=d.holdings||{};
+      // Only restore custom asset definitions and names — NOT holdings
+      // Holdings start fresh each session so dashboard only reflects current inputs
+      vaultData.holdings={};
       vaultData.customNames=d.customNames||{};
       vaultData.customAssets=d.customAssets||{};
-    }
-    // Migrate old NW data if exists
-    const old=localStorage.getItem('rb_nw_data');
-    if(old&&!raw){
-      try{
-        const od=JSON.parse(old);
-        if(od.market)od.market.forEach(m=>{
-          const id='migrated_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
-          vaultData.holdings[id]={quantity:m.qty||0,pricePerUnit:m.manualPrice||0,value:(m.qty||0)*(m.manualPrice||0),category:m.type==='crypto'?'crypto':'stocks'};
-          vaultData.customNames[id]=m.ticker;
-        });
-        if(od.assets)od.assets.forEach(a=>{
-          const id='migrated_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
-          const cat=a.category==='vehicle'?'vehicles':a.category==='cash'?'precious_metals':a.category==='retirement'?'stocks':a.category==='real_estate'?'real_estate':'collectibles';
-          vaultData.holdings[id]={quantity:a.value,pricePerUnit:1,value:a.value,category:cat};
-          vaultData.customNames[id]=a.name;
-        });
-        saveVault();
-      }catch(e){}
     }
   }catch(e){vaultData={holdings:{},customNames:{},customAssets:{}};}
 }
