@@ -2191,8 +2191,7 @@ function saveVault(){try{localStorage.setItem(VAULT_KEY,JSON.stringify(vaultData
 function vaultFmt(n){
   if(n>=1e9)return '$'+(n/1e9).toFixed(2)+'B';
   if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M';
-  if(n>=1e3)return '$'+(n/1e3).toFixed(1)+'K';
-  return '$'+n.toFixed(n<10?2:0);
+  return '$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
 }
 
 function getVaultCategories(){
