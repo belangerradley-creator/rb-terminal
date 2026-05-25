@@ -2733,6 +2733,7 @@ init();
 </div>
 <div id="share-popover" role="dialog" aria-label="Share options">
   <div class="sp-title">Share RB Terminal</div>
+  <div id="share-preview" style="display:none;"></div>
   <div class="sp-btns">
     <button class="sp-btn" onclick="shareX()"       aria-label="Share on X"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X / Twitter</button>
     <button class="sp-btn" onclick="shareLinkedIn()" aria-label="Share on LinkedIn"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</button>
@@ -2771,7 +2772,7 @@ init();
 /* ── SHARE FAB ── */
 #share-fab{position:fixed;bottom:90px;right:22px;z-index:9000;display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border2);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.5px;padding:8px 14px;border-radius:var(--radius-xl);cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,.5);}
 #share-fab:hover{background:rgba(245,184,0,.08);border-color:var(--gold);box-shadow:0 6px 24px rgba(245,184,0,.15);}
-#share-popover{position:fixed;bottom:140px;right:22px;z-index:9001;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:14px;width:200px;display:none;box-shadow:0 8px 32px rgba(0,0,0,.6);animation:popIn .15s ease;}
+#share-popover{position:fixed;bottom:140px;right:22px;z-index:9001;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:14px;width:240px;max-height:80vh;overflow-y:auto;display:none;box-shadow:0 8px 32px rgba(0,0,0,.6);animation:popIn .15s ease;}
 #share-popover.open{display:block;}
 @keyframes popIn{from{opacity:0;transform:scale(.95) translateY(6px);}to{opacity:1;transform:scale(1) translateY(0);}}
 .sp-title{font-size:8px;color:var(--muted);letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
@@ -2823,43 +2824,66 @@ const SHARE_TEXT='Real-time stocks, crypto, commodities & market predictions. Bu
 
 let shareOpen=false;
 
+function getShareContext(){
+  // Determine what the user is currently viewing in the assets tab
+  const isAssets=document.getElementById('assets-page').classList.contains('visible');
+  if(!isAssets)return{scope:'terminal'};
+  if(vaultView==='dashboard')return{scope:'dashboard'};
+  if(vaultView==='manage'&&vaultActiveCat)return{scope:'category',cat:vaultActiveCat};
+  return{scope:'dashboard'};
+}
+
 function getVaultShareData(){
-  // Build a rich text summary of vault assets for sharing
-  if(!document.getElementById('assets-page').classList.contains('visible'))return null;
+  const ctx=getShareContext();
+  if(ctx.scope==='terminal')return null;
   const h=vaultData.holdings;
+  const cats=getVaultCategories();
   let totalNW=0;
   const catBreak={};
   const holdingsList=[];
+
   Object.entries(h).forEach(([id,v])=>{
-    if(v.value>0){
-      totalNW+=v.value;
-      catBreak[v.category]=(catBreak[v.category]||0)+v.value;
-      let name=vaultData.customNames[id]||id;
-      const cats=getVaultCategories();
-      Object.values(cats).forEach(c=>{const f=c.assets.find(a=>a.id===id);if(f&&!vaultData.customNames[id])name=f.name;});
-      holdingsList.push({name,value:v.value,category:v.category});
-    }
+    if(v.value<=0)return;
+    // If sharing a specific category, skip others
+    if(ctx.scope==='category'&&v.category!==ctx.cat)return;
+    totalNW+=v.value;
+    catBreak[v.category]=(catBreak[v.category]||0)+v.value;
+    let name=vaultData.customNames[id]||id;
+    Object.values(cats).forEach(c=>{const f=c.assets.find(a=>a.id===id);if(f&&!vaultData.customNames[id])name=f.name;});
+    holdingsList.push({name,value:v.value,category:v.category});
   });
   if(totalNW<=0)return null;
   holdingsList.sort((a,b)=>b.value-a.value);
-  return{totalNW,catBreak,holdingsList};
+  return{totalNW,catBreak,holdingsList,scope:ctx.scope,cat:ctx.cat};
 }
 
 function buildVaultShareText(){
   const data=getVaultShareData();
   if(!data)return null;
-  let text='💰 My Portfolio on RB Terminal\n\n';
-  text+='📊 Net Worth: '+vaultFmt(data.totalNW)+'\n\n';
   const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
-  text+='📈 Breakdown:\n';
-  Object.entries(data.catBreak).forEach(([cat,val])=>{
-    const pct=((val/data.totalNW)*100).toFixed(1);
-    text+=`  ${catNames[cat]||cat}: ${vaultFmt(val)} (${pct}%)\n`;
-  });
-  text+='\n🏆 Top Holdings:\n';
-  data.holdingsList.slice(0,5).forEach(h=>{
-    text+=`  ${h.name}: ${vaultFmt(h.value)}\n`;
-  });
+
+  let text='';
+  if(data.scope==='category'){
+    const label=catNames[data.cat]||data.cat;
+    text+=`💰 My ${label} on RB Terminal\n\n`;
+    text+=`📊 Total: ${vaultFmt(data.totalNW)}\n\n`;
+    text+='🏆 Holdings:\n';
+    data.holdingsList.forEach(h=>{
+      text+=`  ${h.name}: ${vaultFmt(h.value)}\n`;
+    });
+  }else{
+    text+='💰 My Portfolio on RB Terminal\n\n';
+    text+='📊 Net Worth: '+vaultFmt(data.totalNW)+'\n\n';
+    text+='📈 Breakdown:\n';
+    Object.entries(data.catBreak).forEach(([cat,val])=>{
+      const pct=((val/data.totalNW)*100).toFixed(1);
+      text+=`  ${catNames[cat]||cat}: ${vaultFmt(val)} (${pct}%)\n`;
+    });
+    text+='\n🏆 Top Holdings:\n';
+    data.holdingsList.slice(0,5).forEach(h=>{
+      text+=`  ${h.name}: ${vaultFmt(h.value)}\n`;
+    });
+  }
   text+='\nTracked with RB Terminal';
   return text;
 }
@@ -2893,21 +2917,26 @@ function generateVaultShareCard(){
   ctx.strokeStyle=borderC;ctx.lineWidth=2;
   ctx.beginPath();ctx.roundRect(1,1,598,398,16);ctx.stroke();
   
+  // Scope-aware labels
+  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
+  const isCat=data.scope==='category';
+  const subtitle=isCat?`${(catNames[data.cat]||data.cat).toUpperCase()} SNAPSHOT`:'PORTFOLIO SNAPSHOT';
+  const valueLabel=isCat?(catNames[data.cat]||data.cat).toUpperCase()+' TOTAL':'NET WORTH';
+
   // Logo
   ctx.font="700 16px 'Space Grotesk', sans-serif";
   ctx.fillStyle=accent;ctx.fillText('RB',24,36);
   ctx.fillStyle=textC;ctx.fillText(' TERMINAL',46,36);
   ctx.font="400 8px 'JetBrains Mono', monospace";
-  ctx.fillStyle=mutedC;ctx.fillText('PORTFOLIO SNAPSHOT',24,52);
+  ctx.fillStyle=mutedC;ctx.fillText(subtitle,24,52);
   
   // Net Worth big
   ctx.font="700 36px 'Space Grotesk', sans-serif";
   ctx.fillStyle=accent;ctx.fillText(vaultFmt(data.totalNW),24,100);
   ctx.font="600 9px 'JetBrains Mono', monospace";
-  ctx.fillStyle=mutedC;ctx.fillText('NET WORTH',24,116);
+  ctx.fillStyle=mutedC;ctx.fillText(valueLabel,24,116);
   
   // Category bars
-  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
   const catColors=gm
     ?{precious_metals:'#ffb347',stocks:'#00ffaa',crypto:'#ff8c42',real_estate:'#d580ff',vehicles:'#ff3d6e',collectibles:'#ff66f9'}
     :{precious_metals:'#D4A017',stocks:'#00e676',crypto:'#ff7c2a',real_estate:'#3d9dff',vehicles:'#ff3b5c',collectibles:'#a855f7'};
@@ -2932,10 +2961,10 @@ function generateVaultShareCard(){
     barY+=28;
   });
   
-  // Top holdings
+  // Holdings list
   barY+=10;
   ctx.font="700 8px 'JetBrains Mono', monospace";
-  ctx.fillStyle=mutedC;ctx.fillText('TOP HOLDINGS',24,barY);
+  ctx.fillStyle=mutedC;ctx.fillText(isCat?'HOLDINGS':'TOP HOLDINGS',24,barY);
   barY+=16;
   data.holdingsList.slice(0,4).forEach(h=>{
     ctx.font="500 9px 'JetBrains Mono', monospace";
@@ -2955,9 +2984,13 @@ function generateVaultShareCard(){
 }
 
 function handleShare(){
-  const isAssets=document.getElementById('assets-page').classList.contains('visible');
+  const ctx=getShareContext();
+  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
+  const isAssets=ctx.scope!=='terminal';
   const vaultText=isAssets?buildVaultShareText():null;
-  const shareTitle=isAssets?'My Portfolio — RB Terminal':SHARE_TITLE;
+  const shareTitle=ctx.scope==='category'
+    ?`My ${catNames[ctx.cat]||ctx.cat} — RB Terminal`
+    :isAssets?'My Portfolio — RB Terminal':SHARE_TITLE;
   const shareText=vaultText||SHARE_TEXT;
   
   if(isAssets&&vaultText){
@@ -2991,10 +3024,34 @@ function handleShare(){
 
 function fallbackShare(title,text){
   shareOpen=!shareOpen;
-  // Update popover content based on context
-  const isAssets=document.getElementById('assets-page').classList.contains('visible');
+  const ctx=getShareContext();
+  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
   const popTitle=document.querySelector('.sp-title');
-  if(popTitle)popTitle.textContent=isAssets?'Share My Portfolio':'Share RB Terminal';
+  if(popTitle){
+    if(ctx.scope==='category')popTitle.textContent='Share '+catNames[ctx.cat];
+    else if(ctx.scope==='dashboard')popTitle.textContent='Share My Portfolio';
+    else popTitle.textContent='Share RB Terminal';
+  }
+  // Show image preview if on assets page
+  const previewWrap=document.getElementById('share-preview');
+  if(previewWrap){
+    if(ctx.scope!=='terminal'){
+      const canvas=generateVaultShareCard();
+      if(canvas){
+        previewWrap.innerHTML='';
+        const img=document.createElement('img');
+        img.src=canvas.toDataURL('image/png');
+        img.style.cssText='width:100%;border-radius:8px;margin-bottom:8px;cursor:pointer;';
+        img.title='Tap to save image';
+        img.onclick=()=>{
+          const a=document.createElement('a');
+          a.href=img.src;a.download='rb-portfolio.png';a.click();
+        };
+        previewWrap.appendChild(img);
+        previewWrap.style.display='block';
+      }else{previewWrap.style.display='none';}
+    }else{previewWrap.style.display='none';}
+  }
   document.getElementById('share-popover').classList.toggle('open',shareOpen);
 }
 
@@ -3009,8 +3066,9 @@ function shareX(){
 }
 function shareLinkedIn(){window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(SHARE_URL)}`,'_blank','noopener,noreferrer');closeShare();}
 function shareReddit(){
-  const isAssets=document.getElementById('assets-page').classList.contains('visible');
-  const title=isAssets?'My Portfolio — RB Terminal':SHARE_TITLE;
+  const ctx=getShareContext();
+  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
+  const title=ctx.scope==='category'?`My ${catNames[ctx.cat]||ctx.cat} — RB Terminal`:ctx.scope==='dashboard'?'My Portfolio — RB Terminal':SHARE_TITLE;
   window.open(`https://reddit.com/submit?url=${encodeURIComponent(SHARE_URL)}&title=${encodeURIComponent(title)}`,'_blank','noopener,noreferrer');closeShare();
 }
 async function copyLink(){
