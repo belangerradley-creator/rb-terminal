@@ -2231,7 +2231,8 @@ function renderVaultDashboard(){
   const catBreak={};
   let holdingCount=0;
   Object.values(h).forEach(v=>{
-    if(v.value>0){totalNW+=v.value;catBreak[v.category]=(catBreak[v.category]||0)+v.value;holdingCount++;}
+    const val=parseFloat(v.value)||0;
+    if(val>0){totalNW+=val;catBreak[v.category]=(catBreak[v.category]||0)+val;holdingCount++;}
   });
   const catCount=Object.keys(catBreak).length;
 
@@ -2412,11 +2413,34 @@ function renderVaultManage(){
 function renderVaultManageTotals(){
   const el=document.getElementById('vault-manage-totals');
   let total=0;
-  Object.values(vaultData.holdings).forEach(h=>{if(h.value>0)total+=h.value;});
+  let catTotals={};
+  Object.values(vaultData.holdings).forEach(h=>{
+    const val=parseFloat(h.value)||0;
+    if(val>0){
+      total+=val;
+      catTotals[h.category]=(catTotals[h.category]||0)+val;
+    }
+  });
   if(total<=0){el.innerHTML='';return;}
+  
+  // Show category subtotal if a category is active
+  let catLine='';
+  if(vaultActiveCat&&catTotals[vaultActiveCat]){
+    const cats=getVaultCategories();
+    const catLabel=cats[vaultActiveCat]?.label||vaultActiveCat;
+    const color=VAULT_COLOR_MAP[vaultActiveCat]||'var(--gold)';
+    catLine=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+      <div class="vtb-label" style="color:${color};">${catLabel} Total</div>
+      <div class="vtb-val" style="color:${color};font-size:14px;">${vaultFmt(catTotals[vaultActiveCat])}</div>
+    </div>`;
+  }
+  
   el.innerHTML=`<div class="vault-totals-bar">
-    <div><div class="vtb-label">Portfolio Total</div><div class="vtb-val">${vaultFmt(total)}</div></div>
-    <button class="vtb-btn" onclick="switchVaultView('dashboard')">VIEW DASHBOARD →</button>
+    ${catLine}
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div><div class="vtb-label">Portfolio Total</div><div class="vtb-val">${vaultFmt(total)}</div></div>
+      <button class="vtb-btn" onclick="switchVaultView('dashboard')">VIEW DASHBOARD →</button>
+    </div>
   </div>`;
 }
 
@@ -2429,7 +2453,7 @@ function toggleVaultCat(key){
 function vaultUpdateHolding(id,category,qty,price,name){
   const q=parseFloat(qty)||0;
   const p=parseFloat(price)||0;
-  vaultData.holdings[id]={quantity:q,pricePerUnit:p,value:q*p,category:category};
+  vaultData.holdings[id]={quantity:q,pricePerUnit:p,value:Math.round((q*p)*100)/100,category:category};
   if(name)vaultData.customNames[id]=name;
   saveVault();
   renderVaultManageTotals();
