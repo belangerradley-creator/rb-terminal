@@ -2959,49 +2959,115 @@ function generateVaultShareCard(){
   ctx.font="600 9px 'JetBrains Mono', monospace";
   ctx.fillStyle=mutedC;ctx.fillText(valueLabel,24,116);
   
-  // Category bars
+  // Category colors
   const catColors=gm
     ?{precious_metals:'#ffb347',stocks:'#00ffaa',crypto:'#ff8c42',real_estate:'#d580ff',vehicles:'#ff3d6e',collectibles:'#ff66f9'}
     :{precious_metals:'#D4A017',stocks:'#00e676',crypto:'#ff7c2a',real_estate:'#3d9dff',vehicles:'#ff3b5c',collectibles:'#a855f7'};
-  let barY=140;
-  Object.entries(data.catBreak).forEach(([cat,val])=>{
-    const pct=val/data.totalNW;
-    const barW=Math.max(pct*480,4);
-    const color=catColors[cat]||accent;
+
+  if(isCat){
+    // CATEGORY VIEW — bar chart for individual holdings
+    let barY=140;
+    data.holdingsList.forEach(h=>{
+      const pct=h.value/data.totalNW;
+      const barW=Math.max(pct*420,4);
+      const color=catColors[h.category]||accent;
+      
+      ctx.fillStyle=barBg;
+      ctx.beginPath();ctx.roundRect(24,barY,420,18,4);ctx.fill();
+      ctx.fillStyle=color;
+      ctx.beginPath();ctx.roundRect(24,barY,barW,18,4);ctx.fill();
+      
+      ctx.font="600 8px 'JetBrains Mono', monospace";
+      ctx.fillStyle=textC;
+      ctx.fillText(h.name,30,barY+13);
+      ctx.fillStyle='rgba(255,255,255,0.7)';
+      ctx.textAlign='right';
+      ctx.fillText(vaultFmt(h.value)+' · '+(pct*100).toFixed(1)+'%',500,barY+13);
+      ctx.textAlign='left';
+      barY+=28;
+    });
     
-    ctx.fillStyle=barBg;
-    ctx.beginPath();ctx.roundRect(24,barY,480,18,4);ctx.fill();
-    ctx.fillStyle=color;
-    ctx.beginPath();ctx.roundRect(24,barY,barW,18,4);ctx.fill();
+    // Footer
+    ctx.font="400 7px 'JetBrains Mono', monospace";
+    ctx.fillStyle=mutedC;
+    ctx.fillText('Generated with RB Terminal · '+new Date().toLocaleDateString(),24,384);
+  }else{
+    // DASHBOARD VIEW — donut pie chart with legend
+    const entries=Object.entries(data.catBreak).filter(([,v])=>v>0);
+    const dcx=150,dcy=260,dr=80,dsw=24;
     
-    ctx.font="600 8px 'JetBrains Mono', monospace";
-    ctx.fillStyle=textC;
-    ctx.fillText(catNames[cat]||cat,30,barY+13);
-    ctx.fillStyle='rgba(255,255,255,0.7)';
-    ctx.textAlign='right';
-    ctx.fillText(vaultFmt(val)+' · '+(pct*100).toFixed(1)+'%',500,barY+13);
+    // Draw donut slices
+    let startAngle=-Math.PI/2;
+    const slices=[];
+    entries.forEach(([cat,val])=>{
+      const pct=val/data.totalNW;
+      const sweep=pct*Math.PI*2;
+      const color=catColors[cat]||accent;
+      
+      ctx.beginPath();
+      ctx.arc(dcx,dcy,dr,startAngle,startAngle+sweep);
+      ctx.arc(dcx,dcy,dr-dsw,startAngle+sweep,startAngle,true);
+      ctx.closePath();
+      ctx.fillStyle=color;
+      ctx.fill();
+      
+      slices.push({cat,val,pct,color,startAngle,sweep});
+      startAngle+=sweep;
+    });
+    
+    // Donut center — net worth
+    ctx.fillStyle=bg1;
+    ctx.beginPath();ctx.arc(dcx,dcy,dr-dsw-2,0,Math.PI*2);ctx.fill();
+    ctx.font="700 14px 'Space Grotesk', sans-serif";
+    ctx.fillStyle=accent;ctx.textAlign='center';
+    ctx.fillText(vaultFmt(data.totalNW),dcx,dcy+2);
+    ctx.font="600 6px 'JetBrains Mono', monospace";
+    ctx.fillStyle=mutedC;
+    ctx.fillText('NET WORTH',dcx,dcy+14);
     ctx.textAlign='left';
-    barY+=28;
-  });
-  
-  // Holdings list
-  barY+=10;
-  ctx.font="700 8px 'JetBrains Mono', monospace";
-  ctx.fillStyle=mutedC;ctx.fillText(isCat?'HOLDINGS':'TOP HOLDINGS',24,barY);
-  barY+=16;
-  data.holdingsList.slice(0,4).forEach(h=>{
-    ctx.font="500 9px 'JetBrains Mono', monospace";
-    ctx.fillStyle=textC;ctx.fillText(h.name,28,barY);
-    ctx.fillStyle=accent;ctx.textAlign='right';
-    ctx.fillText(vaultFmt(h.value),500,barY);
-    ctx.textAlign='left';
-    barY+=18;
-  });
-  
-  // Footer
-  ctx.font="400 7px 'JetBrains Mono', monospace";
-  ctx.fillStyle=mutedC;
-  ctx.fillText('Generated with RB Terminal · '+new Date().toLocaleDateString(),24,384);
+    
+    // Legend — right side
+    let ly=145;
+    entries.forEach(([cat,val])=>{
+      const pct=((val/data.totalNW)*100).toFixed(1);
+      const color=catColors[cat]||accent;
+      
+      // Color dot
+      ctx.fillStyle=color;
+      ctx.beginPath();ctx.arc(280,ly-3,4,0,Math.PI*2);ctx.fill();
+      
+      // Label
+      ctx.font="600 9px 'JetBrains Mono', monospace";
+      ctx.fillStyle=textC;
+      ctx.fillText(catNames[cat]||cat,292,ly);
+      
+      // Value + pct
+      ctx.fillStyle='rgba(255,255,255,0.6)';
+      ctx.textAlign='right';
+      ctx.fillText(vaultFmt(val)+' ('+pct+'%)',570,ly);
+      ctx.textAlign='left';
+      ly+=26;
+    });
+    
+    // Top holdings below legend
+    ly+=10;
+    ctx.font="700 8px 'JetBrains Mono', monospace";
+    ctx.fillStyle=mutedC;ctx.fillText('TOP HOLDINGS',280,ly);
+    ly+=16;
+    data.holdingsList.slice(0,4).forEach(h=>{
+      ctx.font="500 9px 'JetBrains Mono', monospace";
+      ctx.fillStyle=textC;ctx.fillText(h.name,284,ly);
+      ctx.fillStyle=accent;ctx.textAlign='right';
+      ctx.fillText(vaultFmt(h.value),570,ly);
+      ctx.textAlign='left';
+      ly+=18;
+    });
+    
+    // Footer
+    ctx.font="400 7px 'JetBrains Mono', monospace";
+    ctx.fillStyle=mutedC;
+    ctx.fillText('Generated with RB Terminal · '+new Date().toLocaleDateString(),24,384);
+  }
   
   return canvas;
 }
