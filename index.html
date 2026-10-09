@@ -1,6 +1,7 @@
 
 
-  <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -534,22 +535,6 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 .rt-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
 @media(max-width:900px){.rt-wrap{grid-template-columns:1fr;padding:12px}.rt-stats{grid-template-columns:repeat(2,1fr)}.rt-canvas{height:260px}#pokedex-grid{grid-template-columns:repeat(2,1fr)!important}}
 </style>
-<style id="rb-v26">
-.rt-slots{grid-template-columns:1fr!important;gap:6px!important}
-.rt-div{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--cyan);font-size:16px}
-.rt-div .rt-swap{width:26px;height:26px;font-size:12px}
-.rt-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;min-height:26px}
-.rt-tag{display:inline-flex;align-items:center;gap:6px;border:1px solid;border-radius:var(--radius-xl);padding:3px 10px;font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif}
-.rt-tag b{cursor:pointer;opacity:.6;font-size:13px}.rt-tag b:hover{opacity:1}
-.rt-hint{font-size:9px;color:var(--gold);min-height:12px;margin-bottom:8px}
-.rt-stats{display:block!important;overflow-x:auto}
-.rt-tbl{width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap}
-.rt-tbl th{color:var(--muted);font-size:8px;letter-spacing:1px;text-transform:uppercase;text-align:right;padding:6px 8px;border-bottom:1px solid var(--border2)}
-.rt-tbl td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text)}
-.rt-tbl th:first-child,.rt-tbl td:first-child{text-align:left;font-weight:700}
-.rt-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
-.rt-note{font-size:8px;color:var(--muted);margin-top:8px;line-height:1.5}
-</style>
 <style id="rb-v27">
 #bubble-tooltip{min-width:240px;max-width:300px}
 .btt-bs-h{font-size:7px;letter-spacing:1.5px;color:var(--cyan);margin:10px 0 0;padding-top:8px;border-top:1px solid var(--border2)}
@@ -559,6 +544,24 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 .btt-bs-note{font-size:8px;color:var(--muted);margin-top:8px;line-height:1.5}
 .bs-table{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .bs-t-h{font-size:8px;letter-spacing:2px;color:var(--cyan);margin-bottom:8px}
+</style>
+<style id="rb-v28">
+.rt-wrap{grid-template-columns:360px 1fr}
+.rt-slot-s{font-size:26px}.rt-slot-l{font-size:9px}.rt-slot-n{font-size:11px;color:#8aa0bd}
+.rt-chip{font-size:12px;padding:6px 12px;color:#a9bbd2}
+.rt-search input{font-size:12px;padding:10px 12px}.rt-search button{font-size:10px}
+.rt-title{font-size:13px;letter-spacing:2px;color:#a9bbd2}
+.rt-big{font-size:44px}
+.rt-seg button{font-size:11px;padding:7px 12px;color:#a9bbd2}
+.rt-seg button.on{color:var(--cyan)}
+.rt-canvas{height:400px}
+.rt-status{font-size:12px;gap:12px;flex-wrap:wrap;color:#c3d2e6;background:rgba(5,7,15,.8)}
+.rt-retry{background:var(--cyan);border:none;color:#05070f;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer}
+.rt-stats{margin-top:16px;gap:10px}
+.rt-stats .stat-b{padding:12px 14px}
+.rt-stats .stat-l{font-size:10px;color:#8aa0bd}
+.rt-stats .stat-v{font-size:16px;margin-top:4px;font-weight:700}
+@media(max-width:900px){.rt-wrap{grid-template-columns:1fr}.rt-big{font-size:34px}.rt-canvas{height:300px}.rt-stats .stat-v{font-size:14px}}
 </style>
 </head>
 <body>
@@ -822,12 +825,12 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 ═════════════════════════════════════════════ -->
 </div><!-- END #terminal-page -->
 <div id="ratios-page" class="tabpage">
-  <div class="sec-hdr"><span class="sec-title">Ratio Lab</span><span class="sec-sub">ADD UP TO 5 ASSETS OVER ONE BASE · CHART A ÷ B</span></div>
+  <div class="sec-hdr"><span class="sec-title">Ratio Lab</span><span class="sec-sub">PICK ANY TWO ASSETS · CHART A ÷ B</span></div>
   <div class="rt-wrap">
     <div class="rt-pick">
       <div class="rt-slots" id="rt-slots"></div>
       <div class="rt-search">
-        <input id="rt-q" type="text" placeholder="Search any stock, ETF or coin — adds to the highlighted slot…" autocomplete="off" onkeydown="if(event.key==='Enter')rtSearch()"/>
+        <input id="rt-q" type="text" placeholder="Search any stock, ETF or coin into the highlighted slot…" autocomplete="off" onkeydown="if(event.key==='Enter')rtSearch()"/>
         <button onclick="rtSearch()">SEARCH</button>
         <div id="rt-results" class="rt-results"></div>
       </div>
@@ -2833,40 +2836,24 @@ const RATIO_PRESETS=[
   ...['AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA','AVGO','SPY','QQQ','GLD'].map(s=>({sym:s,name:s,type:'stock'})),
   ...TOP10_CRYPTO.filter(c=>!['USDT','USDC'].includes(c.sym)).map(c=>({sym:c.sym,name:c.name,type:'crypto',cgId:c.id}))
 ];
-const RT_COL=['#00d4ff','#f5b800','#a855f7','#00e676','#ff7c2a'],RT_MAX=5;
-const RT={nums:[RATIO_PRESETS.find(x=>x.sym==='ETH')],b:RATIO_PRESETS.find(x=>x.sym==='BTC'),active:'n',tf:'3M',mode:'ratio',ready:false,chart:null,req:0,cache:{},results:[],rows:[],failed:[]};
+const RT={a:RATIO_PRESETS.find(x=>x.sym==='ETH'),b:RATIO_PRESETS.find(x=>x.sym==='BTC'),active:'a',tf:'3M',mode:'ratio',ready:false,chart:null,req:0,cache:{},results:[],data:null};
 const rtKey=x=>x.type+':'+(x.cgId||x.sym);
-const rtHas=x=>RT.nums.some(n=>rtKey(n)===rtKey(x));
 function initRatios(){if(RT.ready)return;RT.ready=true;renderRatioChips();renderRatioSlots();loadRatio();}
-function rtHint(t){const e=document.getElementById('rt-hint');if(e)e.textContent=t||'';}
 function renderRatioChips(){
   document.getElementById('rt-chips').innerHTML=RATIO_PRESETS.map((p,i)=>{
-    const on=rtHas(p)||rtKey(p)===rtKey(RT.b);
+    const on=rtKey(p)===rtKey(RT.a)||rtKey(p)===rtKey(RT.b);
     return`<button class="rt-chip ${p.type}${on?' on':''}" onclick="rtPick(${i})">${p.sym}</button>`;}).join('');
 }
 function renderRatioSlots(){
-  const tags=RT.nums.map((n,i)=>`<span class="rt-tag" style="border-color:${RT_COL[i]};color:${RT_COL[i]}">${n.sym}${RT.nums.length>1?`<b onclick="event.stopPropagation();rtRemove(${i})" title="Remove">×</b>`:''}</span>`).join('');
-  document.getElementById('rt-slots').innerHTML=
-   `<div class="rt-slot${RT.active==='n'?' active':''}" onclick="rtActive('n')"><div class="rt-slot-l">A · TOP · ${RT.nums.length}/${RT_MAX} ASSETS</div><div class="rt-tags">${tags}</div></div>
-    <div class="rt-div">÷${RT.nums.length===1?`<button class="rt-swap" onclick="rtSwap()" title="Swap A and B">⇄</button>`:''}</div>
-    <div class="rt-slot${RT.active==='b'?' active':''}" onclick="rtActive('b')"><div class="rt-slot-l">B · BASE</div><div class="rt-slot-s">${RT.b.sym}</div><div class="rt-slot-n">${RT.b.name}${RT.b.type==='crypto'?' · crypto':''}</div></div>`;
+  const slot=(k,l)=>`<div class="rt-slot${RT.active===k?' active':''}" onclick="rtActive('${k}')"><div class="rt-slot-l">${l}</div><div class="rt-slot-s">${RT[k].sym}</div><div class="rt-slot-n">${RT[k].name}${RT[k].type==='crypto'?' · crypto':''}</div></div>`;
+  document.getElementById('rt-slots').innerHTML=slot('a','A · TOP')+`<button class="rt-swap" onclick="rtSwap()" title="Swap A and B">⇄</button>`+slot('b','B · BOTTOM');
 }
-function rtActive(k){RT.active=k;rtHint(k==='n'?'Tap assets to add or remove them from A.':'Tap an asset to make it the base (B).');renderRatioSlots();}
-function rtRefresh(){renderRatioChips();renderRatioSlots();loadRatio();}
-function rtAssign(x){
-  rtHint('');
-  if(RT.active==='b'){RT.b=x;RT.nums=RT.nums.filter(n=>rtKey(n)!==rtKey(x));if(!RT.nums.length)RT.nums=[RATIO_PRESETS.find(p=>rtKey(p)!==rtKey(x))];RT.active='n';}
-  else if(rtHas(x)){if(RT.nums.length<2){rtHint('Keep at least one asset in A.');return;}RT.nums=RT.nums.filter(n=>rtKey(n)!==rtKey(x));}
-  else if(rtKey(x)===rtKey(RT.b)){rtHint(x.sym+' is the base. Select B to change it.');return;}
-  else if(RT.nums.length>=RT_MAX){rtHint('Maximum '+RT_MAX+' assets in A. Remove one first.');return;}
-  else RT.nums.push(x);
-  rtRefresh();
-}
+function rtActive(k){RT.active=k;renderRatioSlots();}
+function rtAssign(asset){RT[RT.active]=asset;RT.active=RT.active==='a'?'b':'a';renderRatioChips();renderRatioSlots();loadRatio();}
 function rtPick(i){rtAssign(RATIO_PRESETS[i]);}
-function rtRemove(i){if(RT.nums.length<2)return;RT.nums.splice(i,1);rtRefresh();}
-function rtSwap(){if(RT.nums.length!==1)return;const t=RT.nums[0];RT.nums=[RT.b];RT.b=t;rtRefresh();}
+function rtSwap(){const t=RT.a;RT.a=RT.b;RT.b=t;renderRatioChips();renderRatioSlots();loadRatio();}
 function rtTF(tf,btn){RT.tf=tf;document.querySelectorAll('#rt-tfs button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');loadRatio();}
-function rtMode(m,btn){RT.mode=m;document.querySelectorAll('#rt-modes button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');if(RT.rows.length)drawRatio();}
+function rtMode(m,btn){RT.mode=m;document.querySelectorAll('#rt-modes button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');if(RT.data)drawRatio();}
 
 async function rtSearch(){
   const q=document.getElementById('rt-q').value.trim();
@@ -2890,13 +2877,24 @@ function rtChoose(i){
 }
 document.addEventListener('click',e=>{if(!e.target.closest('.rt-search'))document.getElementById('rt-results')?.classList.remove('visible');});
 
+/* Backup price history for crypto (Binance public API, no key) when CoinGecko is rate-limited */
+async function rtBinance(x){
+  if(x.type!=='crypto')return[];
+  const cfg={'5D':['1h',120],'1M':['1d',30],'3M':['1d',90],'1Y':['1d',365],'ALL':['1d',1000]}[RT.tf];
+  try{
+    const r=await fetch(`https://api.binance.com/api/v3/klines?symbol=${x.sym}USDT&interval=${cfg[0]}&limit=${cfg[1]}`);
+    if(!r.ok)return[];
+    return(await r.json()).map(k=>({t:k[0],c:parseFloat(k[4])}));
+  }catch(e){return[];}
+}
 async function rtSeries(x){
-  const tf=RT.tf==='1Y'?'ALL':RT.tf;
-  const k=rtKey(x)+'|'+tf;
+  const k=rtKey(x)+'|'+RT.tf;
   if(RT.cache[k])return RT.cache[k];
-  let pts=await fetchSeries(x.sym,x.type,x.cgId,tf);
+  let pts=[];
+  try{pts=(await fetchSeries(x.sym,x.type,x.cgId,RT.tf==='1Y'?'ALL':RT.tf)).map(p=>({t:+p.t,c:p.c}));}catch(e){}
+  if(pts.length<2)pts=await rtBinance(x);
   if(RT.tf==='1Y'){const cut=Date.now()-365*864e5;pts=pts.filter(p=>p.t>=cut);}
-  pts=pts.filter(p=>p.c>0).sort((a,b)=>a.t-b.t);
+  pts=pts.filter(p=>p.c>0&&isFinite(p.t)).sort((a,b)=>a.t-b.t);
   if(pts.length>1)RT.cache[k]=pts;
   return pts;
 }
@@ -2913,72 +2911,56 @@ function rtAlign(A,B){
   return out;
 }
 const rtFmt=n=>n==null||isNaN(n)?'--':n>=1000?fmt(n,0):n>=100?fmt(n,2):n>=1?fmt(n,4):n>=0.01?fmt(n,6):n.toExponential(3);
+function rtMsg(t){const st=document.getElementById('rt-status');st.innerHTML=t+' <button class="rt-retry" onclick="loadRatio()">RETRY</button>';st.style.display='flex';}
 
 async function loadRatio(){
   const id=++RT.req;
   const st=document.getElementById('rt-status');
-  const names=RT.nums.map(n=>n.sym).join(', ');
-  st.textContent='LOADING '+names+' ÷ '+RT.b.sym+'…';st.style.display='flex';
-  document.getElementById('rt-title').textContent=names+' ÷ '+RT.b.sym;
-  const [B,...As]=await Promise.all([rtSeries(RT.b),...RT.nums.map(rtSeries)]);
+  st.textContent='LOADING '+RT.a.sym+' ÷ '+RT.b.sym+'…';st.style.display='flex';
+  document.getElementById('rt-title').textContent=RT.a.sym+' ÷ '+RT.b.sym;
+  const [A,B]=await Promise.all([rtSeries(RT.a),rtSeries(RT.b)]);
   if(id!==RT.req)return;
-  RT.rows=[];
-  if(B.length<2){st.textContent='NO HISTORY RETURNED FOR BASE '+RT.b.sym+' — TRY ANOTHER RANGE OR BASE';return;}
-  let rows=[];const failed=[];
-  RT.nums.forEach((n,i)=>{
-    if(As[i].length<2){failed.push(n.sym);return;}
-    const d=rtAlign(As[i],B);
-    if(d.length<2){failed.push(n.sym);return;}
-    rows.push({asset:n,color:RT_COL[i],d});
-  });
-  if(!rows.length){st.textContent='NO USABLE HISTORY FOR THE SELECTED ASSETS ON THIS RANGE';return;}
-  const t0=Math.max(...rows.map(r=>r.d[0].t));
-  rows.forEach(r=>{r.d=r.d.filter(p=>p.t>=t0);});
-  rows=rows.filter(r=>r.d.length>1);
-  if(!rows.length){st.textContent='THESE ASSETS DON\'T OVERLAP IN TIME ON THIS RANGE';return;}
-  RT.rows=rows;RT.failed=failed;
-  if(failed.length)rtHint('No history for '+failed.join(', ')+' on this range — left out of the chart.');
-  st.style.display='none';drawRatio();
-}
-function rtStats(r){
-  const avg=r.reduce((s,v)=>s+v,0)/r.length,sd=Math.sqrt(r.reduce((s,v)=>s+(v-avg)**2,0)/r.length);
-  const cur=r[r.length-1];
-  return{cur,avg,hi:Math.max(...r),lo:Math.min(...r),z:sd?(cur-avg)/sd:0,pct:r.filter(v=>v<=cur).length/r.length*100,chg:(cur/r[0]-1)*100};
+  if(A.length<2||B.length<2){RT.data=null;rtMsg('NO PRICE HISTORY FOR '+(A.length<2?RT.a.sym:RT.b.sym)+' ON THIS RANGE.');return;}
+  const d=rtAlign(A,B);
+  if(d.length<2){RT.data=null;rtMsg('THESE TWO ASSETS DON\'T OVERLAP IN TIME ON THIS RANGE.');return;}
+  RT.data=d;st.style.display='none';
+  try{drawRatio();}catch(e){console.error(e);rtMsg('CHART ERROR: '+e.message);}
 }
 function drawRatio(){
-  const rows=RT.rows,multi=rows.length>1;
-  rows.forEach(r=>{r.s=rtStats(r.d.map(p=>p.r));});
-  const cur=document.getElementById('rt-cur'),c=document.getElementById('rt-chg');
-  if(multi){cur.textContent=rows.length+' ratios';c.style.display='none';}
-  else{const s=rows[0].s;cur.textContent=rtFmt(s.cur);c.style.display='';c.className='ch-badge '+(s.chg>=0?'up':'dn');c.textContent=(s.chg>=0?'+':'')+fmt(s.chg,2)+'%';}
-  const rd=z=>z>1?'A stretched':z<-1?'A depressed':'Near average';
-  document.getElementById('rt-stats').innerHTML='<table class="rt-tbl"><tr><th>Pair</th><th>Ratio</th><th>Change</th><th>A price</th><th>Avg</th><th>High</th><th>Low</th><th>Pctl</th><th>Z</th><th>Reading</th></tr>'+
-    rows.map(r=>{const s=r.s;return`<tr><td><span class="rt-dot" style="background:${r.color}"></span>${r.asset.sym} ÷ ${RT.b.sym}</td><td>${rtFmt(s.cur)}</td><td style="color:${s.chg>=0?'var(--green)':'var(--red)'}">${s.chg>=0?'+':''}${fmt(s.chg,2)}%</td><td>$${rtFmt(r.d[r.d.length-1].a)}</td><td>${rtFmt(s.avg)}</td><td>${rtFmt(s.hi)}</td><td>${rtFmt(s.lo)}</td><td>${fmt(s.pct,0)}th</td><td>${fmt(s.z,2)}</td><td style="color:var(--cyan)">${rd(s.z)}</td></tr>`;}).join('')+
-    `</table><div class="rt-note">${RT.b.sym} price: $${rtFmt(rows[0].d[rows[0].d.length-1].b)}${multi&&RT.mode==='ratio'?' · Chart shows each ratio indexed to 100 at the start so different scales are comparable. Real values are in the table.':''}</div>`;
+  const d=RT.data,r=d.map(x=>x.r);
+  const cur=r[r.length-1],first=r[0];
+  const avg=r.reduce((s,v)=>s+v,0)/r.length;
+  const sd=Math.sqrt(r.reduce((s,v)=>s+(v-avg)**2,0)/r.length);
+  const hi=Math.max(...r),lo=Math.min(...r);
+  const z=sd?(cur-avg)/sd:0;
+  const pct=r.filter(v=>v<=cur).length/r.length*100;
+  const chg=(cur/first-1)*100;
+  document.getElementById('rt-cur').textContent=rtFmt(cur);
+  const c=document.getElementById('rt-chg');c.style.display='';c.className='ch-badge '+(chg>=0?'up':'dn');c.textContent=(chg>=0?'+':'')+fmt(chg,2)+'%';
+  const read=z>1?'A STRETCHED VS B':z<-1?'A DEPRESSED VS B':'NEAR AVERAGE';
+  const last=d[d.length-1];
+  const cell=(l,v,x='')=>`<div class="stat-b"><div class="stat-l">${l}</div><div class="stat-v" ${x}>${v}</div></div>`;
+  document.getElementById('rt-stats').innerHTML=
+    cell(RT.a.sym+' price','$'+rtFmt(last.a))+cell(RT.b.sym+' price','$'+rtFmt(last.b))+
+    cell('Average',rtFmt(avg))+cell('High',rtFmt(hi))+cell('Low',rtFmt(lo))+
+    cell('Percentile',fmt(pct,0)+'th')+cell('Z-score',fmt(z,2))+cell('Reading',read,'style="color:var(--cyan)"');
   const css=getComputedStyle(document.body);
-  const gd=css.getPropertyValue('--gold').trim()||'#f5b800';
+  const cy=(css.getPropertyValue('--cyan').trim()||'#00d4ff'),gd=(css.getPropertyValue('--gold').trim()||'#f5b800');
   const long=RT.tf==='1Y'||RT.tf==='ALL';
-  const fd=v=>{const t=new Date(v);return RT.tf==='5D'?t.toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',hour12:false}):long?t.toLocaleDateString('en-US',{month:'short',year:'2-digit'}):t.toLocaleDateString('en-US',{month:'short',day:'numeric'});};
-  const line=(label,data,color,extra={})=>({label,data,borderColor:color,borderWidth:2,pointRadius:0,tension:.15,fill:false,...extra});
-  let ds,realY=false;
-  if(RT.mode==='ratio'&&!multi){
-    const r=rows[0],a=r.s.avg;realY=true;
-    ds=[line(r.asset.sym+'/'+RT.b.sym,r.d.map(p=>({x:p.t,y:p.r})),r.color,{fill:true,backgroundColor:r.color+'18'}),
-        line('Average',r.d.map(p=>({x:p.t,y:a})),gd,{borderDash:[5,5],borderWidth:1})];
-  }else if(RT.mode==='ratio'){
-    ds=rows.map(r=>line(r.asset.sym+'/'+RT.b.sym,r.d.map(p=>({x:p.t,y:p.r/r.d[0].r*100})),r.color));
-  }else{
-    ds=rows.map(r=>line(r.asset.sym,r.d.map(p=>({x:p.t,y:p.a/r.d[0].a*100})),r.color));
-    ds.push(line(RT.b.sym+' (base)',rows[0].d.map(p=>({x:p.t,y:p.b/rows[0].d[0].b*100})),'#8aa0bd',{borderDash:[4,4]}));
-  }
-  if(RT.chart)RT.chart.destroy();
-  RT.chart=new Chart(document.getElementById('rt-chart'),{type:'line',data:{datasets:ds},options:{
-    responsive:true,maintainAspectRatio:false,animation:{duration:300},parsing:false,interaction:{mode:'nearest',axis:'x',intersect:false},
-    plugins:{legend:{display:ds.length>1&&!(RT.mode==='ratio'&&!multi),labels:{color:'#8aa0bd',font:{family:'JetBrains Mono',size:9},boxWidth:10}},
-      tooltip:{backgroundColor:'#090d18',borderColor:'#1e3050',borderWidth:1,titleColor:gd,bodyColor:'#dce8f5',titleFont:{family:'JetBrains Mono',size:9},bodyFont:{family:'JetBrains Mono',size:10},
-        callbacks:{title:i=>i.length?fd(i[0].parsed.x):'',label:x=>' '+x.dataset.label+': '+(realY&&x.datasetIndex===0?rtFmt(x.parsed.y):fmt(x.parsed.y,2))}}},
-    scales:{x:{type:'linear',ticks:{color:'#3d5470',font:{family:'JetBrains Mono',size:8},maxTicksLimit:8,maxRotation:0,callback:v=>fd(v)},grid:{color:'rgba(61,157,255,.06)'}},
-      y:{position:'right',title:{display:!realY,text:'Indexed, start = 100',color:'#3d5470',font:{family:'JetBrains Mono',size:8}},ticks:{color:'#6b86a8',font:{family:'JetBrains Mono',size:9},maxTicksLimit:6,callback:v=>realY?rtFmt(v):fmt(v,0)},grid:{color:'rgba(61,157,255,.06)'}}}}});
+  const labels=d.map(x=>{const t=new Date(x.t);return RT.tf==='5D'?t.toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',hour12:false}):long?t.toLocaleDateString('en-US',{month:'short',year:'2-digit'}):t.toLocaleDateString('en-US',{month:'short',day:'numeric'});});
+  const ds=RT.mode==='ratio'
+    ?[{label:RT.a.sym+'/'+RT.b.sym,data:r,borderColor:cy,backgroundColor:'rgba(0,212,255,.10)',fill:true,borderWidth:2.5,pointRadius:0,tension:.15},
+      {label:'Average',data:r.map(()=>avg),borderColor:gd,borderDash:[6,5],borderWidth:1.5,pointRadius:0,fill:false}]
+    :[{label:RT.a.sym,data:d.map(x=>x.a/d[0].a*100),borderColor:cy,borderWidth:2.5,pointRadius:0,tension:.15,fill:false},
+      {label:RT.b.sym,data:d.map(x=>x.b/d[0].b*100),borderColor:gd,borderWidth:2.5,pointRadius:0,tension:.15,fill:false}];
+  if(RT.chart){RT.chart.destroy();RT.chart=null;}
+  RT.chart=new Chart(document.getElementById('rt-chart'),{type:'line',data:{labels,datasets:ds},options:{
+    responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:RT.mode==='rebased',labels:{color:'#c3d2e6',font:{family:'JetBrains Mono',size:11},boxWidth:12}},
+      tooltip:{backgroundColor:'#090d18',borderColor:'#1e3050',borderWidth:1,titleColor:gd,bodyColor:'#fff',titleFont:{family:'JetBrains Mono',size:11},bodyFont:{family:'JetBrains Mono',size:12},padding:10,
+        callbacks:{label:x=>' '+x.dataset.label+': '+(RT.mode==='ratio'?rtFmt(x.parsed.y):fmt(x.parsed.y,2))}}},
+    scales:{x:{ticks:{color:'#8aa0bd',font:{family:'JetBrains Mono',size:10},maxTicksLimit:7,maxRotation:0},grid:{color:'rgba(61,157,255,.10)'}},
+      y:{position:'right',ticks:{color:'#c3d2e6',font:{family:'JetBrains Mono',size:11},maxTicksLimit:6,callback:v=>RT.mode==='ratio'?rtFmt(v):fmt(v,0)},grid:{color:'rgba(61,157,255,.10)'}}}}});
 }
 
 async function init(){
