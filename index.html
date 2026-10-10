@@ -479,7 +479,6 @@ body.girl-mode .ticker-result-item:hover{border-color:rgba(255,77,148,.3);backgr
 </style>
 <style id="rb-v24">
 .tabpage{display:none}.tabpage.visible{display:block}
-#ratios-page,#pokedex-page{max-width:1600px;margin:0 auto}
 /* futuristic skin */
 body{background:
   radial-gradient(1200px 600px at 85% -10%,rgba(0,212,255,.07),transparent 60%),
@@ -533,7 +532,7 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 .rt-canvas canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 .rt-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;font-size:10px;letter-spacing:1px;color:var(--muted);background:rgba(5,7,15,.6)}
 .rt-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
-@media(max-width:900px){.rt-wrap{grid-template-columns:1fr;padding:12px}.rt-stats{grid-template-columns:repeat(2,1fr)}.rt-canvas{height:260px}#pokedex-grid{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:900px){.rt-wrap{grid-template-columns:1fr;padding:12px}.rt-stats{grid-template-columns:repeat(2,1fr)}.rt-canvas{height:260px}}
 </style>
 <style id="rb-v27">
 #bubble-tooltip{min-width:240px;max-width:300px}
@@ -542,8 +541,6 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 .btt-bs-bar i{display:block;height:100%}
 .btt-sw{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px}
 .btt-bs-note{font-size:8px;color:var(--muted);margin-top:8px;line-height:1.5}
-.bs-table{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
-.bs-t-h{font-size:8px;letter-spacing:2px;color:var(--cyan);margin-bottom:8px}
 </style>
 <style id="rb-v28">
 .rt-wrap{grid-template-columns:360px 1fr}
@@ -563,6 +560,149 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 .rt-stats .stat-v{font-size:16px;margin-top:4px;font-weight:700}
 @media(max-width:900px){.rt-wrap{grid-template-columns:1fr}.rt-big{font-size:34px}.rt-canvas{height:300px}.rt-stats .stat-v{font-size:14px}}
 </style>
+
+<style id="rb-v29">
+/* bubble map: fixed responsive height (the old auto height ballooned to ~1500px) */
+#bubbleCanvas{width:100%;height:clamp(430px,40vw,540px);display:block}
+.bubble-legend{gap:8px 18px}
+.bubble-legend .leg-item{font-size:10px;color:#a9bbd2}
+@media(max-width:700px){#bubbleCanvas{height:470px}.bubble-hero{padding:12px}}
+/* ── TCG TAB ── */
+#ratios-page,#tcg-page{max-width:1600px;margin:0 auto}
+.tcg-wrap{padding:16px 20px 40px;display:flex;flex-direction:column;gap:16px}
+.tcg-hero{display:grid;grid-template-columns:1fr 1.25fr;gap:16px}
+.tcg-panel{background:linear-gradient(160deg,rgba(14,20,36,.72),rgba(8,12,22,.72));border:1px solid rgba(0,212,255,.16);border-radius:var(--radius-lg);padding:20px;min-width:0}
+.tcg-cap{border-color:rgba(245,184,0,.22);background:linear-gradient(160deg,rgba(245,184,0,.07),rgba(8,12,22,.72))}
+.tcg-label{font-size:10px;font-weight:700;letter-spacing:2px;color:#8aa0bd;text-transform:uppercase;margin-bottom:14px}
+.tcg-cap-val{font-family:'Space Grotesk',sans-serif;font-size:64px;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 28px rgba(245,184,0,.35)}
+.tcg-cap-sub{font-size:11px;color:#8aa0bd;margin-top:10px;line-height:1.7}
+.tcg-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.tcg-stat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 13px}
+.tcg-stat-l{font-size:9px;color:#8aa0bd;letter-spacing:1.5px;text-transform:uppercase}
+.tcg-stat-v{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-top:3px}
+.tcg-stat-v.up{color:var(--green)}
+.tcg-pie-row{display:flex;align-items:center;gap:26px;flex-wrap:wrap;justify-content:center}
+.tcg-pie{width:260px;height:260px;flex-shrink:0;display:block;cursor:default}
+.tcg-legend{display:flex;flex-direction:column;gap:6px;flex:1;min-width:230px}
+.tcg-leg-row{display:flex;align-items:center;gap:9px;font-size:12px;padding:5px 8px;border-radius:var(--radius-sm);border:1px solid transparent;transition:background .12s,border-color .12s;cursor:default}
+.tcg-leg-row.hot{background:rgba(255,255,255,.04);border-color:var(--border2)}
+.tcg-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tcg-leg-name{color:var(--text);font-weight:600;flex:1}
+.tcg-leg-pct{color:#8aa0bd;min-width:40px;text-align:right}
+.tcg-leg-val{color:var(--gold);font-weight:700;min-width:64px;text-align:right}
+.tcg-leg-note{font-size:9px;color:#8aa0bd;margin-top:2px;padding-left:8px}
+.tcg-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tcg-chip{background:transparent;border:1px solid var(--border2);color:#a9bbd2;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;padding:7px 15px;border-radius:var(--radius-xl);cursor:pointer;transition:all .15s}
+.tcg-chip:hover{color:var(--text);border-color:var(--cyan)}
+.tcg-chip.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,.1)}
+.tcg-search-row{display:flex;gap:8px}
+#tcg-search{flex:1;min-width:0;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;padding:11px 14px;border-radius:var(--radius-sm);outline:none;transition:border-color .2s,box-shadow .2s}
+#tcg-search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.08)}
+#tcg-search::placeholder{color:var(--muted)}
+#tcg-search-btn{background:var(--cyan);border:none;color:#05070f;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:0 22px;border-radius:var(--radius-sm);cursor:pointer;letter-spacing:1px}
+#tcg-search-btn:hover{opacity:.85}
+.tcg-status{font-size:11px;color:#a9bbd2;margin:14px 0 6px;min-height:16px;letter-spacing:.3px;line-height:1.7}
+.tcg-quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tcg-quick button{background:var(--bg3);border:1px solid var(--border);color:#a9bbd2;font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s}
+.tcg-quick button:hover{color:var(--cyan);border-color:var(--cyan)}
+.tcg-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:6px}
+.tcg-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+a.tcg-card:hover{border-color:var(--cyan);transform:translateY(-2px)}
+.tcg-card-img{aspect-ratio:2.5/3.5;background:var(--bg);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.tcg-card-img img{width:100%;height:100%;object-fit:contain;display:block}
+.tcg-card-badge{position:absolute;top:7px;left:7px;font-size:8px;font-weight:700;letter-spacing:.6px;padding:2px 7px;border-radius:4px;color:#05070f}
+.tcg-card-body{padding:10px 11px 12px;display:flex;flex-direction:column;gap:2px}
+.tcg-card-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.4}
+.tcg-card-set{font-size:9px;color:#8aa0bd;line-height:1.5}
+.tcg-card-price{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--green);margin-top:6px}
+.tcg-card-var{font-size:8px;color:#8aa0bd;letter-spacing:.6px;text-transform:uppercase}
+.tcg-source{font-size:10px;color:#8aa0bd;line-height:1.8;padding:0 4px}
+@media(max-width:900px){
+  .tcg-wrap{padding:12px}
+  .tcg-hero{grid-template-columns:1fr}
+  .tcg-cap-val{font-size:48px}
+  .tcg-pie{width:220px;height:220px}
+  .tcg-results{grid-template-columns:repeat(2,1fr)}
+}
+/* ── POLYMARKET (political odds) ── */
+.poly-card{display:block;text-decoration:none;color:inherit}
+.poly-card .poly-q{font-size:10.5px;min-height:0;font-weight:600}
+.poly-rows{display:flex;flex-direction:column;gap:5px;margin:2px 0 4px}
+.poly-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) 34px;align-items:center;gap:7px;font-size:9.5px}
+.pr-l{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.pr-bar i{display:block;height:100%;background:var(--cyan);border-radius:3px}
+.pr-p{color:var(--cyan);font-weight:700;text-align:right}
+.poly-err{grid-column:1/-1;padding:14px;font-size:11px;color:#c3d2e6;line-height:2;border:1px dashed var(--border2);border-radius:var(--radius-md)}
+@media(max-width:700px){.poly-cards{grid-template-columns:1fr}}
+.poly-card .pvol{font-size:9px;color:#8aa0bd}
+#share-popover{width:310px;max-height:86vh;bottom:140px}
+.sp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.sp-head .sp-title{margin:0;padding:0;border:0}
+.sp-sub{font-size:10px;color:var(--cyan);margin-top:3px;letter-spacing:.5px}
+.sp-retake{background:transparent;border:1px solid var(--border2);color:#a9bbd2;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1px;padding:5px 8px;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap}
+.sp-retake:hover{color:var(--cyan);border-color:var(--cyan)}
+.sp-mode{display:flex;gap:2px;background:var(--bg3);border-radius:var(--radius-sm);padding:3px;margin-bottom:10px}
+.sp-mode button{flex:1;background:transparent;border:none;color:#8aa0bd;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1px;padding:6px;border-radius:5px;cursor:pointer}
+.sp-mode button.on{background:rgba(0,212,255,.14);color:var(--cyan)}
+#share-preview{margin-bottom:10px;border:1px solid var(--border2);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
+#share-preview img{display:block;width:100%;max-height:34vh;object-fit:contain;background:#05070f}
+.sp-state{padding:26px 14px;text-align:center;font-size:10px;color:#a9bbd2;line-height:1.8}
+.sp-err{color:var(--red)}
+.sp-btns{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sp-btns .sp-main{grid-column:1/-1;background:var(--cyan);border-color:var(--cyan);color:#05070f;font-weight:700;justify-content:center}
+.sp-btns .sp-main:hover{background:var(--cyan);opacity:.88;color:#05070f}
+.sp-btn:disabled{opacity:.4;cursor:not-allowed}
+.sp-note{font-size:9px;color:var(--green);margin-top:8px;line-height:1.6;min-height:0}
+@media(max-width:480px){#share-popover{width:calc(100vw - 16px);right:8px;bottom:130px}}
+/* ── BONDS TAB ── */
+#bonds-page{max-width:1600px;margin:0 auto}
+.bd-wrap{padding:16px 20px 40px;display:flex;flex-direction:column;gap:16px}
+.bd-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.bd-tile{background:linear-gradient(160deg,rgba(14,20,36,.72),rgba(8,12,22,.72));border:1px solid rgba(0,212,255,.16);border-radius:var(--radius-lg);padding:18px 20px;min-width:0}
+.bd-tile.est{border-style:dashed}
+.bd-tl{font-size:10px;letter-spacing:2px;color:#8aa0bd;text-transform:uppercase}
+.bd-tv{font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:#fff;line-height:1.1;margin-top:6px}
+.bd-tv small{font-size:22px;color:#8aa0bd;margin-left:2px}
+.bd-tc{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:#a9bbd2}
+.bd-up{color:var(--red)}.bd-dn{color:var(--green)}   /* a rising yield = falling bond price → red */
+.bd-tn{font-size:9px;color:#8aa0bd;margin-top:6px;line-height:1.5}
+.bd-mini{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.bd-ms{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 13px}
+.bd-ms-l{font-size:9px;letter-spacing:1.5px;color:#8aa0bd;text-transform:uppercase}
+.bd-ms-v{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-top:2px}
+.bd-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.bd-panel{background:linear-gradient(160deg,rgba(14,20,36,.72),rgba(8,12,22,.72));border:1px solid rgba(0,212,255,.16);border-radius:var(--radius-lg);padding:18px 20px;min-width:0}
+.bd-phead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bd-ptitle{font-size:10px;font-weight:700;letter-spacing:2px;color:#8aa0bd;text-transform:uppercase}
+.bd-cv{position:relative;height:300px;margin-top:6px}
+.bd-cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bd-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:10px;color:#a9bbd2}
+.bd-legend i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+#bd-add{background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 10px;border-radius:var(--radius-sm);outline:none;max-width:240px}
+.bd-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;min-height:8px}
+.bd-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.35);color:var(--cyan);font-size:11px;font-weight:700;padding:5px 6px 5px 12px;border-radius:var(--radius-xl)}
+.bd-chip button{background:transparent;border:none;color:var(--cyan);cursor:pointer;font-size:13px;line-height:1;padding:0 6px}
+.bd-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.bd-tbl th{font-size:9px;letter-spacing:1.5px;color:#8aa0bd;text-align:right;padding:6px 8px;border-bottom:1px solid var(--border2);text-transform:uppercase}
+.bd-tbl th:first-child,.bd-tbl td:first-child{text-align:left}
+.bd-tbl td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:right;color:var(--text);white-space:nowrap}
+.bd-bar{display:block;height:6px;border-radius:3px;background:var(--cyan);min-width:2px}
+.bd-bar-w{width:100%;min-width:90px}
+.bd-badge{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:4px;border:1px solid var(--border2);color:#8aa0bd}
+.bd-badge.live{color:var(--green);border-color:rgba(0,230,118,.4)}
+.bd-empty{font-size:11px;color:#8aa0bd;padding:6px 0}
+.bd-note{font-size:10px;color:#8aa0bd;line-height:1.8;padding:0 4px}
+@media(max-width:900px){
+  .bd-wrap{padding:12px}
+  .bd-tiles{grid-template-columns:1fr}.bd-tv{font-size:38px}
+  .bd-mini{grid-template-columns:repeat(2,1fr)}
+  .bd-grid{grid-template-columns:1fr}
+  .bd-cv{height:250px}
+  .bd-tbl th:nth-child(5),.bd-tbl td:nth-child(5){display:none}
+}
+
+</style>
 </head>
 <body>
 
@@ -574,7 +714,8 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
     <div class="topbar-tabs">
       <button class="top-tab active" id="tab-terminal" onclick="switchTab('terminal')">TERMINAL</button>
       <button class="top-tab" id="tab-ratios" onclick="switchTab('ratios')">RATIOS</button>
-      <button class="top-tab" id="tab-pokedex" onclick="switchTab('pokedex')">POKÉDEX</button>
+      <button class="top-tab" id="tab-tcg" onclick="switchTab('tcg')">TCG</button>
+      <button class="top-tab" id="tab-bonds" onclick="switchTab('bonds')">BONDS</button>
       <button class="top-tab" id="tab-assets" onclick="switchTab('assets')">ASSETS</button>
     </div>
     <div class="topbar-right">
@@ -657,14 +798,13 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 <div class="page-section">
   <div class="sec-hdr">
     <span class="sec-title">Institutional Ownership + Corporate BTC</span>
-    <span class="sec-sub">HOVER OR CLICK ANY BUBBLE FOR DETAILS · BUBBLE SIZE = HOLDINGS</span>
+    <span class="sec-sub">HOVER OR CLICK ANY BUBBLE FOR DETAILS · BUBBLE SIZE = HOLDINGS · OWNERSHIP % = APPROX. 13F SNAPSHOT (Q4 2024)</span>
   </div>
   <div class="bubble-hero">
     <div class="bubble-wrap" style="position:relative;">
       <canvas id="bubbleCanvas" height="340" style="cursor:default;"></canvas>
       <div id="bubble-tooltip"></div>
       <div class="bubble-legend" id="bubble-legend"></div>
-      <div id="bs-table" class="bs-table"></div>
     </div>
   </div>
 </div>
@@ -809,7 +949,7 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
       </div>
       <div>
         <div class="panel-hdr" style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px 6px 0 0;">
-          <span class="panel-title">Polymarket Predictions</span>
+          <span class="panel-title">Polymarket · Political Odds</span>
           <span class="panel-sub" id="poly-status">LOADING LIVE ODDS...</span>
         </div>
         <div class="poly-cards" id="poly-grid"></div>
@@ -820,9 +960,6 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 
 <div class="divider"></div>
 
-<!-- ════════════════════════════════════════════
-  SECTION 5: POKÉDEX COLLECTIBLES INDEX
-═════════════════════════════════════════════ -->
 </div><!-- END #terminal-page -->
 <div id="ratios-page" class="tabpage">
   <div class="sec-hdr"><span class="sec-title">Ratio Lab</span><span class="sec-sub">PICK ANY TWO ASSETS · CHART A ÷ B</span></div>
@@ -862,53 +999,81 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
     </div>
   </div>
 </div>
-<div id="pokedex-page" class="tabpage">
-<div class="page-section">
-  <div class="sec-hdr">
-    <span class="sec-title">📖 Pokédex — Collectibles Price Index</span>
-    <span class="sec-sub">PSA 10 GRADED · 1ST EDITION BASE SET · UPDATED OCT 2026 · SRC: POKEMONPRICING, PRICECHARTING, POKEINVEST</span>
-  </div>
-  <div style="padding:16px 20px;">
-    <!-- Pokédex Card Grid -->
-    <div id="pokedex-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;"></div>
-    <!-- Horizontal Bar Chart — price comparison (log scale visual) -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Price Comparison · Log Scale</div>
-        <div style="font-size:7px;color:var(--muted);">PSA 10 · 1ST ED. BASE SET</div>
+<div id="tcg-page" class="tabpage">
+  <div class="sec-hdr"><span class="sec-title">TCG Market</span><span class="sec-sub">ESTIMATED MARKET CAP · TOP 6 GAMES · CARD PRICE SEARCH</span></div>
+  <div class="tcg-wrap">
+    <div class="tcg-hero">
+      <div class="tcg-panel tcg-cap">
+        <div class="tcg-label">Estimated TCG Market Cap</div>
+        <div class="tcg-cap-val" id="tcg-cap-val">--</div>
+        <div class="tcg-cap-sub" id="tcg-cap-sub"></div>
+        <div class="tcg-stats">
+          <div class="tcg-stat"><div class="tcg-stat-l">Pokémon share</div><div class="tcg-stat-v">65%</div></div>
+          <div class="tcg-stat"><div class="tcg-stat-l">Graded % of sales</div><div class="tcg-stat-v">60%</div></div>
+          <div class="tcg-stat"><div class="tcg-stat-l">Tracked sales 2025</div><div class="tcg-stat-v up">+107%</div></div>
+          <div class="tcg-stat"><div class="tcg-stat-l">Sealed YTD 2026</div><div class="tcg-stat-v up">+37%</div></div>
+        </div>
       </div>
-      <div id="poke-bars"></div>
-    </div>
-    <!-- Additional notable cards -->
-    <div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid #f7931a;">
-        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">PIKACHU ILLUSTRATOR</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f7931a;margin:2px 0;">$2M+</div>
-        <div style="font-size:6px;color:var(--muted);">Promo · 1998 · price not re-verified</div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid #00e676;">
-        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">JP BASE CHARIZARD</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--green);margin:2px 0;">$1.7M</div>
-        <div style="font-size:6px;color:var(--muted);">PSA 10 · record sale · Mar 3, 2026</div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid #e84142;">
-        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">VENUSAUR 1ST ED.</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#e84142;margin:2px 0;">$37.2K</div>
-        <div style="font-size:6px;color:var(--muted);">Base Set · PSA 10 · PriceCharting index</div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-left:2px solid var(--gold);">
-        <div style="font-size:7px;color:var(--muted);letter-spacing:1px;">COMPLETE SET</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--gold);margin:2px 0;">$911K</div>
-        <div style="font-size:6px;color:var(--muted);">Full 1st Ed. set, all PSA 10 · 2025 sale</div>
+      <div class="tcg-panel">
+        <div class="tcg-label">Market share · top 6 games</div>
+        <div class="tcg-pie-row">
+          <canvas id="tcg-pie" class="tcg-pie"></canvas>
+          <div id="tcg-legend" class="tcg-legend"></div>
+        </div>
       </div>
     </div>
+
+    <div class="tcg-panel">
+      <div class="tcg-label">Card price search</div>
+      <div class="tcg-chips" id="tcg-chips">
+        <button class="tcg-chip active" data-g="all" onclick="setTcgGame('all',this)">ALL</button>
+        <button class="tcg-chip" data-g="pokemon" onclick="setTcgGame('pokemon',this)">POKÉMON</button>
+        <button class="tcg-chip" data-g="mtg" onclick="setTcgGame('mtg',this)">MAGIC</button>
+        <button class="tcg-chip" data-g="ygo" onclick="setTcgGame('ygo',this)">YU-GI-OH!</button>
+        <button class="tcg-chip" data-g="lorcana" onclick="setTcgGame('lorcana',this)">LORCANA</button>
+      </div>
+      <div class="tcg-search-row">
+        <input id="tcg-search" type="text" placeholder="Search a card name (e.g. Charizard, Black Lotus, Blue-Eyes White Dragon)..." autocomplete="off" onkeydown="if(event.key==='Enter')searchCards()"/>
+        <button id="tcg-search-btn" onclick="searchCards()">SEARCH</button>
+      </div>
+      <div id="tcg-status" class="tcg-status"></div>
+      <div id="tcg-results" class="tcg-results"></div>
+    </div>
+
+    <div class="tcg-source">Market cap = 2026 estimate of annual TCG market size (GM Insights $9.2B; other research firms range $7.8B–$13.3B depending on whether digital, singles resale and accessories are counted). Game split uses Collectr's share of tracked sales volume (Jun 2026): Pokémon 65%, One Piece 17%, Yu-Gi-Oh! 7%. Magic, Lorcana and Flesh and Blood are approximations of the remaining ~11% (marked *), not published figures. Card prices are raw-card TCGplayer market prices via the Pokémon TCG API, Scryfall, YGOPRODeck and Lorcast.</div>
   </div>
 </div>
 
-<div class="divider"></div>
 
+<div id="bonds-page" class="tabpage">
+  <div class="sec-hdr"><span class="sec-title">Bonds</span><span class="sec-sub" id="bd-src">LOADING YIELDS…</span></div>
+  <div class="bd-wrap">
+    <div class="bd-tiles" id="bd-tiles"></div>
+    <div class="bd-mini" id="bd-mini"></div>
+    <div class="bd-grid">
+      <div class="bd-panel">
+        <div class="bd-ptitle">U.S. Treasury yield curve</div>
+        <div class="bd-cv"><canvas id="bd-curve"></canvas></div>
+        <div class="bd-legend" id="bd-curve-leg"></div>
+      </div>
+      <div class="bd-panel">
+        <div class="bd-phead"><div class="bd-ptitle">History · 10Y / 15Y* / 30Y</div>
+          <div class="rt-seg" id="bd-ranges">
+            <button onclick="bdRange('1M',this)">1M</button><button class="on" onclick="bdRange('3M',this)">3M</button><button onclick="bdRange('1Y',this)">1Y</button><button onclick="bdRange('5Y',this)">5Y</button>
+          </div></div>
+        <div class="bd-cv"><canvas id="bd-hist"></canvas><div id="bd-hist-msg" class="rt-status" style="display:none"></div></div>
+        <div class="bd-legend" id="bd-hist-leg"></div>
+      </div>
+    </div>
+    <div class="bd-panel">
+      <div class="bd-phead"><div class="bd-ptitle">Compare other countries · 10-year government yield</div>
+        <select id="bd-add" onchange="bdAddCountry(this.value);this.value=''"></select></div>
+      <div class="bd-chips" id="bd-chips"></div>
+      <div id="bd-cmp"></div>
+    </div>
+    <div class="bd-note" id="bd-note"></div>
+  </div>
 </div>
-
 
 <!-- ══ ASSETS PAGE (Net Worth Calculator) ══ -->
 <div id="assets-page">
@@ -959,16 +1124,16 @@ body.girl-mode .sec-title,body.girl-mode .top-tab.active{color:#ff4d94;}
 <script>
 /* ══ DATA ══ */
 const STOCKS=[
-  {sym:'AAPL', name:'Apple',      mktcap:3.1e12},
-  {sym:'MSFT', name:'Microsoft',  mktcap:2.9e12},
-  {sym:'NVDA', name:'Nvidia',     mktcap:2.7e12},
-  {sym:'AMZN', name:'Amazon',     mktcap:2.1e12},
-  {sym:'GOOGL',name:'Alphabet',   mktcap:2.0e12},
-  {sym:'META', name:'Meta',       mktcap:1.5e12},
-  {sym:'BRK-B',name:'Berkshire',  mktcap:1.1e12},
+  {sym:'AAPL', name:'Apple',      mktcap:4.03e12},
+  {sym:'MSFT', name:'Microsoft',  mktcap:2.98e12},
+  {sym:'NVDA', name:'Nvidia',     mktcap:4.77e12},
+  {sym:'AMZN', name:'Amazon',     mktcap:2.26e12},
+  {sym:'GOOGL',name:'Alphabet',   mktcap:3.79e12},
+  {sym:'META', name:'Meta',       mktcap:1.65e12},
+  {sym:'BRK-B',name:'Berkshire',  mktcap:1.07e12},
   {sym:'LLY',  name:'Eli Lilly',  mktcap:7.2e11},
-  {sym:'AVGO', name:'Broadcom',   mktcap:6.5e11},
-  {sym:'TSLA', name:'Tesla',      mktcap:5.9e11},
+  {sym:'AVGO', name:'Broadcom',   mktcap:1.58e12},
+  {sym:'TSLA', name:'Tesla',      mktcap:1.57e12},
 ];
 const TOP10_CRYPTO=[
   {id:'bitcoin',       sym:'BTC',  name:'Bitcoin',      color:'#f7931a',icon:'₿'},
@@ -982,15 +1147,6 @@ const TOP10_CRYPTO=[
   {id:'cardano',       sym:'ADA',  name:'Cardano',      color:'#0033ad',icon:'₳'},
   {id:'avalanche-2',   sym:'AVAX', name:'Avalanche',    color:'#e84142',icon:'A'},
 ];
-// POLY is now dynamic — populated by fetchPolymarket()
-// Static fallback used if API unavailable
-const POLY_FALLBACK=[
-  {q:'Will BTC hold above $80K by end of Q2 2026?',   yes:71,no:29,vol:'$6.8M', ends:'Q2 · Jun 30'},
-  {q:'Fed rate cut before July 2026?',                  yes:58,no:42,vol:'$11.2M',ends:'Q2 · Jun 30'},
-  {q:'BTC reaches $120K in Q3 2026?',                  yes:34,no:66,vol:'$9.4M', ends:'Q3 · Sep 30'},
-  {q:'Fed cuts rates 2+ times by end of Q3 2026?',     yes:45,no:55,vol:'$7.1M', ends:'Q3 · Sep 30'},
-];
-let POLY=[...POLY_FALLBACK];
 const OWNERSHIP={
   firms:[
     {name:'Vanguard',    short:'VGD',color:'#f5b800'},
@@ -1062,14 +1218,6 @@ function drawBsRing(ctx,x,y,r,bs,hot){
   bs.items.forEach(i=>{const sw=i.v/tot*Math.PI*2,g=Math.min(.04,sw/4);
     ctx.beginPath();ctx.arc(x,y,r+5,a+g,a+sw-g);ctx.strokeStyle=BS_COL[i.t];ctx.lineWidth=hot?5:3;ctx.globalAlpha=hot?1:.85;ctx.stroke();a+=sw;});
   ctx.restore();
-}
-function renderBsTable(){
-  const el=document.getElementById('bs-table');if(!el)return;
-  const sum=(bs,ts)=>bs.items.filter(i=>ts.includes(i.t)).reduce((s,i)=>s+i.v,0);
-  const c=v=>v>0?'$'+bsFmt(v):'—';
-  el.innerHTML='<div class="bs-t-h">BALANCE SHEET SNAPSHOT · LATEST FILED QUARTER · USD</div><div style="overflow-x:auto"><table class="rt-tbl"><tr><th>Company</th><th>As of</th><th>Cash &amp; securities</th><th>LT investments*</th><th>Bitcoin</th><th>Total assets</th><th>Liabilities</th></tr>'+
-   Object.entries(BS).map(([k,b])=>{const l=b.claims.find(x=>x.k==='Total liabilities');return`<tr><td>${k}</td><td>${b.asOf}</td><td>${c(sum(b,['cash','sec']))}</td><td>${c(sum(b,['inv']))}</td><td>${c(sum(b,['btc']))}</td><td>${b.total?'$'+bsFmt(b.total):'—'}</td><td>${l?'$'+bsFmt(l.v):'—'}</td></tr>`;}).join('')+
-   '</table></div><div class="rt-note">*Amazon reports one "other long-term assets" line that includes investments. Strategy and Tesla show only disclosed lines. Sources: company 10-Q / 8-K filings.</div>';
 }
 const HARDCODED_KEY='d70q4bpr01ql6rg090bgd70q4bpr01ql6rg090c0';
 const HARDCODED_AV_KEY='R8SE1JUXABGCXNVQ';
@@ -1229,11 +1377,12 @@ async function fetchCrypto(){
 /* ══ FETCH COMMODITIES — Alpha Vantage (oil/gas/corn) + Finnhub (gold/silver) ══ */
 async function fetchCommodities(){
   const defaults={
-    oil:  {price:71.42, chgPct:-0.38},
-    gas:  {price:3.92,  chgPct:1.24},
-    gold: {price:3115,  chgPct:0.52},
-    silver:{price:34.18,chgPct:0.71},
-    corn: {price:4.82,  chgPct:-0.22},
+    // last-resort offline fallbacks (gold/silver/WTI ≈ Oct 9 2026 closes; gas/corn approximate). Live quotes override these.
+    oil:  {price:83.11, chgPct:-0.11},
+    gas:  {price:3.92,  chgPct:0},
+    gold: {price:4183,  chgPct:1.82},
+    silver:{price:60.40,chgPct:2.04},
+    corn: {price:4.82,  chgPct:0},
   };
   Object.keys(defaults).forEach(k=>{if(!commodities[k]||!commodities[k].price)commodities[k]=defaults[k];});
 
@@ -1280,15 +1429,15 @@ async function fetchCommodities(){
 
 /* ══ FETCH FOREX — Finnhub OANDA pairs with accurate fallbacks ══ */
 async function fetchForex(){
-  // Pre-populate with accurate Apr 2025 fallbacks immediately
+  // Pre-populate with approximate offline fallbacks (live quotes override; change shown as 0 until live)
   const defaults={
-    eurusd:{price:1.0842,chgPct:-0.31},
-    gbpusd:{price:1.2918,chgPct: 0.14},
-    usdjpy:{price:149.38,chgPct: 0.42},
-    usdchf:{price:0.9042,chgPct:-0.18},
-    audusd:{price:0.6312,chgPct:-0.09},
-    usdcad:{price:1.3884,chgPct: 0.22},
-    dxy:   {price:103.84,chgPct:-0.27},
+    eurusd:{price:1.0842,chgPct:0},
+    gbpusd:{price:1.2918,chgPct:0},
+    usdjpy:{price:149.38,chgPct:0},
+    usdchf:{price:0.9042,chgPct:0},
+    audusd:{price:0.6312,chgPct:0},
+    usdcad:{price:1.3884,chgPct:0},
+    dxy:   {price:103.84,chgPct:0},
   };
   Object.keys(defaults).forEach(k=>{if(!forex[k])forex[k]=defaults[k];});
 
@@ -1308,73 +1457,45 @@ async function fetchForex(){
   Object.keys(defaults).forEach(k=>{if(!forex[k]||!forex[k].price)forex[k]=defaults[k];});
 }
 
-/* ══ POLYMARKET API ══ */
+/* ══ POLYMARKET — political odds only ══ */
+// Gamma API: /events?tag_slug=politics → each event has markets[]; multi-outcome events (nominee, winner…) carry one market per candidate.
+let POLY=[],POLY_STATE='loading';          // loading | live | error
+const POLY_EXCLUDE=/\b(fed|federal reserve|fomc|interest rates?|rate (cut|hike)s?|bitcoin|btc|ethereum|crypto|inflation|cpi|gdp|recession|s&p|nasdaq|stocks?|oil|gold)\b/i;
+const polyEsc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const polyJson=v=>{try{return typeof v==='string'?JSON.parse(v):(Array.isArray(v)?v:[]);}catch(e){return[];}};
+const polyMoney=n=>{n=Number(n)||0;return n>=1e9?'$'+(n/1e9).toFixed(1)+'B':n>=1e6?'$'+(n/1e6).toFixed(1)+'M':n>=1e3?'$'+Math.round(n/1e3)+'K':'$'+Math.round(n);};
+const polyPct=p=>p>0&&p<0.005?'<1%':Math.round(p*100)+'%';
+
 async function fetchPolymarket(){
+  POLY_STATE='loading';renderPoly();
   try{
-    // Gamma API — public, no key. Use /markets with tag filter for crypto + politics
-    // Fetch active markets with high volume, filter client-side for BTC/Fed relevance
-    const urls=[
-      'https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=20&order=volume&ascending=false',
-    ];
-    const results=[];
-    for(const url of urls){
-      try{
-        const r=await fetch(url,{headers:{'Accept':'application/json'}});
-        if(!r.ok)continue;
-        const data=await r.json();
-        const markets=Array.isArray(data)?data:(data.markets||[]);
-        results.push(...markets);
-      }catch(e){}
-    }
-
-    if(!results.length)return; // keep fallback
-
-    // Filter for BTC/Fed/crypto/rates relevance, deduplicate
-    const keywords=['bitcoin','btc','federal reserve','fed rate','rate cut','crypto','ethereum'];
-    const seen=new Set();
-    const relevant=results.filter(m=>{
-      if(!m.question||!m.outcomePrices)return false;
-      if(seen.has(m.id))return false;
-      seen.add(m.id);
-      const q=(m.question||'').toLowerCase();
-      return keywords.some(k=>q.includes(k));
-    });
-
-    // If nothing relevant in top 20, use top 4 by volume regardless
-    const pool=relevant.length>=2?relevant:results.filter(m=>m.question&&m.outcomePrices);
-    const top4=pool
-      .sort((a,b)=>parseFloat(b.volume||0)-parseFloat(a.volume||0))
-      .slice(0,4);
-
-    if(!top4.length)return;
-
-    POLY=top4.map(m=>{
-      let prices=[0.5,0.5];
-      try{
-        const raw=typeof m.outcomePrices==='string'?JSON.parse(m.outcomePrices):m.outcomePrices;
-        if(Array.isArray(raw)&&raw.length>=2)prices=raw;
-      }catch(e){}
-      const yes=Math.min(99,Math.max(1,Math.round(parseFloat(prices[0])*100)));
-      const no=100-yes;
-
-      const vol=parseFloat(m.volume||m.liquidityNum||0);
-      const volStr=vol>=1e6?'$'+(vol/1e6).toFixed(1)+'M':vol>=1e3?'$'+(vol/1e3).toFixed(0)+'K':'$'+Math.round(vol);
-
-      let ends='Active';
-      if(m.endDate||m.endDateIso){
-        try{
-          const d=new Date(m.endDate||m.endDateIso);
-          if(!isNaN(d))ends=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-        }catch(e){}
-      }
-
-      return{q:m.question,yes,no,vol:volStr,ends};
-    });
-
-    renderPoly();
-  }catch(e){
-    // silently keep fallback
-  }
+    const url='https://gamma-api.polymarket.com/events?tag_slug=politics&active=true&closed=false&order=volume24hr&ascending=false&limit=40';
+    const r=await fetch(url,{headers:{'Accept':'application/json'},signal:AbortSignal.timeout(12000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const events=await r.json();
+    if(!Array.isArray(events))throw new Error('bad payload');
+    POLY=events
+      .filter(e=>e&&!e.closed&&e.title&&Array.isArray(e.markets)&&e.markets.length&&!POLY_EXCLUDE.test(e.title))
+      .map(e=>{
+        const mk=e.markets.filter(m=>!m.closed&&m.outcomePrices).map(m=>{
+          const pr=polyJson(m.outcomePrices).map(Number),oc=polyJson(m.outcomes);
+          return{label:m.groupItemTitle||m.question||'',yes:pr[0],no:pr[1],oc};
+        }).filter(m=>isFinite(m.yes));
+        if(!mk.length)return null;
+        let ends='';
+        if(e.endDate){const d=new Date(e.endDate);if(!isNaN(d))ends=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+        const multi=mk.length>1;
+        return{title:e.title,slug:e.slug,multi,
+          rows:multi?mk.sort((a,b)=>b.yes-a.yes).slice(0,4):null,
+          bin:multi?null:{a:(mk[0].oc[0]||'Yes'),b:(mk[0].oc[1]||'No'),yes:mk[0].yes,no:isFinite(mk[0].no)?mk[0].no:1-mk[0].yes},
+          v24:Number(e.volume24hr)||0,vol:Number(e.volume)||0,ends};
+      })
+      .filter(Boolean)
+      .sort((a,b)=>b.v24-a.v24)
+      .slice(0,6);
+    POLY_STATE=POLY.length?'live':'error';
+  }catch(err){POLY=[];POLY_STATE='error';}
+  renderPoly();
 }
 
 /* ══ SERIES (for main chart) ══ */
@@ -1510,7 +1631,7 @@ function showTooltip(bubble,canvasX,canvasY,canvasRect){
     html=`<div class="btt-name" style="color:${h.color}">${h.name}</div>`
       +`<div class="btt-row"><span class="btt-lbl">TICKER</span><span class="btt-val">${h.short}</span></div>`
       +`<div class="btt-row"><span class="btt-lbl">BTC HELD</span><span class="btt-val btt-btc">${h.btc.toLocaleString()} ₿</span></div>`
-      +`<div class="btt-row"><span class="btt-lbl">USD VALUE</span><span class="btt-val">$${h.usdB.toFixed(2)}B</span></div>`
+      +`<div class="btt-row"><span class="btt-lbl">USD VALUE</span><span class="btt-val">$${((cryptoData.BTC&&cryptoData.BTC.price)?h.btc*cryptoData.BTC.price/1e9:h.usdB).toFixed(2)}B</span></div>`
       +`<div class="btt-row"><span class="btt-lbl">SECTOR</span><span class="btt-val">${h.sector}</span></div>`+bsHtml(BS[h.short]);
   }
   tt.innerHTML=html;
@@ -1519,7 +1640,8 @@ function showTooltip(bubble,canvasX,canvasY,canvasRect){
   const wrapW=wrap.offsetWidth;
   tt.classList.add('visible');
   const tw=tt.offsetWidth,th=tt.offsetHeight,wrapH=wrap.offsetHeight;
-  let tx=canvasX+16, ty=canvasY-10;
+  const cvEl=document.getElementById('bubbleCanvas');
+  let tx=cvEl.offsetLeft+canvasX+16, ty=cvEl.offsetTop+canvasY-10;
   if(tx+tw>wrapW) tx=canvasX-tw-16;
   if(tx<4) tx=4;
   if(ty+th>wrapH) ty=wrapH-th;
@@ -1580,13 +1702,13 @@ function initBubbleEvents(){
 function drawBubble(){
   const canvas=document.getElementById('bubbleCanvas');
   if(!canvas)return;
-  const W=canvas.offsetWidth;
-  const H=canvas.offsetHeight||340;
-  const dpr=Math.min(devicePixelRatio,2); // cap at 2x to prevent mobile crash
-  canvas.width=W*dpr;
-  canvas.height=H*dpr;
+  const W=canvas.clientWidth,H=canvas.clientHeight;
+  if(!W||!H)return;                       // terminal tab hidden → nothing to draw
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const pw=Math.round(W*dpr),ph=Math.round(H*dpr);
+  if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph;}
   const ctx=canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,W,H);
   bubbleHits=[];
 
@@ -1594,10 +1716,11 @@ function drawBubble(){
   const holders=BTC_CORP.holders;
   const maxBtc=Math.max(...holders.map(h=>h.btc));
 
-  const cx=W*0.5, cy=H*0.5; // center
+  const u=clamp(Math.min(W/820,H/460),0.6,1.1);   // global size scale so phones & wide screens both fit
+  const cx=W*0.5, cy=H*0.5;
 
   // ── CENTRAL HUB ──
-  const hubR=36+Math.sin(bPhase*0.012)*2;
+  const hubR=(36+Math.sin(bPhase*0.012)*2)*u;
   const hubGlow=ctx.createRadialGradient(cx,cy,0,cx,cy,hubR*2.5);
   hubGlow.addColorStop(0,'rgba(245,184,0,0.18)');hubGlow.addColorStop(1,'transparent');
   ctx.beginPath();ctx.arc(cx,cy,hubR*2.5,0,Math.PI*2);ctx.fillStyle=hubGlow;ctx.fill();
@@ -1609,49 +1732,35 @@ function drawBubble(){
   hubShine.addColorStop(0,'rgba(255,255,255,0.4)');hubShine.addColorStop(1,'rgba(255,255,255,0)');
   ctx.beginPath();ctx.arc(cx,cy,hubR,0,Math.PI*2);ctx.fillStyle=hubShine;ctx.fill();
   ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.font="700 13px 'Space Grotesk'";ctx.fillStyle='#05070f';
-  ctx.fillText('$154T',cx,cy-5);
-  ctx.font="400 6px 'JetBrains Mono'";ctx.fillStyle='rgba(5,7,15,0.55)';
-  ctx.fillText('GLOBAL EQUITY',cx,cy+8);
+  ctx.font=`700 ${Math.round(14*u)}px 'Space Grotesk'`;ctx.fillStyle='#05070f';
+  ctx.fillText('$152T',cx,cy-5*u);
+  if(hubR>=30){ctx.font=`600 7px 'JetBrains Mono'`;ctx.fillStyle='rgba(5,7,15,0.62)';
+    ctx.fillText('GLOBAL EQUITY',cx,cy+9*u);}
   ctx.restore();
 
-  // ── RADIAL POSITIONS ──
-  // Ring 1 (inner): stocks — 5 items
-  const ring1R=Math.min(W,H)*0.22;
-  const sPos=stocks.map((s,i)=>{
-    const angle=-Math.PI/2+(i/(stocks.length))*Math.PI*2+Math.sin(bPhase*0.008+i)*0.02;
-    return{x:cx+Math.cos(angle)*ring1R,y:cy+Math.sin(angle)*ring1R};
-  });
-  // Ring 2 (middle): institutions — 6 items
-  const ring2R=Math.min(W,H)*0.38;
-  const fPos=firms.map((f,i)=>{
-    const angle=-Math.PI/2+(i/(firms.length))*Math.PI*2+0.3+Math.sin(bPhase*0.007+i*1.1)*0.015;
-    return{x:cx+Math.cos(angle)*ring2R,y:cy+Math.sin(angle)*ring2R};
-  });
-  // Ring 3 (outer): BTC holders — 10 items
-  const ring3R=Math.min(W,H)*0.48;
-  const bPos=holders.map((h,i)=>{
-    const angle=-Math.PI/2+(i/(holders.length))*Math.PI*2+Math.sin(bPhase*0.006+i*0.8)*0.012;
-    return{x:cx+Math.cos(angle)*ring3R,y:cy+Math.sin(angle)*ring3R};
-  });
+  // ── ELLIPTICAL RINGS (use the full width instead of a tiny circle) ──
+  const ring=(i,n,off,wob,rx,ry)=>{const a=-Math.PI/2+(i/n)*Math.PI*2+off+Math.sin(bPhase*wob+i)*0.015;return{x:cx+Math.cos(a)*rx,y:cy+Math.sin(a)*ry};};
+  const R1x=W*0.17,R1y=H*0.19;     // stocks
+  const R2x=W*0.31,R2y=H*0.31;     // institutions
+  const R3x=W*0.44,R3y=H*0.42;     // BTC treasuries
+  const sPos=stocks.map((s,i)=>ring(i,stocks.length,0,0.008,R1x,R1y));
+  const fPos=firms.map((f,i)=>ring(i,firms.length,0.3,0.007,R2x,R2y));
+  const bPos=holders.map((h,i)=>ring(i,holders.length,0.1,0.006,R3x,R3y));
 
   const fTot=firms.map((_,fi)=>data[fi].reduce((a,b)=>a+b,0));
   const sTot=stocks.map((_,si)=>firms.reduce((s,_,fi)=>s+data[fi][si],0));
   const mFT=Math.max(...fTot),mST=Math.max(...sTot);
 
   // Faint orbital rings
-  ctx.save();ctx.setLineDash([2,6]);ctx.lineWidth=0.5;
-  [ring1R,ring2R,ring3R].forEach(r=>{
-    ctx.strokeStyle='rgba(255,255,255,0.03)';
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
-  });
+  ctx.save();ctx.setLineDash([2,6]);ctx.lineWidth=0.6;ctx.strokeStyle='rgba(255,255,255,0.05)';
+  [[R1x,R1y],[R2x,R2y],[R3x,R3y]].forEach(([rx,ry])=>{ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.stroke();});
   ctx.restore();
 
   // ── CONNECTION LINES: Hub → Stocks ──
   stocks.forEach((stock,si)=>{
     const sp=sPos[si];
-    const isHov=hoveredBubble&&((hoveredBubble.type==='stock'&&hoveredBubble.si===si));
-    const alpha=isHov?0.5:0.08;
+    const isHov=hoveredBubble&&hoveredBubble.type==='stock'&&hoveredBubble.si===si;
+    const alpha=isHov?0.5:0.1;
     const grad=ctx.createLinearGradient(cx,cy,sp.x,sp.y);
     grad.addColorStop(0,hexA('#f5b800',alpha));grad.addColorStop(1,hexA('#3d9dff',alpha));
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(sp.x,sp.y);
@@ -1664,7 +1773,7 @@ function drawBubble(){
       const pct=data[fi][si];
       const fp=fPos[fi],sp=sPos[si];
       const isHov=(hoveredBubble&&(hoveredBubble.fi===fi||hoveredBubble.si===si));
-      const alpha=(isHov?0.45:0.03)+(pct/9)*0.25;
+      const alpha=(isHov?0.45:0.04)+(pct/9)*0.25;
       const lw=(isHov?1.5:0.3)+(pct/9)*2;
       const grad=ctx.createLinearGradient(fp.x,fp.y,sp.x,sp.y);
       grad.addColorStop(0,hexA(firm.color,alpha));grad.addColorStop(1,hexA('#3d9dff',alpha*0.5));
@@ -1679,20 +1788,20 @@ function drawBubble(){
     const nearSi=Math.round(i/(holders.length-1)*(stocks.length-1));
     const sp=sPos[Math.min(nearSi,sPos.length-1)];
     const isHov=(hoveredBubble&&hoveredBubble.type==='btc'&&hoveredBubble.bi===i);
-    const alpha=(isHov?0.4:0.03)+(h.btc/maxBtc)*0.2;
+    const alpha=(isHov?0.4:0.04)+(h.btc/maxBtc)*0.2;
     const grad=ctx.createLinearGradient(sp.x,sp.y,bp.x,bp.y);
     grad.addColorStop(0,hexA('#3d9dff',alpha*0.4));grad.addColorStop(1,hexA(h.color,alpha));
     ctx.beginPath();ctx.moveTo(sp.x,sp.y);ctx.lineTo(bp.x,bp.y);
     ctx.strokeStyle=grad;ctx.lineWidth=isHov?1.5:0.4;ctx.stroke();
   });
 
-  // ── DRAW STOCK BUBBLES (ring 1) ──
+  // ── STOCK BUBBLES (inner ring) ──
   stocks.forEach((stock,si)=>{
     const pos=sPos[si];
     const isHov=hoveredBubble&&hoveredBubble.type==='stock'&&hoveredBubble.si===si;
     const isPinned=pinnedBubble&&pinnedBubble.type==='stock'&&pinnedBubble.si===si;
     const sc=(isHov||isPinned?1.12:1)+Math.sin(bPhase*0.014+si*2.2)*0.016;
-    const r=(16+(sTot[si]/mST)*18)*sc;
+    const r=(16+(sTot[si]/mST)*18)*sc*u;
     const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2);
     glow.addColorStop(0,'rgba(61,157,255,'+(isHov||isPinned?.25:.12)+')');glow.addColorStop(1,'transparent');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r*2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
@@ -1701,19 +1810,19 @@ function drawBubble(){
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
     ctx.strokeStyle='rgba(61,157,255,'+(isHov||isPinned?.7:.35)+')';ctx.lineWidth=(isHov||isPinned)?2:1;ctx.stroke();
     ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font=`700 ${clamp(r*.42,7,11)}px 'JetBrains Mono'`;ctx.fillStyle='#fff';
+    ctx.font=`700 ${clamp(r*.42,9,13)}px 'JetBrains Mono'`;ctx.fillStyle='#fff';
     ctx.fillText(stock,pos.x,pos.y);ctx.restore();
     drawBsRing(ctx,pos.x,pos.y,r,BS[stock],isHov||isPinned);
     bubbleHits.push({x:pos.x,y:pos.y,r:Math.max(r,14)+5,type:'stock',si,data:stock,tot:sTot[si]});
   });
 
-  // ── DRAW FIRM BUBBLES (ring 2) ──
+  // ── FIRM BUBBLES (middle ring) ──
   firms.forEach((firm,fi)=>{
     const pos=fPos[fi];
     const isHov=hoveredBubble&&hoveredBubble.type==='firm'&&hoveredBubble.fi===fi;
     const isPinned=pinnedBubble&&pinnedBubble.type==='firm'&&pinnedBubble.fi===fi;
     const sc=(isHov||isPinned?1.12:1)+Math.sin(bPhase*0.016+fi*1.4)*0.018;
-    const r=(18+(fTot[fi]/mFT)*22)*sc;
+    const r=(18+(fTot[fi]/mFT)*22)*sc*u;
     const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2);
     glow.addColorStop(0,hexA(firm.color,(isHov||isPinned)?0.22:0.1));glow.addColorStop(1,'transparent');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r*2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
@@ -1725,21 +1834,24 @@ function drawBubble(){
     shine.addColorStop(0,'rgba(255,255,255,0.3)');shine.addColorStop(1,'rgba(255,255,255,0)');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=shine;ctx.fill();
     ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font=`700 ${clamp(r*.36,6,10)}px 'JetBrains Mono'`;ctx.fillStyle='#05070f';
-    ctx.fillText(firm.short,pos.x,pos.y-r*.1);
-    ctx.font=`400 ${clamp(r*.24,5,7)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(5,7,15,0.6)';
-    ctx.fillText(fTot[fi].toFixed(1)+'%',pos.x,pos.y+r*.2);ctx.restore();
+    ctx.font=`700 ${clamp(r*.36,9,12)}px 'JetBrains Mono'`;ctx.fillStyle='#05070f';
+    if(r>=22){
+      ctx.fillText(firm.short,pos.x,pos.y-r*.12);
+      ctx.font=`600 ${clamp(r*.26,8,10)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(5,7,15,0.72)';
+      ctx.fillText(fTot[fi].toFixed(1)+'%',pos.x,pos.y+r*.28);
+    }else ctx.fillText(firm.short,pos.x,pos.y);        // small bubbles: ticker only, % is in the tooltip
+    ctx.restore();
     bubbleHits.push({x:pos.x,y:pos.y,r,type:'firm',fi,data:firm});
   });
 
-  // ── DRAW BTC HOLDER BUBBLES (ring 3) ──
+  // ── BTC HOLDER BUBBLES (outer ring) ──
   holders.forEach((h,i)=>{
     const pos=bPos[i];
     const isHov=hoveredBubble&&hoveredBubble.type==='btc'&&hoveredBubble.bi===i;
     const isPinned=pinnedBubble&&pinnedBubble.type==='btc'&&pinnedBubble.bi===i;
     const sc=(isHov||isPinned?1.14:1)+Math.sin(bPhase*0.013+i*1.8)*0.015;
     const logR=Math.log10(h.btc+1)/Math.log10(maxBtc+1);
-    const r=(8+logR*16)*sc;
+    const r=(10+logR*16)*sc*u;
     const glow=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r*2);
     glow.addColorStop(0,hexA(h.color,(isHov||isPinned)?.2:.08));glow.addColorStop(1,'transparent');
     ctx.beginPath();ctx.arc(pos.x,pos.y,r*2,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
@@ -1747,25 +1859,20 @@ function drawBubble(){
     bg.addColorStop(0,hexA(h.color,1));bg.addColorStop(.6,hexA(h.color,.82));bg.addColorStop(1,hexA(h.color,.2));
     ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();
     ctx.strokeStyle=hexA(h.color,(isHov||isPinned)?.8:.3);ctx.lineWidth=(isHov||isPinned)?1.5:0.6;ctx.stroke();
-    if(r>10){
-      ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.font=`700 ${clamp(r*.42,5,9)}px 'JetBrains Mono'`;
-      ctx.fillStyle=r>14?'#05070f':'#fff';
-      ctx.fillText(h.short,pos.x,pos.y);ctx.restore();
-    }else{
-      ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.font=`700 ${clamp(r*.65,4,8)}px 'JetBrains Mono'`;ctx.fillStyle='rgba(255,255,255,0.7)';
-      ctx.fillText('₿',pos.x,pos.y);ctx.restore();
-    }
+    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=`700 ${clamp(r*.44,8,11)}px 'JetBrains Mono'`;
+    ctx.fillStyle=r>16?'#05070f':'#fff';
+    ctx.fillText(h.short,pos.x,pos.y);ctx.restore();
     drawBsRing(ctx,pos.x,pos.y,r,BS[h.short],isHov||isPinned);
     bubbleHits.push({x:pos.x,y:pos.y,r:Math.max(r,10)+4,type:'btc',bi:i,data:h});
   });
 
-  // Ring labels
-  ctx.save();ctx.font=`700 7px 'JetBrains Mono'`;ctx.textAlign='center';ctx.fillStyle='rgba(61,157,255,0.3)';
-  ctx.fillText('EQUITIES',cx,cy-ring1R-12);
-  ctx.fillStyle='rgba(245,184,0,0.3)';ctx.fillText('INSTITUTIONS',cx+ring2R*0.7,cy-ring2R*0.7-10);
-  ctx.fillStyle='rgba(247,147,26,0.35)';ctx.fillText('₿ BTC TREASURY',cx-ring3R*0.7,cy+ring3R*0.7+14);
+  // Ring key (top-left) — replaces the old tiny floating labels
+  ctx.save();ctx.font="700 9px 'JetBrains Mono'";ctx.textAlign='left';ctx.textBaseline='middle';
+  [['#3d9dff','EQUITIES · INNER'],['#f5b800','INSTITUTIONS · MIDDLE'],['#f7931a','BTC TREASURY · OUTER']].forEach(([c,t],i)=>{
+    ctx.fillStyle=c;ctx.beginPath();ctx.arc(12,14+i*15,3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(176,188,208,.8)';ctx.fillText(t,22,14+i*15);
+  });
   ctx.restore();
 
   bPhase++;
@@ -1791,8 +1898,7 @@ function renderBubbleLegend(){
   const btcLeg=`<div class="leg-item"><div class="leg-dot" style="background:#f7931a"></div>BTC Treasury (bubble ∝ log BTC held)</div>`;
   const stockLeg=`<div class="leg-item"><div class="leg-dot" style="background:#3d9dff"></div>Stock (size ∝ institutional ownership)</div>`;
   const ringLeg='<div class="leg-item" style="flex-basis:100%;color:var(--text)">Outer ring = balance sheet mix:</div>'+BS_LEG.map(([t,l])=>`<div class="leg-item"><div class="leg-dot" style="background:${BS_COL[t]}"></div>${l}</div>`).join('');
-  el.innerHTML=instLeg+stockLeg+btcLeg+ringLeg+`<div class="leg-item" style="color:var(--muted);font-size:7px;margin-left:auto">Click any bubble to pin details</div>`;
-  renderBsTable();
+  el.innerHTML=instLeg+stockLeg+btcLeg+ringLeg+`<div class="leg-item" style="color:#8aa0bd;font-size:10px;margin-left:auto">Click any bubble to pin details</div>`;
 }
 
 /* ══ RENDER STOCKS ══ */
@@ -1858,19 +1964,24 @@ function renderCrypto(){
 
 /* ══ RENDER TOP 8 ASSETS BY MARKET CAP ══ */
 const TOP8_ASSETS=[
-  {name:'Gold',       icon:'🥇', mktcap:31.591e12, color:'var(--gold)'},
-  {name:'Nvidia',     icon:'🟢', sym:'NVDA', fallbackCap:5.46e12, color:'var(--green)'},
-  {name:'Alphabet',   icon:'🔤', sym:'GOOGL',fallbackCap:4.77e12, color:'var(--cyan)'},
-  {name:'Apple',      icon:'🍎', sym:'AAPL', fallbackCap:4.41e12, color:'var(--text)'},
-  {name:'Silver',     icon:'🥈', mktcap:4.295e12, color:'var(--muted)'},
-  {name:'Microsoft',  icon:'🟦', sym:'MSFT', fallbackCap:3.13e12, color:'var(--blue)'},
-  {name:'Amazon',     icon:'📦', sym:'AMZN', fallbackCap:2.84e12, color:'var(--orange)'},
-  {name:'TSMC',       icon:'🔲', sym:'TSM',  fallbackCap:2.10e12, color:'var(--purple)'},
+  {name:'Gold',       icon:'🥇', mktcap:31.591e12, oz:6.95e9, color:'var(--gold)'},
+  {name:'Nvidia',     icon:'🟢', sym:'NVDA', fallbackCap:4.77e12, color:'var(--green)'},
+  {name:'Alphabet',   icon:'🔤', sym:'GOOGL',fallbackCap:3.79e12, color:'var(--cyan)'},
+  {name:'Apple',      icon:'🍎', sym:'AAPL', fallbackCap:4.03e12, color:'var(--text)'},
+  {name:'Silver',     icon:'🥈', mktcap:4.295e12, oz:5.6e10, color:'var(--muted)'},
+  {name:'Microsoft',  icon:'🟦', sym:'MSFT', fallbackCap:2.98e12, color:'var(--blue)'},
+  {name:'Amazon',     icon:'📦', sym:'AMZN', fallbackCap:2.26e12, color:'var(--orange)'},
+  {name:'TSMC',       icon:'🔲', sym:'TSM',  fallbackCap:2.01e12, color:'var(--purple)'},
 ];
 function renderTop8Assets(){
   const panel=document.getElementById('top8-assets-panel');
   if(!panel)return;
-  panel.innerHTML=TOP8_ASSETS.map((a,i)=>{
+  const capOf=a=>{
+    if(a.oz){const c=commodities[a.name.toLowerCase()];return c&&c.price?c.price*a.oz:a.mktcap;}
+    if(a.sym){const q=quotes[a.sym];return q&&q.mktcap>1e9?q.mktcap:a.fallbackCap;}
+    return a.mktcap||0;};
+  const ROWS=TOP8_ASSETS.slice().sort((x,y)=>capOf(y)-capOf(x));
+  panel.innerHTML=ROWS.map((a,i)=>{
     let cap='--',price='--',chg=0;
     if(a.sym){
       const q=quotes[a.sym];
@@ -1887,12 +1998,14 @@ function renderTop8Assets(){
       const d=cryptoData[a.crypto];
       if(d){price='$'+fmt(d.price,2);cap=d.mktcap?'$'+fmtL(d.mktcap):'--';chg=d.chgPct||0;}
     }else{
-      cap='$'+fmtL(a.mktcap);
+      cap='$'+fmtL(capOf(a));
+      const c=a.oz&&commodities[a.name.toLowerCase()];
+      if(c&&c.price){price='$'+fmt(c.price,2);chg=c.chgPct||0;}
     }
     const up=chg>=0;
-    const chgStr=a.sym||a.crypto?`<div class="comm-chg" style="color:${up?'var(--green)':'var(--red)'};font-size:8px;">${up?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:'';
-    const priceStr=a.sym?`<div style="font-size:7px;color:var(--muted);margin-top:1px;">${price}</div>`:'';
-    return`<div class="comm-row" style="padding:8px 14px;${i===TOP8_ASSETS.length-1?'border-bottom:none;':''}">
+    const chgStr=a.sym||a.crypto||a.oz?`<div class="comm-chg" style="color:${up?'var(--green)':'var(--red)'};font-size:8px;">${up?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:'';
+    const priceStr=(a.sym||a.oz)?`<div style="font-size:7px;color:var(--muted);margin-top:1px;">${price}</div>`:'';
+    return`<div class="comm-row" style="padding:8px 14px;${i===ROWS.length-1?'border-bottom:none;':''}">
       <div class="comm-label" style="gap:8px;">
         <span style="font-size:9px;color:var(--gold);font-weight:700;width:16px;">#${i+1}</span>
         <span style="font-size:12px;">${a.icon}</span>
@@ -2002,31 +2115,28 @@ async function loadMainChart(){
   if(pts.length>1)drawMain(pts,selectedSym,selectedType);
 }
 
-/* ══ POLYMARKET ══ */
+/* ══ POLYMARKET RENDER ══ */
 function renderPoly(){
-  const card=m=>`<div class="poly-card">
-    <div class="poly-q">${m.q}</div>
-    <div class="bar-track"><div class="bar-y" style="width:${m.yes}%"></div><div class="bar-n"></div></div>
-    <div class="poly-odds"><span class="py">YES ${m.yes}%</span><span class="pn">NO ${m.no}%</span></div>
-    <div class="pvol">Vol ${m.vol} · Polymarket · <span style="color:var(--gold)">${m.ends}</span></div>
-  </div>`;
-  const el=document.getElementById('poly-grid');
-  if(el)el.innerHTML=POLY.map(card).join('');
-  const st=document.getElementById('poly-status');
-  if(st)st.textContent=POLY===POLY_FALLBACK?'STATIC DATA':'● LIVE · '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false})+' EDT';
+  const el=document.getElementById('poly-grid'),st=document.getElementById('poly-status');
+  if(!el)return;
+  if(POLY_STATE==='loading'&&!POLY.length){el.innerHTML='<div class="loading" style="grid-column:1/-1;padding:12px 4px;">Loading political odds...</div>';if(st)st.textContent='LOADING LIVE ODDS...';return;}
+  if(POLY_STATE==='error'){
+    el.innerHTML='<div class="poly-err">Couldn\'t load live political odds from Polymarket.<br><button class="rt-retry" onclick="fetchPolymarket()">RETRY</button> <a href="https://polymarket.com/politics" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);font-size:10px;margin-left:8px;">Open polymarket.com/politics ↗</a></div>';
+    if(st)st.textContent='UNAVAILABLE';return;
+  }
+  el.innerHTML=POLY.map(m=>{
+    const meta=`<div class="pvol">24h ${polyMoney(m.v24)} · Total ${polyMoney(m.vol)}${m.ends?` · <span style="color:var(--gold)">${polyEsc(m.ends)}</span>`:''}</div>`;
+    const href=m.slug?`https://polymarket.com/event/${encodeURIComponent(m.slug)}`:'https://polymarket.com/politics';
+    const body=m.multi
+      ?'<div class="poly-rows">'+m.rows.map(r=>`<div class="poly-row"><span class="pr-l" title="${polyEsc(r.label)}">${polyEsc(r.label)}</span><span class="pr-bar"><i style="width:${Math.max(2,Math.round(r.yes*100))}%"></i></span><span class="pr-p">${polyPct(r.yes)}</span></div>`).join('')+'</div>'
+      :`<div class="bar-track"><div class="bar-y" style="width:${Math.round(m.bin.yes*100)}%"></div><div class="bar-n"></div></div><div class="poly-odds"><span class="py">${polyEsc(String(m.bin.a).toUpperCase())} ${polyPct(m.bin.yes)}</span><span class="pn">${polyEsc(String(m.bin.b).toUpperCase())} ${polyPct(m.bin.no)}</span></div>`;
+    return`<a class="poly-card" href="${href}" target="_blank" rel="noopener noreferrer"><div class="poly-q">${polyEsc(m.title)}</div>${body}${meta}</a>`;
+  }).join('');
+  if(st)st.textContent='● LIVE · '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});
 }
 
 /* ══ NEWS ══ */
-const NEWS_STATIC=[
-  {time:'09:42',hed:'Fed officials signal patience on rate cuts amid tariff uncertainty',src:'Reuters',url:'https://www.reuters.com'},
-  {time:'09:15',hed:'Bitcoin holds above $85K as institutional demand remains steady',src:'CoinDesk',url:'https://www.coindesk.com'},
-  {time:'08:57',hed:'Gold at 3-month high as dollar weakens on trade war fears',src:'Bloomberg',url:'https://www.bloomberg.com/markets'},
-  {time:'08:30',hed:'Nvidia to unveil new AI chip architecture at GTC next week',src:'The Verge',url:'https://www.theverge.com'},
-  {time:'07:55',hed:'Meta surges after ad revenue beat; guidance raised for Q2',src:'WSJ',url:'https://www.wsj.com/markets'},
-  {time:'07:20',hed:'Oil slides as OPEC+ signals potential output increase in June',src:'Reuters',url:'https://www.reuters.com'},
-  {time:'06:45',hed:"S&P 500 futures flat after last week's broad sell-off",src:'CNBC',url:'https://www.cnbc.com/markets/'},
-  {time:'06:10',hed:'Natural gas futures rally on colder-than-expected outlook',src:'Bloomberg',url:'https://www.bloomberg.com/energy'},
-];
+const NEWS_STATIC=[]; // no placeholder headlines: shown only when a live feed returns
 
 function newsItemHtml(n,compact=false){
   const href=n.url||`https://www.google.com/search?q=${encodeURIComponent(n.hed)}`;
@@ -2051,7 +2161,7 @@ async function renderNews(){
   }
   document.getElementById('news-date').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}).toUpperCase();
   const sideEl=document.getElementById('chart-news-list');
-  if(sideEl)sideEl.innerHTML=articles.slice(0,6).map(n=>newsItemHtml(n,true)).join('');
+  if(sideEl)sideEl.innerHTML=articles.length?articles.slice(0,6).map(n=>newsItemHtml(n,true)).join(''):'<div style="padding:10px;color:var(--muted);font-size:10px">Live headlines unavailable right now.</div>';
 }
 
 /* ══ INTERACTIONS ══ */
@@ -2159,99 +2269,450 @@ function renderFedPath(){
     </div>`).join('');
 }
 
-/* ══ POKÉDEX — Stat Card Grid + Horizontal Bar Chart ══ */
-
-// Add PSA 10 population data and total graded to each card
-const POKE_CARDS=[
-  {name:'Charizard',emoji:'🔥',color:'#ff7c2a',set:'4/102',price:343098,pop10:124,totalGraded:5325,rarity:10,
-   desc:'Aug 2026 avg sale. Record $954,800 (Feb 16, 2026, Goldin). Prior record $550K (Dec 2025).'},
-  {name:'Mewtwo',emoji:'👁️',color:'#00d4ff',set:'10/102',price:56351,pop10:0,totalGraded:0,rarity:6,
-   desc:'PriceCharting PSA 10 index. PSA 10 pop not re-verified.'},
-  {name:'Blastoise',emoji:'💧',color:'#3d9dff',set:'2/102',price:37388,pop10:100,totalGraded:0,rarity:8,
-   desc:'PriceCharting index. Last sale $73,810 (Aug 10, 2026); record $138,880 (Feb 2026). Pop approx.'},
-  {name:'Venusaur',emoji:'🌿',color:'#4ade80',set:'15/102',price:37210,pop10:80,totalGraded:0,rarity:8,
-   desc:'PriceCharting PSA 10 index. Pop is an early-2026 estimate.'},
-  {name:'Alakazam',emoji:'🔮',color:'#a855f7',set:'1/102',price:13302,pop10:93,totalGraded:2440,rarity:7,
-   desc:'PSA 10 market value (PokeInvest). PSA 9 is $4,578.'},
+/* ══ TCG — market cap, top-6 share pie, card price search ══ */
+const TCG_TOTAL=9.2e9;            // 2026 est. annual TCG market size (GM Insights); research firms range $7.8B–$13.3B
+const TCG_RANGE='$7.8B – $13.3B';
+// Shares: Pokémon / One Piece / Yu-Gi-Oh! are Collectr's share of tracked volume (Jun 2026).
+// est:true = approximated split of the remaining ~11% (no published figure; shares sum to 100). Edit here to change the pie.
+const TCG_GAMES=[
+  {name:'Pokémon',             share:65,color:'#f5b800',est:false},
+  {name:'One Piece',           share:17,color:'#ff3b5c',est:false},
+  {name:'Yu-Gi-Oh!',           share:7, color:'#a855f7',est:false},
+  {name:'Magic: The Gathering',share:5, color:'#ff7c2a',est:true},
+  {name:'Disney Lorcana',      share:3, color:'#3d9dff',est:true},
+  {name:'Flesh and Blood',     share:3, color:'#00e676',est:true},
 ];
+let tcgHover=-1,tcgSlices=[];
+const tcgMoney=n=>n>=1e9?'$'+(n/1e9).toFixed(2)+'B':'$'+Math.round(n/1e6)+'M';
+const tcgEsc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-let pokeVisible=POKE_CARDS.map(()=>true);
+function tcgPieSum(){return TCG_GAMES.reduce((a,g)=>a+g.share,0);}
 
-function drawPokedex(){
-  const grid=document.getElementById('pokedex-grid');
-  const bars=document.getElementById('poke-bars');
-  if(!grid||!bars)return;
+function drawTcgPie(){
+  const cv=document.getElementById('tcg-pie');if(!cv)return;
+  const S=cv.clientWidth;if(!S)return;
+  const dpr=Math.min(devicePixelRatio||1,2);
+  cv.width=cv.height=Math.round(S*dpr);
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,S,S);
+  const sum=tcgPieSum(),cx=S/2,R=S/2-10,r=R*0.64;
+  let a=-Math.PI/2;tcgSlices=[];
+  TCG_GAMES.forEach((g,i)=>{
+    const sw=g.share/sum*Math.PI*2,gap=0.014,hot=i===tcgHover,Ro=hot?R+5:R;
+    c.beginPath();c.arc(cx,cx,Ro,a+gap,a+sw-gap);c.arc(cx,cx,r,a+sw-gap,a+gap,true);c.closePath();
+    c.fillStyle=g.color;c.globalAlpha=(tcgHover<0||hot)?1:.45;c.fill();c.globalAlpha=1;
+    tcgSlices.push({a0:a,a1:a+sw});a+=sw;
+  });
+  c.textAlign='center';c.textBaseline='middle';
+  const g=tcgHover>=0?TCG_GAMES[tcgHover]:null;
+  if(g){
+    c.fillStyle=g.color;c.font=`700 ${Math.round(S*0.10)}px 'Space Grotesk',sans-serif`;
+    c.fillText((g.share/sum*100).toFixed(0)+'%',cx,cx-S*0.07);
+    c.fillStyle='#dce8f5';c.font=`600 ${Math.round(S*0.052)}px 'JetBrains Mono',monospace`;
+    c.fillText(g.name.replace('Magic: The Gathering','Magic'),cx,cx+S*0.03);
+    c.fillStyle='#f5b800';c.font=`700 ${Math.round(S*0.055)}px 'JetBrains Mono',monospace`;
+    c.fillText(tcgMoney(TCG_TOTAL*g.share/sum),cx,cx+S*0.105);
+  }else{
+    c.fillStyle='#f5b800';c.font=`700 ${Math.round(S*0.12)}px 'Space Grotesk',sans-serif`;
+    c.fillText('$'+(TCG_TOTAL/1e9).toFixed(1)+'B',cx,cx-S*0.025);
+    c.fillStyle='#8aa0bd';c.font=`600 ${Math.round(S*0.045)}px 'JetBrains Mono',monospace`;
+    c.fillText('EST. MARKET',cx,cx+S*0.085);
+  }
+}
+function setTcgHover(i){
+  if(i===tcgHover)return;
+  tcgHover=i;drawTcgPie();
+  document.querySelectorAll('.tcg-leg-row').forEach((r,j)=>r.classList.toggle('hot',j===i));
+}
+function initTcgPieEvents(){
+  const cv=document.getElementById('tcg-pie');if(!cv||cv._ev)return;cv._ev=true;
+  const pick=e=>{
+    const rc=cv.getBoundingClientRect(),S=rc.width,cx=S/2;
+    const t=e.touches?e.touches[0]:e;
+    const dx=t.clientX-rc.left-cx,dy=t.clientY-rc.top-cx,d=Math.hypot(dx,dy);
+    if(d<S*0.32||d>S/2)return -1;
+    let ang=Math.atan2(dy,dx);if(ang<-Math.PI/2)ang+=Math.PI*2;
+    return tcgSlices.findIndex(s=>ang>=s.a0&&ang<s.a1);
+  };
+  cv.addEventListener('mousemove',e=>setTcgHover(pick(e)));
+  cv.addEventListener('mouseleave',()=>setTcgHover(-1));
+  cv.addEventListener('click',e=>setTcgHover(pick(e)));
+}
 
-  const maxPrice=Math.max(...POKE_CARDS.filter(c=>c.price>0).map(c=>c.price));
-  const maxPop=Math.max(...POKE_CARDS.filter(c=>c.pop10>0).map(c=>c.pop10));
+function drawTcg(){
+  const sum=tcgPieSum();
+  document.getElementById('tcg-cap-val').textContent='$'+(TCG_TOTAL/1e9).toFixed(1)+'B';
+  document.getElementById('tcg-cap-sub').innerHTML='2026 estimated annual market size<br>Research-firm range: '+TCG_RANGE;
+  document.getElementById('tcg-legend').innerHTML=TCG_GAMES.map((g,i)=>
+    `<div class="tcg-leg-row" onmouseenter="setTcgHover(${i})" onmouseleave="setTcgHover(-1)"><span class="tcg-leg-dot" style="background:${g.color}"></span><span class="tcg-leg-name">${g.name}${g.est?' *':''}</span><span class="tcg-leg-pct">${(g.share/sum*100).toFixed(0)}%</span><span class="tcg-leg-val">${tcgMoney(TCG_TOTAL*g.share/sum)}</span></div>`
+  ).join('')+'<div class="tcg-leg-note">* approximated share</div>';
+  tcgHover=-1;drawTcgPie();initTcgPieEvents();
+  if(!document.getElementById('tcg-results').children.length&&!tcgSearched)showTcgHint();
+}
+window.addEventListener('resize',()=>{if(document.getElementById('tcg-page').classList.contains('visible'))drawTcgPie();});
 
-  // ── Stat Card Grid ──
-  grid.innerHTML=POKE_CARDS.map((c,i)=>{
-    const pricePct=c.price/maxPrice*100;
-    const popPct=c.pop10>0?(c.pop10/maxPop*100):0;
-    const rarityPct=c.rarity*10;
-    const priceStr=c.price>=1000?'$'+fmtL(c.price):'$'+c.price;
-    const popStr=c.pop10>0?c.pop10.toLocaleString():'N/A';
-    const gradedStr=c.totalGraded>0?c.totalGraded.toLocaleString():'N/A';
-    return`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;position:relative;overflow:hidden;border-top:3px solid ${c.color};">
-      <div style="position:absolute;top:8px;right:10px;font-size:7px;background:${c.color}18;border:1px solid ${c.color}33;color:${c.color};padding:2px 6px;border-radius:3px;font-weight:700;letter-spacing:1px;">PSA 10</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-        <span style="font-size:20px;">${c.emoji}</span>
-        <div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--text);">${c.name}</div>
-          <div style="font-size:7px;color:var(--muted);">#${c.set} · 1st Ed.</div>
-        </div>
-      </div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:${c.color};margin-bottom:8px;">${priceStr}</div>
-      <div style="margin-bottom:6px;">
-        <div style="display:flex;justify-content:space-between;font-size:7px;margin-bottom:2px;"><span style="color:var(--muted);">PRICE</span><span style="color:${c.color};">${pricePct.toFixed(0)}%</span></div>
-        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:${pricePct}%;height:100%;background:${c.color};border-radius:2px;transition:width .5s;"></div></div>
-      </div>
-      <div style="margin-bottom:6px;">
-        <div style="display:flex;justify-content:space-between;font-size:7px;margin-bottom:2px;"><span style="color:var(--muted);">PSA 10 POP</span><span style="color:var(--text);">${popStr}</span></div>
-        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:${popPct}%;height:100%;background:var(--cyan);border-radius:2px;transition:width .5s;"></div></div>
-      </div>
-      <div style="margin-bottom:6px;">
-        <div style="display:flex;justify-content:space-between;font-size:7px;margin-bottom:2px;"><span style="color:var(--muted);">RARITY</span><span style="color:var(--gold);">${c.rarity}/10</span></div>
-        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:${rarityPct}%;height:100%;background:var(--gold);border-radius:2px;transition:width .5s;"></div></div>
-      </div>
-      <div style="font-size:6px;color:var(--muted);margin-top:6px;line-height:1.4;">${c.totalGraded>0?'Total graded: '+gradedStr:''}</div>
-      <div style="font-size:6.5px;color:${c.color}55;margin-top:4px;line-height:1.3;font-style:italic;">${c.desc}</div>
-    </div>`;
-  }).join('');
+let tcgSearched=false;
+function showTcgHint(){
+  document.getElementById('tcg-status').innerHTML='Pick a game and search any card name for current market prices.<div class="tcg-quick">'
+    +[['Charizard','pokemon'],['Pikachu','pokemon'],['Black Lotus','mtg'],['Blue-Eyes White Dragon','ygo'],['Elsa','lorcana']]
+      .map(([q,g])=>`<button onclick="quickTcg('${q}','${g}')">${q}</button>`).join('')+'</div>';
+}
+function quickTcg(q,g){
+  setTcgGame(g,document.querySelector(`.tcg-chip[data-g="${g}"]`),true);
+  document.getElementById('tcg-search').value=q;
+  searchCards();
+}
 
-  // ── Horizontal Bar Chart (log scale visual) ──
-  // Use log scale so Charizard doesn't crush others
-  const logMax=Math.log10(maxPrice);
-  bars.innerHTML=POKE_CARDS.map(c=>{
-    const logVal=c.price>0?Math.log10(c.price):0;
-    const pct=(logVal/logMax*100).toFixed(1);
-    const priceStr=c.price>=1000?'$'+fmtL(c.price):'$'+c.price;
-    return`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <div style="width:90px;display:flex;align-items:center;gap:5px;flex-shrink:0;">
-        <span style="font-size:12px;">${c.emoji}</span>
-        <span style="font-size:8px;font-weight:700;color:var(--text);">${c.name}</span>
-      </div>
-      <div style="flex:1;height:18px;background:var(--bg3);border-radius:3px;overflow:hidden;position:relative;">
-        <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,${c.color}88,${c.color});border-radius:3px;transition:width .8s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
-          <span style="font-size:7px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);white-space:nowrap;">${priceStr}</span>
-        </div>
-      </div>
-      <div style="width:55px;text-align:right;flex-shrink:0;">
-        <div style="font-size:7px;color:var(--muted);">Pop ${c.pop10>0?c.pop10:'—'}</div>
-      </div>
-    </div>`;
+let tcgGame='all',tcgToken=0;
+function setTcgGame(g,btn,silent){
+  tcgGame=g;
+  document.querySelectorAll('.tcg-chip').forEach(c=>c.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(!silent&&document.getElementById('tcg-search').value.trim())searchCards();
+}
+
+const tcgPretty=v=>v?v.replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase()):'';
+async function tcgFetch(url,ms){
+  const r=await fetch(url,{signal:AbortSignal.timeout(ms||15000)});
+  if(!r.ok){if(r.status===404||r.status===400)return null;throw new Error('HTTP '+r.status);}
+  return r.json();
+}
+async function searchPokemon(q){
+  const d=await tcgFetch('https://api.pokemontcg.io/v2/cards?q='+encodeURIComponent('name:"'+q+'*"')+'&pageSize=60&select=id,name,set,number,rarity,images,tcgplayer',25000);
+  if(!d||!d.data)return[];
+  return d.data.map(c=>{
+    const p=(c.tcgplayer&&c.tcgplayer.prices)||{};
+    let best=null,variant='';
+    Object.entries(p).forEach(([k,v])=>{const m=v&&(v.market!=null?v.market:v.mid);if(m!=null&&(best==null||m>best)){best=m;variant=k;}});
+    return{game:'pokemon',name:c.name,set:(c.set&&c.set.name)||'',num:c.number||'',rarity:c.rarity||'',img:c.images&&c.images.small,price:best,variant:tcgPretty(variant),url:c.tcgplayer&&c.tcgplayer.url};
+  });
+}
+async function searchMtg(q){
+  const d=await tcgFetch('https://api.scryfall.com/cards/search?q='+encodeURIComponent(q)+'&unique=prints&order=usd&dir=desc');
+  if(!d||!d.data)return[];
+  return d.data.slice(0,60).map(c=>{
+    const pr=c.prices||{};
+    const opts=[['Nonfoil',pr.usd],['Foil',pr.usd_foil],['Etched',pr.usd_etched]].filter(x=>x[1]).map(x=>[x[0],parseFloat(x[1])]);
+    let best=null,variant='';
+    opts.forEach(([k,v])=>{if(best==null||v>best){best=v;variant=k;}});
+    const img=(c.image_uris&&c.image_uris.small)||(c.card_faces&&c.card_faces[0]&&c.card_faces[0].image_uris&&c.card_faces[0].image_uris.small);
+    return{game:'mtg',name:c.name,set:c.set_name||'',num:c.collector_number||'',rarity:c.rarity||'',img,price:best,variant,url:(c.purchase_uris&&c.purchase_uris.tcgplayer)||c.scryfall_uri};
+  });
+}
+async function searchYgo(q){
+  const d=await tcgFetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?fname='+encodeURIComponent(q)+'&num=40&offset=0');
+  if(!d||!d.data)return[];
+  return d.data.map(c=>{
+    const cp=c.card_prices&&c.card_prices[0];
+    const price=cp&&cp.tcgplayer_price?parseFloat(cp.tcgplayer_price):null;   // card-level price (not per printing)
+    const n=c.card_sets?c.card_sets.length:0;
+    return{game:'ygo',name:c.name,set:n?n+' printing'+(n>1?'s':''):'',num:'',rarity:c.humanReadableCardType||c.type||'',img:c.card_images&&c.card_images[0]&&c.card_images[0].image_url_small,price:price>0?price:null,variant:'TCGplayer',url:c.ygoprodeck_url};
+  });
+}
+async function searchLorcana(q){
+  const d=await tcgFetch('https://api.lorcast.com/v0/cards/search?q='+encodeURIComponent(q)+'&unique=prints');
+  if(!d||!d.results)return[];
+  return d.results.map(c=>{
+    const pr=c.prices||{};
+    const opts=[['Nonfoil',pr.usd],['Foil',pr.usd_foil]].filter(x=>x[1]).map(x=>[x[0],parseFloat(x[1])]);
+    let best=null,variant='';
+    opts.forEach(([k,v])=>{if(best==null||v>best){best=v;variant=k;}});
+    return{game:'lorcana',name:c.name+(c.version?' — '+c.version:''),set:(c.set&&c.set.name)||'',num:c.collector_number||'',rarity:c.rarity||'',img:c.image_uris&&c.image_uris.digital&&c.image_uris.digital.small,price:best,variant,url:null};
+  });
+}
+const TCG_SOURCES={
+  pokemon:{label:'Pokémon',  color:'#f5b800',fn:searchPokemon},
+  mtg:    {label:'Magic',    color:'#ff7c2a',fn:searchMtg},
+  ygo:    {label:'Yu-Gi-Oh!',color:'#a855f7',fn:searchYgo},
+  lorcana:{label:'Lorcana',  color:'#3d9dff',fn:searchLorcana},
+};
+async function searchCards(){
+  const q=document.getElementById('tcg-search').value.trim();
+  if(!q)return;
+  tcgSearched=true;
+  const token=++tcgToken;
+  const keys=tcgGame==='all'?Object.keys(TCG_SOURCES):[tcgGame];
+  const st=document.getElementById('tcg-status'),out=document.getElementById('tcg-results');
+  st.textContent='Searching '+keys.map(k=>TCG_SOURCES[k].label).join(', ')+' for "'+q+'"...';
+  out.innerHTML='';
+  const res=await Promise.allSettled(keys.map(k=>TCG_SOURCES[k].fn(q)));
+  if(token!==tcgToken)return;                   // a newer search started
+  const all=[],failed=[],per=keys.length===1?24:6;
+  res.forEach((r,i)=>{
+    if(r.status==='fulfilled')all.push(...r.value.filter(c=>c.price!=null&&c.price>0).sort((a,b)=>b.price-a.price).slice(0,per));
+    else failed.push(TCG_SOURCES[keys[i]].label);
+  });
+  all.sort((a,b)=>b.price-a.price);
+  let msg=all.length?`${all.length} priced result${all.length>1?'s':''} for "${tcgEsc(q)}" · highest market price first`:`No priced cards found for "${tcgEsc(q)}"`;
+  if(failed.length)msg+=` · <span style="color:var(--red)">couldn't reach: ${failed.join(', ')}</span>`;
+  st.innerHTML=msg;
+  out.innerHTML=all.map(c=>{
+    const src=TCG_SOURCES[c.game];
+    const tag=c.url?'a':'div';
+    const link=c.url?` href="${tcgEsc(c.url)}" target="_blank" rel="noopener noreferrer"`:'';
+    const sub=[c.set,c.num?'#'+c.num:''].filter(Boolean).join(' · ');
+    return`<${tag} class="tcg-card"${link}>
+      <div class="tcg-card-img">${c.img?`<img src="${tcgEsc(c.img)}" alt="${tcgEsc(c.name)}" loading="lazy" onerror="this.style.display='none'"/>`:''}<span class="tcg-card-badge" style="background:${src.color}">${src.label.toUpperCase()}</span></div>
+      <div class="tcg-card-body">
+        <div class="tcg-card-name">${tcgEsc(c.name)}</div>
+        <div class="tcg-card-set">${tcgEsc(sub)}${c.rarity?'<br>'+tcgEsc(c.rarity):''}</div>
+        <div class="tcg-card-price">$${fmt(c.price,2)}</div>
+        <div class="tcg-card-var">${tcgEsc(c.variant)}</div>
+      </div></${tag}>`;
   }).join('');
 }
+
+/* ══ BONDS — U.S. Treasury yields (10Y / 15Y* / 30Y) + optional other countries ══
+   *The U.S. Treasury issues no 15-year security. 15Y is interpolated between the 10Y and 20Y constant-maturity yields
+    (or between 10Y and 30Y when no 20Y is available) and is always labelled as an estimate.
+   Live chain for the U.S.: Treasury CSV → FRED CSV → Alpha Vantage → dated snapshot (clearly badged).
+   Other countries: dated 10Y snapshot (Trading Economics, Oct 9 2026); Canada is refreshed live from the Bank of Canada. */
+const BD_MATS=['1M','2M','3M','6M','1Y','2Y','3Y','5Y','7Y','10Y','20Y','30Y'];
+const BD_SNAPSHOT=[   // U.S. Treasury daily par yield curve (home.treasury.gov), Oct 7–9 2026
+  {date:'2026-10-07','1M':4.07,'2M':4.14,'3M':4.22,'6M':4.28,'1Y':4.42,'2Y':4.77,'3Y':4.87,'5Y':5.03,'7Y':5.15,'10Y':5.28,'20Y':5.71,'30Y':5.67},
+  {date:'2026-10-08','1M':4.14,'2M':4.13,'3M':4.23,'6M':4.30,'1Y':4.44,'2Y':4.75,'3Y':4.85,'5Y':4.99,'7Y':5.11,'10Y':5.22,'20Y':5.64,'30Y':5.60},
+  {date:'2026-10-09','1M':4.13,'2M':4.13,'3M':4.25,'6M':4.32,'1Y':4.47,'2Y':4.80,'3Y':4.89,'5Y':5.02,'7Y':5.13,'10Y':5.24,'20Y':5.65,'30Y':5.60},
+];
+const BD_CTRY_DATE='Oct 9, 2026';
+const BD_COUNTRIES=[   // 10Y government bond yield, % — Trading Economics major-bonds table, Oct 9 2026 (South Korea: Oct 8)
+  {c:'GB',n:'United Kingdom',y:5.4226},{c:'JP',n:'Japan',y:3.0159},{c:'AU',n:'Australia',y:5.356},{c:'DE',n:'Germany',y:3.4654},
+  {c:'BR',n:'Brazil',y:12.535},{c:'RU',n:'Russia',y:16.85},{c:'IN',n:'India',y:7.288},{c:'CA',n:'Canada',y:3.878},
+  {c:'IT',n:'Italy',y:4.588},{c:'FR',n:'France',y:4.8673},{c:'ZA',n:'South Africa',y:8.955},{c:'CN',n:'China',y:1.6976},
+  {c:'CH',n:'Switzerland',y:0.558},{c:'MX',n:'Mexico',y:9.298},{c:'NL',n:'Netherlands',y:3.588},{c:'NZ',n:'New Zealand',y:5.0703},
+  {c:'PT',n:'Portugal',y:3.977},{c:'KR',n:'South Korea',y:4.394},{c:'ES',n:'Spain',y:4.101},{c:'GR',n:'Greece',y:4.414},{c:'TR',n:'Turkey',y:35.61},
+].sort((a,b)=>a.n.localeCompare(b.n));
+const BD_COLORS=['#ff7c2a','#a855f7','#00e676','#ff3b5c','#3d9dff','#f5b800'];
+
+const BD={rows:[],src:'SNAPSHOT',live:false,range:'3M',sel:[],fullYears:2,hover:{curve:-1,hist:-1},ca:null,loading:false,approx15:false};
+try{BD.sel=(JSON.parse(localStorage.getItem('rb_bonds_sel')||'[]')||[]).filter(c=>BD_COUNTRIES.some(x=>x.c===c)).slice(0,6);}catch(e){}
+
+/* ── helpers ── */
+const bdF=(v,d=2)=>v==null||!isFinite(v)?'--':Number(v).toFixed(d);
+const bdBp=v=>v==null||!isFinite(v)?'--':(v>=0?'+':'')+Math.round(v*100)+' bp';
+function bdB15(r){
+  if(!r)return null;
+  if(r['10Y']!=null&&r['20Y']!=null)return(r['10Y']+r['20Y'])/2;
+  if(r['10Y']!=null&&r['30Y']!=null)return 0.75*r['10Y']+0.25*r['30Y'];
+  return null;
+}
+const bdVal=(r,k)=>k==='15Y'?bdB15(r):(r?r[k]:null);
+const bdCsv=t=>t.trim().split(/\r?\n/).map(l=>l.split(',').map(s=>s.replace(/^"|"$/g,'').trim()));
+const bdIso=d=>{const m=d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?`${m[3]}-${m[1]}-${m[2]}`:d;};
+async function bdGet(url,ms){
+  const r=await fetch(url,{signal:AbortSignal.timeout(ms||12000)});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return r;
+}
+
+/* ── U.S. sources ── */
+async function bdTreasury(years){
+  const y0=new Date().getFullYear(),all=[];
+  const parts=await Promise.all(Array.from({length:years},(_,i)=>y0-i).map(async(y,i)=>{
+    try{return await (await bdGet(`https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/${y}/all?type=daily_treasury_yield_curve&field_tdr_date_value=${y}&page&_format=csv`,15000)).text();}
+    catch(e){if(i===0)throw e;return null;}      // current year is mandatory, older years optional
+  }));
+  parts.forEach(t=>{
+    if(!t)return;
+    const rows=bdCsv(t),head=rows[0];
+    const keys=head.map(h=>{const m=h.match(/^(\d+(?:\.\d+)?)\s*(mo|month|yr|year)/i);return m?(parseFloat(m[1])+(/^m/i.test(m[2])?'M':'Y')):null;});
+    rows.slice(1).forEach(l=>{
+      if(!/^\d{2}\/\d{2}\/\d{4}$/.test(l[0]))return;
+      const o={date:bdIso(l[0])};
+      keys.forEach((k,i)=>{if(k&&BD_MATS.includes(k)){const v=parseFloat(l[i]);if(isFinite(v))o[k]=v;}});
+      if(o['10Y']!=null)all.push(o);
+    });
+  });
+  all.sort((a,b)=>a.date<b.date?-1:1);
+  return{rows:all,src:'U.S. TREASURY'};
+}
+async function bdFred(years){
+  const ids={DGS1MO:'1M',DGS3MO:'3M',DGS6MO:'6M',DGS1:'1Y',DGS2:'2Y',DGS3:'3Y',DGS5:'5Y',DGS7:'7Y',DGS10:'10Y',DGS20:'20Y',DGS30:'30Y'};
+  const cosd=(new Date().getFullYear()-years+1)+'-01-01';
+  const t=await (await bdGet(`https://fred.stlouisfed.org/graph/fredgraph.csv?id=${Object.keys(ids).join(',')}&cosd=${cosd}`,20000)).text();
+  const rows=bdCsv(t),head=rows[0],all=[];
+  rows.slice(1).forEach(l=>{
+    const o={date:l[0]};
+    head.forEach((h,i)=>{if(ids[h]){const v=parseFloat(l[i]);if(isFinite(v))o[ids[h]]=v;}});
+    if(o['10Y']!=null)all.push(o);
+  });
+  return{rows:all,src:'FRED'};
+}
+async function bdAlpha(){
+  const get=async m=>{const d=await (await bdGet(`https://www.alphavantage.co/query?function=TREASURY_YIELD&interval=daily&maturity=${m}&apikey=${AV_KEY}`,15000)).json();
+    if(!d.data)throw new Error('rate limited');return d.data;};
+  const [a,b]=await Promise.all([get('10year'),get('30year')]);
+  const m30={};b.forEach(p=>{const v=parseFloat(p.value);if(isFinite(v))m30[p.date]=v;});
+  const all=[];a.forEach(p=>{const v=parseFloat(p.value);if(isFinite(v)&&m30[p.date]!=null)all.push({date:p.date,'10Y':v,'30Y':m30[p.date]});});
+  all.sort((x,y)=>x.date<y.date?-1:1);
+  return{rows:all.slice(-1400),src:'ALPHA VANTAGE'};
+}
+async function loadBonds(years){
+  BD.loading=true;
+  for(const f of [()=>bdTreasury(years),()=>bdFred(years),()=>bdAlpha()]){
+    try{const r=await f();if(r&&r.rows.length>5){BD.rows=r.rows;BD.src=r.src;BD.live=true;BD.fullYears=years;BD.loading=false;
+      try{localStorage.setItem('rb_bonds_v1',JSON.stringify({ts:Date.now(),years,src:r.src,rows:r.rows.slice(-1500)}));}catch(e){}
+      return;}}catch(e){}
+  }
+  BD.loading=false;
+  if(!BD.live){BD.rows=BD_SNAPSHOT;BD.src='SNAPSHOT';}
+}
+async function bdLoadCanada(){
+  try{
+    const d=await (await bdGet('https://www.bankofcanada.ca/valet/observations/BD.CDN.2YR.DQ.YLD,BD.CDN.5YR.DQ.YLD,BD.CDN.10YR.DQ.YLD,BD.CDN.LONG.DQ.YLD/json?recent=5',10000)).json();
+    const o=(d.observations||[]).slice(-1)[0];if(!o)return;
+    const g=k=>o[k]&&o[k].v!=null?parseFloat(o[k].v):null;
+    BD.ca={date:o.d,'2Y':g('BD.CDN.2YR.DQ.YLD'),'5Y':g('BD.CDN.5YR.DQ.YLD'),'10Y':g('BD.CDN.10YR.DQ.YLD'),'30Y':g('BD.CDN.LONG.DQ.YLD')};
+  }catch(e){}
+}
+
+/* ── charts (plain canvas so they also appear in share snapshots) ── */
+function bdDraw(cv,cfg){
+  const W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return;
+  const dpr=Math.min(devicePixelRatio||1,2);cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);
+  const vals=[];cfg.series.forEach(s=>s.data.forEach(v=>{if(v!=null&&isFinite(v))vals.push(v);}));(cfg.points||[]).forEach(p=>vals.push(p.y));
+  if(!vals.length)return;
+  let mn=Math.min(...vals),mx=Math.max(...vals);const pd=(mx-mn)*0.14||0.2;mn-=pd;mx+=pd;
+  const L=46,R=cfg.rpad||16,T=12,B=26,n=cfg.labels.length;
+  const X=i=>L+(n<2?0.5:i/(n-1))*(W-L-R),Y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
+  c.font="10px 'JetBrains Mono',monospace";c.textBaseline='middle';
+  for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4,y=Y(v);
+    c.strokeStyle='rgba(61,157,255,.12)';c.lineWidth=1;c.beginPath();c.moveTo(L,y);c.lineTo(W-R,y);c.stroke();
+    c.fillStyle='#8aa0bd';c.textAlign='right';c.fillText(v.toFixed(2)+'%',L-6,y);}
+  c.textAlign='center';c.textBaseline='top';c.fillStyle='#8aa0bd';
+  (cfg.xticks||cfg.labels.map((_,i)=>i)).forEach(i=>c.fillText(cfg.xfmt?cfg.xfmt(cfg.labels[i]):cfg.labels[i],X(i),H-B+8));
+  cfg.series.forEach(s=>{
+    c.strokeStyle=s.color;c.lineWidth=s.w||2;c.setLineDash(s.dash||[]);c.beginPath();let started=false;
+    s.data.forEach((v,i)=>{if(v==null||!isFinite(v))return;if(!started){c.moveTo(X(i),Y(v));started=true;}else c.lineTo(X(i),Y(v));});
+    c.stroke();c.setLineDash([]);
+    if(s.dots)s.data.forEach((v,i)=>{if(v==null||!isFinite(v))return;c.fillStyle=s.color;c.beginPath();c.arc(X(i),Y(v),3,0,7);c.fill();});
+  });
+  (cfg.points||[]).forEach(p=>{
+    c.fillStyle=p.color;c.beginPath();c.arc(X(p.i),Y(p.y),5,0,7);c.fill();c.strokeStyle='#05070f';c.lineWidth=1.5;c.stroke();
+    c.fillStyle=p.color;c.textAlign='left';c.textBaseline='middle';c.font="700 10px 'JetBrains Mono',monospace";
+    c.fillText(p.label,Math.min(X(p.i)+8,W-R-c.measureText(p.label).width),Y(p.y)-10);
+  });
+  if(cfg.hover>=0&&cfg.hover<n){
+    const hx=X(cfg.hover);c.strokeStyle='rgba(220,232,245,.35)';c.lineWidth=1;c.beginPath();c.moveTo(hx,T);c.lineTo(hx,H-B);c.stroke();
+    const rows=[(cfg.xfmtHover?cfg.xfmtHover(cfg.labels[cfg.hover]):cfg.labels[cfg.hover])].concat(cfg.series.filter(s=>s.data[cfg.hover]!=null).map(s=>s.name+'  '+s.data[cfg.hover].toFixed(2)+'%'));
+    c.font="11px 'JetBrains Mono',monospace";const w=Math.max(...rows.map(r=>c.measureText(r).width))+18,h=rows.length*16+10;
+    let bx=hx+12;if(bx+w>W-4)bx=hx-12-w;const by=T+4;
+    c.fillStyle='rgba(9,13,24,.96)';c.strokeStyle='#1e3050';c.lineWidth=1;c.beginPath();c.roundRect?c.roundRect(bx,by,w,h,6):c.rect(bx,by,w,h);c.fill();c.stroke();
+    c.textAlign='left';c.textBaseline='middle';
+    rows.forEach((r,i)=>{c.fillStyle=i===0?'#f5b800':(cfg.series.filter(s=>s.data[cfg.hover]!=null)[i-1]||{}).color||'#dce8f5';c.fillText(r,bx+9,by+13+i*16);});
+    cfg.series.forEach(s=>{const v=s.data[cfg.hover];if(v==null)return;c.fillStyle=s.color;c.beginPath();c.arc(hx,Y(v),4,0,7);c.fill();});
+  }
+}
+function bdWire(id,key,nOf){
+  const cv=document.getElementById(id);if(!cv||cv._w)return;cv._w=true;
+  const move=e=>{const r=cv.getBoundingClientRect(),t=e.touches?e.touches[0]:e,n=nOf();if(n<1)return;
+    const L=46,R=key==='curve'?72:16,x=t.clientX-r.left;
+    const i=n<2?0:Math.round((x-L)/(r.width-L-R)*(n-1));BD.hover[key]=Math.max(0,Math.min(n-1,i));bdRenderCharts();};
+  cv.addEventListener('mousemove',move);cv.addEventListener('touchstart',move,{passive:true});cv.addEventListener('touchmove',move,{passive:true});
+  cv.addEventListener('mouseleave',()=>{BD.hover[key]=-1;bdRenderCharts();});
+}
+
+/* ── render ── */
+function bdRange(r,btn){BD.range=r;document.querySelectorAll('#bd-ranges button').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');
+  if(r==='5Y'&&BD.live&&BD.fullYears<6){loadBonds(6).then(renderBonds);}else renderBonds();}
+function bdAddCountry(c){if(!c||BD.sel.includes(c)||BD.sel.length>=6)return;BD.sel.push(c);bdSaveSel();renderBonds();}
+function bdRemoveCountry(c){BD.sel=BD.sel.filter(x=>x!==c);bdSaveSel();renderBonds();}
+function bdSaveSel(){try{localStorage.setItem('rb_bonds_sel',JSON.stringify(BD.sel));}catch(e){}}
+
+function bdCountryRow(code){
+  const k=BD_COUNTRIES.find(x=>x.c===code);if(!k)return null;
+  if(code==='CA'&&BD.ca&&BD.ca['10Y']!=null)return{n:k.n,y:BD.ca['10Y'],live:true,date:BD.ca.date,cur:BD.ca};
+  return{n:k.n,y:k.y,live:false,date:BD_CTRY_DATE};
+}
+function renderBonds(){
+  const rows=BD.rows,last=rows[rows.length-1],prev=rows[rows.length-2];
+  const src=document.getElementById('bd-src');
+  if(src){const d=last?last.date:'';src.textContent=BD.live?`● LIVE · ${BD.src} · AS OF ${d}`:(BD.loading?'LOADING YIELDS…':`SNAPSHOT · U.S. TREASURY · ${d} · LIVE FEED UNAVAILABLE`);}
+  if(!last)return;
+  // 1M-ago row (by date)
+  const t1=new Date(last.date);t1.setDate(t1.getDate()-30);const iso1=t1.toISOString().slice(0,10);
+  const m1=BD.live?([...rows].reverse().find(r=>r.date<=iso1)||null):null;
+  const tile=(k,lab,est)=>{
+    const v=bdVal(last,k),p=bdVal(prev,k),m=bdVal(m1,k);
+    const d1=v!=null&&p!=null?v-p:null,dm=v!=null&&m!=null?v-m:null;
+    const cl=x=>x==null?'':x>0?'bd-up':'bd-dn';
+    return`<div class="bd-tile${est?' est':''}"><div class="bd-tl">${lab}</div><div class="bd-tv">${bdF(v)}<small>%</small></div>
+      <div class="bd-tc"><span class="${cl(d1)}">1D ${bdBp(d1)}</span><span class="${cl(dm)}">1M ${bdBp(dm)}</span></div>
+      ${est?`<div class="bd-tn">* Estimate — the U.S. Treasury issues no 15-year security. Interpolated between the ${last['20Y']!=null?'10Y and 20Y':'10Y and 30Y'} yields.</div>`:''}</div>`;};
+  document.getElementById('bd-tiles').innerHTML=tile('10Y','10-year Treasury')+tile('15Y','15-year (interpolated*)',true)+tile('30Y','30-year Treasury');
+  const s2=last['2Y'],s10=last['10Y'],s3m=last['3M'];
+  const ms=(l,v)=>`<div class="bd-ms"><div class="bd-ms-l">${l}</div><div class="bd-ms-v">${v}</div></div>`;
+  document.getElementById('bd-mini').innerHTML=ms('2-year',s2!=null?bdF(s2)+'%':'—')+ms('5-year',last['5Y']!=null?bdF(last['5Y'])+'%':'—')+ms('20-year',last['20Y']!=null?bdF(last['20Y'])+'%':'—')
+    +ms('2s10s spread',s2!=null?bdBp(s10-s2):'—')+ms('10Y – 3M spread',s3m!=null?bdBp(s10-s3m):'—');
+  // country picker + chips + table
+  const add=document.getElementById('bd-add');
+  add.innerHTML='<option value="">+ Add a country…</option>'+BD_COUNTRIES.filter(k=>!BD.sel.includes(k.c)).map(k=>`<option value="${k.c}">${k.n}</option>`).join('');
+  add.disabled=BD.sel.length>=6;
+  document.getElementById('bd-chips').innerHTML=BD.sel.map((c,i)=>{const k=BD_COUNTRIES.find(x=>x.c===c);return`<span class="bd-chip" style="color:${BD_COLORS[i%6]};border-color:${BD_COLORS[i%6]}66">${k.n}<button onclick="bdRemoveCountry('${c}')" aria-label="Remove ${k.n}">×</button></span>`;}).join('');
+  const us10=last['10Y'],crows=[{n:'United States',y:us10,live:BD.live,date:last.date,us:true}].concat(BD.sel.map(bdCountryRow).filter(Boolean));
+  const mx=Math.max(...crows.map(r=>r.y));
+  document.getElementById('bd-cmp').innerHTML=BD.sel.length?`<table class="bd-tbl"><tr><th>Country</th><th>10Y yield</th><th>vs U.S. 10Y</th><th></th><th>Source</th></tr>`
+    +crows.map((r,i)=>`<tr><td>${r.n}</td><td>${bdF(r.y)}%</td><td>${r.us?'—':bdBp(r.y-us10)}</td><td class="bd-bar-w"><span class="bd-bar" style="width:${Math.max(2,r.y/mx*100)}%;background:${r.us?'#f5b800':BD_COLORS[(i-1)%6]}"></span></td><td><span class="bd-badge ${r.live?'live':''}">${r.live?'LIVE':'SNAPSHOT'} · ${r.date.replace(/^2026-/,'')}</span></td></tr>`).join('')+'</table>'
+    :'<div class="bd-empty">Pick up to six countries from the menu to compare their 10-year yields with the U.S. — they also appear as dots on the yield curve above.</div>';
+  document.getElementById('bd-note').innerHTML=`U.S. yields: constant-maturity Treasury par yields (${BD.live?BD.src:'snapshot of the Treasury daily par yield curve'}). A rising yield is shown in red because it means falling bond prices. 15Y* is an estimate (see above). Other countries: 10-year benchmark snapshot from Trading Economics (${BD_CTRY_DATE}); Canada is refreshed live from the Bank of Canada when reachable. Not investment advice.`;
+  bdRenderCharts();
+}
+function bdRenderCharts(){
+  const rows=BD.rows,last=rows[rows.length-1];if(!last)return;
+  // ── yield curve: today vs ~1M / ~1Y ago + selected-country dots
+  const cur=document.getElementById('bd-curve');
+  const at=days=>{const t=new Date(last.date);t.setDate(t.getDate()-days);const iso=t.toISOString().slice(0,10);return BD.live?([...rows].reverse().find(r=>r.date<=iso)||null):null;};
+  const m1=at(30),y1=at(365);
+  const ser=[{name:'Today',color:'#f5b800',w:2.5,dots:true,data:BD_MATS.map(k=>last[k]!=null?last[k]:null)}];
+  if(m1)ser.push({name:'1M ago',color:'#3d9dff',w:1.6,dash:[5,4],data:BD_MATS.map(k=>m1[k]!=null?m1[k]:null)});
+  if(y1)ser.push({name:'1Y ago',color:'#8aa0bd',w:1.4,dash:[2,4],data:BD_MATS.map(k=>y1[k]!=null?y1[k]:null)});
+  const i10=BD_MATS.indexOf('10Y'),pts=[];
+  BD.sel.forEach((c,i)=>{const r=bdCountryRow(c);if(r)pts.push({i:i10,y:r.y,color:BD_COLORS[i%6],label:r.n.split(' ').pop()+' '+bdF(r.y)});});
+  // stagger overlapping labels at the 10Y column
+  pts.sort((a,b)=>a.y-b.y);
+  bdDraw(cur,{labels:BD_MATS,series:ser,points:pts,hover:BD.hover.curve,rpad:BD.sel.length?78:16,xticks:BD_MATS.map((_,i)=>i)});
+  document.getElementById('bd-curve-leg').innerHTML=ser.map(s=>`<span><i style="background:${s.color}"></i>${s.name}</span>`).join('')+(BD.sel.length?'<span style="color:#8aa0bd">● dots = selected countries’ 10Y</span>':'')+(BD.live?'':'<span style="color:#8aa0bd">(history needs a live connection)</span>');
+  // ── history
+  const days={'1M':31,'3M':92,'1Y':366,'5Y':1830}[BD.range];
+  const t0=new Date(last.date);t0.setDate(t0.getDate()-days);const iso0=t0.toISOString().slice(0,10);
+  const sl=BD.live?rows.filter(r=>r.date>=iso0):[];
+  const msg=document.getElementById('bd-hist-msg'),hv=document.getElementById('bd-hist');
+  if(sl.length<3){msg.style.display='flex';msg.textContent=BD.loading?'Loading history…':'History unavailable without a live connection (showing the latest snapshot above).';
+    hv.getContext('2d').clearRect(0,0,hv.width,hv.height);document.getElementById('bd-hist-leg').innerHTML='';return;}
+  msg.style.display='none';
+  const step=Math.max(1,Math.floor(sl.length/6));const xt=[];for(let i=0;i<sl.length;i+=step)xt.push(i);if(xt[xt.length-1]!==sl.length-1)xt.push(sl.length-1);
+  const long=BD.range==='1Y'||BD.range==='5Y';
+  bdDraw(hv,{labels:sl.map(r=>r.date),xticks:xt,hover:BD.hover.hist,xfmt:d=>long?d.slice(0,7):d.slice(5),xfmtHover:d=>d,
+    series:[{name:'10Y ',color:'#00d4ff',data:sl.map(r=>r['10Y']!=null?r['10Y']:null)},{name:'15Y*',color:'#a855f7',dash:[5,4],data:sl.map(r=>bdB15(r))},{name:'30Y ',color:'#f5b800',data:sl.map(r=>r['30Y']!=null?r['30Y']:null)}]});
+  document.getElementById('bd-hist-leg').innerHTML='<span><i style="background:#00d4ff"></i>10Y</span><span><i style="background:#a855f7"></i>15Y* (est.)</span><span><i style="background:#f5b800"></i>30Y</span>';
+}
+
+let bdInited=false;
+async function initBonds(){
+  if(!bdInited){
+    bdInited=true;
+    bdWire('bd-curve','curve',()=>BD_MATS.length);bdWire('bd-hist','hist',()=>{const l=BD.rows[BD.rows.length-1];if(!l)return 0;const t=new Date(l.date);t.setDate(t.getDate()-({'1M':31,'3M':92,'1Y':366,'5Y':1830}[BD.range]));const i0=t.toISOString().slice(0,10);return BD.live?BD.rows.filter(r=>r.date>=i0).length:0;});
+    window.addEventListener('resize',()=>{if(document.getElementById('bonds-page').classList.contains('visible'))bdRenderCharts();});
+    let cached=null;try{cached=JSON.parse(localStorage.getItem('rb_bonds_v1')||'null');}catch(e){}
+    if(cached&&cached.rows&&cached.rows.length>5){BD.rows=cached.rows;BD.src=cached.src+' (CACHED)';BD.live=true;BD.fullYears=cached.years||2;}
+    else{BD.rows=BD_SNAPSHOT;BD.src='SNAPSHOT';BD.live=false;}
+    renderBonds();
+    bdLoadCanada().then(()=>renderBonds());
+    if(!cached||Date.now()-cached.ts>2*3600*1000){BD.loading=!BD.live;await loadBonds(BD.range==='5Y'?6:2);renderBonds();}
+  }else renderBonds();
+}
+
 
 /* ══ TAB SWITCHING ══ */
 function switchTab(tab){
   document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('terminal-page').classList.toggle('hidden',tab!=='terminal');
-  ['assets','ratios','pokedex'].forEach(p=>document.getElementById(p+'-page').classList.toggle('visible',tab===p));
+  ['assets','ratios','tcg','bonds'].forEach(p=>document.getElementById(p+'-page').classList.toggle('visible',tab===p));
+  closeShare();
   if(tab==='assets')renderNwPage();
   if(tab==='ratios')initRatios();
+  if(tab==='tcg')drawTcg();
+  if(tab==='bonds')initBonds();
   window.scrollTo(0,0);
 }
 
@@ -2260,8 +2721,8 @@ const VAULT_KEY='rb_vault_data';
 const VAULT_CATEGORIES={
   precious_metals:{label:'Precious Metals',icon:'⬡',color:'#D4A017',unitOptions:['oz','grams','$'],
     assets:[
-      {id:'gold_oz',name:'Gold',unit:'oz',defaultPrice:2350},
-      {id:'silver_oz',name:'Silver',unit:'oz',defaultPrice:29.5},
+      {id:'gold_oz',name:'Gold',unit:'oz',defaultPrice:4183},
+      {id:'silver_oz',name:'Silver',unit:'oz',defaultPrice:60.4},
       {id:'platinum_oz',name:'Platinum',unit:'oz',defaultPrice:1020},
       {id:'palladium_oz',name:'Palladium',unit:'oz',defaultPrice:980},
     ]},
@@ -2667,7 +3128,16 @@ function saveVaultCustom(catKey){
 }
 
 /* ── Page render entry ── */
+function vaultSyncLive(){
+  const M={gold_oz:()=>commodities.gold&&commodities.gold.price,silver_oz:()=>commodities.silver&&commodities.silver.price,
+    v_aapl:()=>quotes.AAPL&&quotes.AAPL.price,v_msft:()=>quotes.MSFT&&quotes.MSFT.price,v_googl:()=>quotes.GOOGL&&quotes.GOOGL.price,
+    v_amzn:()=>quotes.AMZN&&quotes.AMZN.price,v_tsla:()=>quotes.TSLA&&quotes.TSLA.price,v_nvda:()=>quotes.NVDA&&quotes.NVDA.price,
+    v_btc:()=>cryptoData.BTC&&cryptoData.BTC.price,v_eth:()=>cryptoData.ETH&&cryptoData.ETH.price,v_sol:()=>cryptoData.SOL&&cryptoData.SOL.price,
+    v_xrp:()=>cryptoData.XRP&&cryptoData.XRP.price,v_ada:()=>cryptoData.ADA&&cryptoData.ADA.price};
+  Object.values(VAULT_CATEGORIES).forEach(c=>(c.assets||[]).forEach(a=>{const f=M[a.id];const p=f&&f();if(p&&p>0)a.defaultPrice=p;}));
+}
 function renderNwPage(){
+  try{vaultSyncLive();}catch(e){}
   loadVault();
   // Restore saved view state
   const savedView=localStorage.getItem('rb_vault_view');
@@ -2965,9 +3435,8 @@ function drawRatio(){
 
 async function init(){
   clock();setInterval(clock,1000);
-  renderPoly();renderBubbleLegend();startBubble();
+  renderPoly();fetchPolymarket();renderBubbleLegend();startBubble();
   fetchFedRate();
-  drawPokedex();
   renderTop8Assets();renderForex();
 
   const cache=loadCache();
@@ -2986,11 +3455,10 @@ async function init(){
       badge.style.color=ok?'var(--green)':'var(--gold)';
     }
     setStatus(ok?'● CACHED':'PARTIAL',ok?'api-ok':'api-loading');
-    renderPoly();
   }else{
     // FRESH FETCH — first load or stale cache
     // Phase 1: fast no-key sources
-    await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex(),fetchPolymarket()]);
+    await Promise.all([fetchCrypto(),fetchCommodities(),fetchForex()]);
     renderCrypto();renderTicker();renderTop8Assets();renderForex();
     renderNews();
 
@@ -3023,19 +3491,26 @@ init();
 <!-- ═══════════════════════════════════════════
   SOCIAL SHARE BUTTON
 ═══════════════════════════════════════════ -->
-<div id="share-fab" onclick="handleShare()" title="Share RB Terminal" aria-label="Share this terminal">
+<div id="share-fab" onclick="handleShare()" title="Share a snapshot of this view" aria-label="Share a snapshot of this view">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
   <span id="share-label">SHARE</span>
 </div>
-<div id="share-popover" role="dialog" aria-label="Share options">
-  <div class="sp-title">Share RB Terminal</div>
-  <div id="share-preview" style="display:none;"></div>
-  <div class="sp-btns">
-    <button class="sp-btn" onclick="shareX()"       aria-label="Share on X"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X / Twitter</button>
-    <button class="sp-btn" onclick="shareLinkedIn()" aria-label="Share on LinkedIn"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</button>
-    <button class="sp-btn" onclick="shareReddit()"   aria-label="Share on Reddit"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>Reddit</button>
-    <button class="sp-btn sp-copy" id="copy-btn" onclick="copyLink()" aria-label="Copy link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span id="copy-text">Copy Link</span></button>
+<div id="share-popover" role="dialog" aria-label="Share snapshot">
+  <div class="sp-head">
+    <div><div class="sp-title">Share snapshot</div><div class="sp-sub" id="sp-sub"></div></div>
+    <button class="sp-retake" onclick="buildShareImage()" title="Re-capture what's on screen now">↻ RETAKE</button>
   </div>
+  <div id="sp-mode" class="sp-mode" style="display:none"><button class="on" data-m="view" onclick="setShareMode('view')">SCREENSHOT</button><button data-m="card" onclick="setShareMode('card')">SUMMARY CARD</button></div>
+  <div id="share-preview"></div>
+  <div class="sp-btns">
+    <button class="sp-btn sp-main" id="sp-native" onclick="shareNative()" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share image…</button>
+    <button class="sp-btn" onclick="shareTo('x')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X / Twitter</button>
+    <button class="sp-btn" onclick="shareTo('reddit')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>Reddit</button>
+    <button class="sp-btn" onclick="shareTo('linkedin')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</button>
+    <button class="sp-btn" onclick="copyImage()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy image</button>
+    <button class="sp-btn" onclick="saveImage()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Save image</button>
+  </div>
+  <div id="sp-note" class="sp-note"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -3113,13 +3588,6 @@ init();
 </style>
 
 <script>
-/* ══ SHARE ══ */
-const SHARE_URL=window.location.href;
-const SHARE_TITLE='RB Terminal — Live Markets Dashboard';
-const SHARE_TEXT='Real-time stocks, crypto, commodities & market predictions. Built on Finnhub + CoinGecko.';
-
-let shareOpen=false;
-
 function getShareContext(){
   // Determine what the user is currently viewing in the assets tab
   const isAssets=document.getElementById('assets-page').classList.contains('visible');
@@ -3151,37 +3619,6 @@ function getVaultShareData(){
   if(totalNW<=0)return null;
   holdingsList.sort((a,b)=>b.value-a.value);
   return{totalNW,catBreak,holdingsList,scope:ctx.scope,cat:ctx.cat};
-}
-
-function buildVaultShareText(){
-  const data=getVaultShareData();
-  if(!data)return null;
-  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
-
-  let text='';
-  if(data.scope==='category'){
-    const label=catNames[data.cat]||data.cat;
-    text+=`💰 My ${label} on RB Terminal\n\n`;
-    text+=`📊 Total: ${vaultFmt(data.totalNW)}\n\n`;
-    text+='🏆 Holdings:\n';
-    data.holdingsList.forEach(h=>{
-      text+=`  ${h.name}: ${vaultFmt(h.value)}\n`;
-    });
-  }else{
-    text+='💰 My Portfolio on RB Terminal\n\n';
-    text+='📊 Net Worth: '+vaultFmt(data.totalNW)+'\n\n';
-    text+='📈 Breakdown:\n';
-    Object.entries(data.catBreak).forEach(([cat,val])=>{
-      const pct=((val/data.totalNW)*100).toFixed(1);
-      text+=`  ${catNames[cat]||cat}: ${vaultFmt(val)} (${pct}%)\n`;
-    });
-    text+='\n🏆 Top Holdings:\n';
-    data.holdingsList.slice(0,5).forEach(h=>{
-      text+=`  ${h.name}: ${vaultFmt(h.value)}\n`;
-    });
-  }
-  text+='\nTracked with RB Terminal';
-  return text;
 }
 
 function generateVaultShareCard(){
@@ -3345,103 +3782,210 @@ function generateVaultShareCard(){
   return canvas;
 }
 
-function handleShare(){
-  const ctx=getShareContext();
-  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
-  const isAssets=ctx.scope!=='terminal';
-  const vaultText=isAssets?buildVaultShareText():null;
-  const shareTitle=ctx.scope==='category'
-    ?`My ${catNames[ctx.cat]||ctx.cat} — RB Terminal`
-    :isAssets?'My Portfolio — RB Terminal':SHARE_TITLE;
-  const shareText=vaultText||SHARE_TEXT;
-  
-  if(isAssets&&vaultText){
-    // Try to share with image
-    const canvas=generateVaultShareCard();
-    if(canvas&&navigator.canShare){
-      canvas.toBlob(async blob=>{
-        if(!blob)return fallbackShare(shareTitle,shareText);
-        const file=new File([blob],'rb-portfolio.png',{type:'image/png'});
-        const shareData={title:shareTitle,text:shareText,files:[file]};
-        try{
-          if(navigator.canShare(shareData)){
-            await navigator.share(shareData);
-          }else{
-            fallbackShare(shareTitle,shareText);
-          }
-        }catch(e){
-          fallbackShare(shareTitle,shareText);
-        }
-      },'image/png');
-      return;
+/* ══ SHARE — image snapshot of whatever the user is looking at ══
+   Chain: (1) native SVG-foreignObject render of the live DOM → (2) html2canvas (lazy-loaded from cdnjs) → error message.
+   No link is ever shared; the payload is a PNG. */
+const SHARE_LABELS={terminal:'Terminal',ratios:'Ratio Lab',tcg:'TCG Market',bonds:'Bonds',assets:'Vault'};
+const XHTML_NS='http://www.w3.org/1999/xhtml';
+let shareMode='view',shareBlob=null,shareMeta0=null,shareReq=0,shareUrl=null;
+
+function currentTabKey(){const a=document.querySelector('.top-tab.active');return a?a.id.replace('tab-',''):'terminal';}
+function shareMeta(){
+  const tab=currentTabKey();
+  let label=SHARE_LABELS[tab]||'Terminal',text='RB Terminal · live markets';
+  if(tab==='ratios'&&typeof RT!=='undefined'&&RT.a&&RT.b){label='Ratio Lab · '+RT.a.sym+' ÷ '+RT.b.sym;text='RB Terminal · '+RT.a.sym+' ÷ '+RT.b.sym+' ratio';}
+  else if(tab==='ratios')text='RB Terminal · Ratio Lab';
+  else if(tab==='tcg')text='RB Terminal · TCG market';
+  else if(tab==='assets'){const c=getShareContext();label=c.scope==='category'?'Vault · '+(VAULT_CATEGORIES[c.cat]?VAULT_CATEGORIES[c.cat].label:c.cat):'Vault';text='RB Terminal · my portfolio';}
+  return{tab,label,text,file:'rb-terminal-'+tab+'-'+new Date().toISOString().slice(0,10)+'.png'};
+}
+
+/* ── capture helpers ── */
+const blobToDataURL=b=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(b);});
+const xmlText=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+let _fontCss=null;
+async function getEmbeddedFonts(){            // inline the Google fonts so the snapshot keeps the terminal look
+  if(_fontCss!==null)return _fontCss;
+  _fontCss='';
+  try{
+    const css=await (await fetch('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap',{signal:AbortSignal.timeout(7000)})).text();
+    const blocks=[...css.matchAll(/\/\*\s*([a-z-]+)\s*\*\/\s*(@font-face\s*\{[^}]*\})/g)].filter(m=>m[1]==='latin').map(m=>m[2]);
+    const cache={};let out='';
+    for(const b of blocks){
+      const u=(b.match(/url\((https:[^)]+)\)/)||[])[1];if(!u)continue;
+      if(!cache[u])cache[u]=await blobToDataURL(await (await fetch(u,{signal:AbortSignal.timeout(7000)})).blob());
+      out+=b.replace(u,cache[u])+'\n';
     }
-  }
-  
-  if(navigator.canShare&&navigator.canShare({title:shareTitle,text:shareText,url:SHARE_URL})){
-    navigator.share({title:shareTitle,text:shareText,url:SHARE_URL}).catch(()=>{});
-  }else{
-    fallbackShare(shareTitle,shareText);
-  }
+    _fontCss=out;
+  }catch(e){_fontCss='';}
+  return _fontCss;
+}
+function canvasLooksBlank(cv){
+  const t=document.createElement('canvas');t.width=t.height=24;
+  const c=t.getContext('2d');c.drawImage(cv,0,0,24,24);
+  const d=c.getImageData(0,0,24,24).data;let min=255,max=0;
+  for(let i=0;i<d.length;i+=4){const v=d[i]+d[i+1]+d[i+2];if(v<min)min=v;if(v>max)max=v;}
+  return max-min<12;
 }
 
-function fallbackShare(title,text){
-  shareOpen=!shareOpen;
-  const ctx=getShareContext();
-  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
-  const popTitle=document.querySelector('.sp-title');
-  if(popTitle){
-    if(ctx.scope==='category')popTitle.textContent='Share '+catNames[ctx.cat];
-    else if(ctx.scope==='dashboard')popTitle.textContent='Share My Portfolio';
-    else popTitle.textContent='Share RB Terminal';
-  }
-  // Show image preview if on assets page
-  const previewWrap=document.getElementById('share-preview');
-  if(previewWrap){
-    if(ctx.scope!=='terminal'){
-      const canvas=generateVaultShareCard();
-      if(canvas){
-        previewWrap.innerHTML='';
-        const img=document.createElement('img');
-        img.src=canvas.toDataURL('image/png');
-        img.style.cssText='width:100%;border-radius:8px;margin-bottom:8px;cursor:pointer;';
-        img.title='Tap to save image';
-        img.onclick=()=>{
-          const a=document.createElement('a');
-          a.href=img.src;a.download='rb-portfolio.png';a.click();
-        };
-        previewWrap.appendChild(img);
-        previewWrap.style.display='block';
-      }else{previewWrap.style.display='none';}
-    }else{previewWrap.style.display='none';}
-  }
-  document.getElementById('share-popover').classList.toggle('open',shareOpen);
+async function nativeCapture(){
+  const cw=document.documentElement.clientWidth,chh=window.innerHeight,sy=window.scrollY||0;
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  // live canvases → still images (the clone can't copy their pixels)
+  const cv0=[...document.querySelectorAll('canvas')].map(c=>{
+    try{const r=c.getBoundingClientRect(),cs=getComputedStyle(c);
+      return{src:c.toDataURL('image/png'),w:r.width,h:r.height,pos:cs.position,top:cs.top,left:cs.left,right:cs.right,bottom:cs.bottom,disp:cs.display};}catch(e){return null;}
+  });
+  const body=document.body.cloneNode(true);
+  // typed values don't survive cloneNode
+  const oi=[...document.querySelectorAll('input,textarea,select')],ci=[...body.querySelectorAll('input,textarea,select')];
+  oi.forEach((o,i)=>{const c=ci[i];if(!c)return;
+    if(o.tagName==='TEXTAREA')c.textContent=o.value;
+    else if(o.tagName==='SELECT')[...c.options].forEach((op,j)=>{op.selected=o.options[j].selected;});
+    else{c.setAttribute('value',o.value);if(o.checked)c.setAttribute('checked','');else c.removeAttribute('checked');}
+  });
+  [...body.querySelectorAll('canvas')].forEach((c,i)=>{
+    const d=cv0[i];if(!d||!d.w){c.remove();return;}
+    const img=document.createElementNS(XHTML_NS,'img');
+    img.setAttribute('src',d.src);if(c.className)img.setAttribute('class',c.className);if(c.id)img.setAttribute('id',c.id);
+    img.setAttribute('style',`display:${d.disp};position:${d.pos};top:${d.top};left:${d.left};right:${d.right};bottom:${d.bottom};width:${d.w}px;height:${d.h}px;`);
+    c.replaceWith(img);
+  });
+  // drop what isn't on screen / isn't part of the view
+  body.querySelectorAll('script,#share-fab,#share-popover,#chat-fab,#chat-panel').forEach(n=>n.remove());
+  ['terminal-page','ratios-page','tcg-page','bonds-page','assets-page'].forEach(id=>{
+    const o=document.getElementById(id);
+    if(o&&getComputedStyle(o).display==='none'){const c=body.querySelector('#'+id);if(c)c.remove();}
+  });
+  // external images (e.g. TCG card art) must be inlined or the SVG renderer drops them
+  await Promise.all([...body.querySelectorAll('img')].filter(i=>/^https?:/i.test(i.getAttribute('src')||'')).map(async im=>{
+    try{const r=await fetch(im.getAttribute('src'),{mode:'cors',signal:AbortSignal.timeout(7000)});
+      im.setAttribute('src',await blobToDataURL(await r.blob()));im.removeAttribute('srcset');im.removeAttribute('loading');}
+    catch(e){im.removeAttribute('src');im.setAttribute('style',(im.getAttribute('style')||'')+';background:#0e1424;');}
+  }));
+  // reproduce the scrolled viewport: shift the body, and emulate the sticky header
+  body.style.cssText+=`;position:relative;margin:0;width:${cw}px;top:-${sy}px;overflow:visible;min-height:${document.documentElement.scrollHeight}px;`;
+  const head=body.querySelector('.sticky-head');if(head){head.style.position='relative';head.style.top=sy+'px';head.style.background='#05070f';head.style.backdropFilter='none';}   // solid: the live page blurs what scrolls under it, a still image can't
+  const styles=[...document.querySelectorAll('style')].map(s=>s.textContent.replace(/@import[^;]+;/g,'')).join('\n');
+  const fonts=await getEmbeddedFonts();
+  const html=`<div xmlns="${XHTML_NS}" style="width:${cw}px;height:${chh}px;overflow:hidden;background:#05070f;position:relative"><style>${xmlText(fonts+'\n'+styles)}\n*,*::before,*::after{animation:none!important;transition:none!important}</style>${new XMLSerializer().serializeToString(body)}</div>`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${cw}" height="${chh}"><foreignObject x="0" y="0" width="${cw}" height="${chh}">${html}</foreignObject></svg>`;
+  const img=new Image();
+  await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('svg render failed'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});
+  const cv=document.createElement('canvas');cv.width=Math.round(cw*dpr);cv.height=Math.round(chh*dpr);
+  const c=cv.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#05070f';c.fillRect(0,0,cw,chh);c.drawImage(img,0,0,cw,chh);
+  cv.toDataURL();                                  // throws if the canvas got tainted (Safari) → caller falls back
+  if(canvasLooksBlank(cv))throw new Error('blank render');
+  return cv;
 }
 
-function getShareText(){
-  const vaultText=buildVaultShareText();
-  return vaultText||SHARE_TEXT;
+function loadH2C(){
+  if(window.html2canvas)return Promise.resolve(window.html2canvas);
+  return new Promise(res=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.onload=()=>res(window.html2canvas||null);s.onerror=()=>res(null);document.head.appendChild(s);});
+}
+async function h2cCapture(){
+  const h2c=await loadH2C();if(!h2c)throw new Error('html2canvas unavailable');
+  const cw=document.documentElement.clientWidth,chh=window.innerHeight,sy=window.scrollY||0;
+  const head=document.querySelector('.sticky-head');let spacer=null;
+  if(head&&sy>0){spacer=document.createElement('div');spacer.style.height=head.offsetHeight+'px';head.after(spacer);head.style.position='fixed';head.style.left='0';head.style.right='0';head.style.top='0';}
+  try{
+    return await h2c(document.body,{backgroundColor:'#05070f',scale:Math.min(2,window.devicePixelRatio||1),useCORS:true,logging:false,x:window.scrollX||0,y:sy,width:cw,height:chh,windowWidth:cw,windowHeight:chh,
+      ignoreElements:el=>/^(share-fab|share-popover|chat-fab|chat-panel)$/.test(el.id)});
+  }finally{if(spacer){spacer.remove();head.style.position='';head.style.left='';head.style.right='';head.style.top='';}}
 }
 
-function shareX(){
-  const text=getShareText();
-  window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(SHARE_URL)}`,'_blank','noopener,noreferrer');closeShare();
+async function captureView(){
+  try{return await nativeCapture();}catch(e){console.warn('native snapshot failed, trying html2canvas:',e);}
+  return await h2cCapture();
 }
-function shareLinkedIn(){window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(SHARE_URL)}`,'_blank','noopener,noreferrer');closeShare();}
-function shareReddit(){
-  const ctx=getShareContext();
-  const catNames={precious_metals:'Precious Metals',stocks:'Stocks',crypto:'Crypto',real_estate:'Real Estate',vehicles:'Vehicles',collectibles:'Collectibles'};
-  const title=ctx.scope==='category'?`My ${catNames[ctx.cat]||ctx.cat} — RB Terminal`:ctx.scope==='dashboard'?'My Portfolio — RB Terminal':SHARE_TITLE;
-  window.open(`https://reddit.com/submit?url=${encodeURIComponent(SHARE_URL)}&title=${encodeURIComponent(title)}`,'_blank','noopener,noreferrer');closeShare();
+
+function decorateShare(cap,meta){                  // thin branded footer so the image says where it came from
+  const s=cap.width/Math.max(1,document.documentElement.clientWidth),bar=Math.round(34*s);
+  const out=document.createElement('canvas');out.width=cap.width;out.height=cap.height+bar;
+  const c=out.getContext('2d');c.drawImage(cap,0,0);
+  c.fillStyle='#070b16';c.fillRect(0,cap.height,out.width,bar);
+  c.fillStyle='rgba(0,212,255,.6)';c.fillRect(0,cap.height,out.width,Math.max(1,Math.round(s)));
+  c.textBaseline='middle';const y=cap.height+bar/2+s,f=Math.round(12*s);
+  c.font=`700 ${f}px 'Space Grotesk','JetBrains Mono',sans-serif`;c.textAlign='left';
+  c.fillStyle='#f5b800';c.fillText('RB',Math.round(14*s),y);
+  const w=c.measureText('RB ').width;c.fillStyle='#dce8f5';c.fillText('TERMINAL',Math.round(14*s)+w,y);
+  c.font=`600 ${Math.round(11*s)}px 'JetBrains Mono',monospace`;c.textAlign='center';c.fillStyle='#8aa0bd';
+  c.fillText(meta.label.toUpperCase(),out.width/2,y);
+  c.textAlign='right';c.fillText(new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}),out.width-Math.round(14*s),y);
+  return out;
 }
-async function copyLink(){
-  const vaultText=buildVaultShareText();
-  const textToCopy=vaultText?(vaultText+'\n\n'+SHARE_URL):SHARE_URL;
-  await navigator.clipboard.writeText(textToCopy);
-  const el=document.getElementById('copy-text');
-  el.textContent='Copied! ✓';setTimeout(()=>{el.textContent='Copy Link';},2000);
-  closeShare();
+
+/* ── popover UI ── */
+function spSet(state,msg){
+  const pv=document.getElementById('share-preview'),btns=document.querySelectorAll('#share-popover .sp-btn');
+  btns.forEach(b=>{b.disabled=state!=='ready';});
+  if(state==='loading')pv.innerHTML='<div class="sp-state">Capturing your view…</div>';
+  else if(state==='error')pv.innerHTML='<div class="sp-state sp-err">'+(msg||'Couldn\'t capture this view in your browser.')+'<br>Try your device\'s screenshot shortcut instead.</div>';
+  else if(shareUrl)pv.innerHTML='<img src="'+shareUrl+'" alt="Snapshot preview"/>';
 }
-function closeShare(){shareOpen=false;document.getElementById('share-popover').classList.remove('open');}
+async function buildShareImage(){
+  const req=++shareReq,meta=shareMeta();
+  shareBlob=null;spSet('loading');
+  document.getElementById('sp-sub').textContent=meta.label;
+  const modeEl=document.getElementById('sp-mode');
+  const hasCard=meta.tab==='assets'&&!!getVaultShareData();
+  modeEl.style.display=hasCard?'flex':'none';
+  if(!hasCard)shareMode='view';
+  modeEl.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.m===shareMode));
+  let cv=null;
+  try{cv=(shareMode==='card'&&hasCard)?generateVaultShareCard():decorateShare(await captureView(),meta);}
+  catch(e){console.warn('share capture failed',e);}
+  if(req!==shareReq)return;                        // user retook / closed meanwhile
+  if(!cv){spSet('error');return;}
+  const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+  if(req!==shareReq)return;
+  if(!blob){spSet('error');return;}
+  if(shareUrl)URL.revokeObjectURL(shareUrl);
+  shareBlob=blob;shareMeta0=meta;shareUrl=URL.createObjectURL(blob);
+  document.getElementById('sp-native').style.display=canShareFiles()?'flex':'none';
+  spSet('ready');
+}
+function canShareFiles(){
+  try{return !!(navigator.canShare&&navigator.canShare({files:[new File([new Blob(['x'])],'x.png',{type:'image/png'})]}));}catch(e){return false;}
+}
+function setShareMode(m){shareMode=m;buildShareImage();}
+function openShare(){document.getElementById('share-popover').classList.add('open');buildShareImage();}
+function closeShare(){shareReq++;document.getElementById('share-popover').classList.remove('open');}
+function handleShare(){
+  if(document.getElementById('share-popover').classList.contains('open'))closeShare();else openShare();
+}
+function spNote(t){const n=document.getElementById('sp-note');n.textContent=t;clearTimeout(spNote._t);spNote._t=setTimeout(()=>{n.textContent='';},6000);}
+
+async function copyImage(quiet){
+  if(!shareBlob)return false;
+  try{
+    await navigator.clipboard.write([new ClipboardItem({'image/png':shareBlob})]);
+    if(!quiet)spNote('Image copied — paste it into your post.');return true;
+  }catch(e){if(!quiet)spNote('Your browser blocked copying — use Save image instead.');return false;}
+}
+function saveImage(){
+  if(!shareBlob)return;
+  const a=document.createElement('a');a.href=shareUrl;a.download=(shareMeta0&&shareMeta0.file)||'rb-terminal.png';document.body.appendChild(a);a.click();a.remove();
+  spNote('Image saved.');
+}
+async function shareNative(){
+  if(!shareBlob)return;
+  const file=new File([shareBlob],shareMeta0.file,{type:'image/png'});
+  try{await navigator.share({files:[file],title:'RB Terminal',text:shareMeta0.text});}catch(e){}
+}
+const SHARE_SITES={
+  x:       t=>'https://x.com/intent/tweet?text='+encodeURIComponent(t),
+  linkedin:t=>'https://www.linkedin.com/feed/?shareActive=true&text='+encodeURIComponent(t),
+  reddit:  t=>'https://www.reddit.com/submit?type=IMAGE&title='+encodeURIComponent(t),
+};
+async function shareTo(site){
+  if(!shareBlob)return;
+  const win=window.open(SHARE_SITES[site](shareMeta0.text),'_blank','noopener,noreferrer');   // opened first, inside the click
+  const ok=await copyImage(true);
+  if(ok)spNote('Image copied — paste it into the post (Ctrl/⌘+V).');
+  else{saveImage();spNote('Image saved — attach it to your post.');}
+  if(!win)spNote('Pop-up blocked — allow pop-ups, then try again.');
+}
 document.addEventListener('click',e=>{
   if(!e.target.closest('#share-fab')&&!e.target.closest('#share-popover'))closeShare();
 });
